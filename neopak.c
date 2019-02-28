@@ -17,6 +17,7 @@
 #include "include/scalar_4x64.h"
 #include "include/testrand_impl.h"
 #include "helper.h"
+#include "sha.h"
 
 
 //global
@@ -187,10 +188,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName)
 
 char* ComputeSha256FromByteArray(uint8_t* paramFileContents, int paramFileContentsLength)
 {
-
-
-    //below is the usage for rfc sha256 (just for reference)
-    /*
     SHA256Context digestContext;
     uint8_t messageDigest[32];
     unsigned char printedMessageDigest[32];
@@ -211,7 +208,6 @@ char* ComputeSha256FromByteArray(uint8_t* paramFileContents, int paramFileConten
     for (int i = 0; i < 32; i++)
         printf("%02x", printedMessageDigest[i]);
     printf("\n");
-    */
 
 }
 
