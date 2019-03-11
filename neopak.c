@@ -17,7 +17,7 @@
 #include "include/scalar_4x64.h"
 #include "include/testrand_impl.h"
 #include "helper.h"
-#include "sha.h"
+#include "./sha/sha.h"
 
 
 //global
@@ -28,7 +28,7 @@ void DisplayUsageInfo();
 enum commands ParseArgumentsIntoCommand(int paramArgc);
 void ExecuteCommand(char **paramArgs, enum commands paramCommand);
 char* ReadFileIntoByteArray(char *paramFileName);
-void ComputeSha256FromByteArray(char *paramFileContents, int paramFileContentsLength, uint8_t *paramFileDigest);
+void ComputeSha256FromCharArray(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 void CompleteTestSigProcess();
 void CompleteSigProcess(char *paramSecKey, char *paramFileName);
 int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
@@ -137,11 +137,34 @@ void CompleteTestSigProcess()
 void CompleteSigProcess(char *paramSecKey, char *paramFileName)
 {
     uint8_t fileDigest[32];
-    char fileContents;
+    char *fileContents;
+    FILE *filePointer;
+    long fileLength;
 
-    int fileContentsLength = readFileIntoByteArrayAndReturnLength(paramFileName, &fileContents);
+    filePointer = fopen(paramFileName, "r");  // Open the file in binary mode
+    fseek(filePointer, 0, SEEK_END);          // Jump to the end of the file
+    fileLength = ftell(filePointer);             // Get the current byte offset in the file
+    rewind(filePointer);                      // Jump back to the beginning of the file
 
-    ComputeSha256FromByteArray(&fileContents, fileContentsLength, fileDigest);
+    fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
+    fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
+    fclose(filePointer); // Close the file
+
+    printf("\ntesting file content string inside completeSig function:");
+    for (int i = 0; i < fileLength; i++)
+    {
+        printf("%c", fileContents[i]);
+    }
+    printf("\n");
+
+    ComputeSha256FromCharArray(fileContents, fileLength, fileDigest);
+
+    printf("\nmessage digest in completeSigProcess function:");
+    for (int i = 0; i < 32; i++)
+        printf("%02x", fileDigest[i]);
+    printf("\n");
+
+
     
     //old code where the message digest has to be passed to this function, instead of it being calculated from a file
     /*
@@ -186,26 +209,32 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName)
 }
 
 
-void ComputeSha256FromByteArray(char *paramFileContents, int paramFileContentsLength, uint8_t *paramFileDigest)
+void ComputeSha256FromCharArray(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)
 {
     USHAContext shaContext;
     uint8_t messageDigest[32];
-    char testArray[5] = {'h','e', 'l', 'l', 'o'};
+
+    printf("\ntesting file content string inside computeSha function:");
+    for (int i = 0; i < paramFileLength; i++)
+    {
+        printf("%c", paramFileContents[i]);
+    }
+    printf("\n");
 
     int errorCode;
 
     errorCode = USHAReset(&shaContext, SHA256);
     printf("%d", errorCode);
 
-    errorCode = USHAInput(&shaContext, (const uint8_t *) testArray, 5);
+    errorCode = USHAInput(&shaContext, (const uint8_t *) paramFileContents, paramFileLength);
     printf("%d", errorCode);
 
-    errorCode = USHAResult(&shaContext, messageDigest);
+    errorCode = USHAResult(&shaContext, paramFileDigest);
     printf("%d", errorCode);
 
-    printf("\n");
+    printf("\nmessage digest in computeSha function:");
     for (int i = 0; i < 32; i++)
-        printf("%02x", messageDigest[i]);
+        printf("%02x", paramFileDigest[i]);
     printf("\n");
 }
 

@@ -30,5 +30,6 @@ char* insertSpaces(const char *s);
 //print secret key, public key, digest, and signature
 void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
 
-long readFileIntoByteArrayAndReturnLength(char *paramFileName, char *paramFileContents);
-
+/*
+long readFileIntoByteArrayAndReturnLength(int paramFileLength, char *paramFileContents);
+*/

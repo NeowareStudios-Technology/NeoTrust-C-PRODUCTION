@@ -1,29 +1,31 @@
 CC = gcc
-OBJ = neopak.o helper.o sha224-256.o sha1.o sha384-512.o usha.o
+OBJ = neopak.o helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
+OPATH = ./obj/
+SPATH = ./sha/
 LDIR = lib
 LIBS = -L $(LDIR) -l secp256k1
 
 neopak: $(OBJ)
 	$(CC) -o neopak $(OBJ) $(LIBS)
 
-neopak.o: neopak.c 
-	$(CC) -c neopak.c
+$(OPATH)neopak.o: neopak.c 
+	$(CC) -c neopak.c -o $(OPATH)neopak.o
 
-helper.o: helper.c
-	$(CC) -c helper.c
+$(OPATH)helper.o: helper.c
+	$(CC) -c helper.c -o $(OPATH)helper.o
 
-usha.o: usha.c
-	$(CC) -c usha.c
+$(OPATH)usha.o: $(SPATH)usha.c
+	$(CC) -c $(SPATH)usha.c -o $(OPATH)usha.o
 
-sha224-256.o: sha224-256.c
-	$(CC) -c sha224-256.c 
+$(OPATH)sha224-256.o: $(SPATH)sha224-256.c
+	$(CC) -c $(SPATH)sha224-256.c -o $(OPATH)sha224-256.o
 
-sha1.o: sha1.c
-	$(CC) -c sha1.c
+$(OPATH)sha1.o: $(SPATH)sha1.c
+	$(CC) -c $(SPATH)sha1.c -o $(OPATH)sha1.o
 
-sha384-512.o: sha384-512.c
-	$(CC) -c sha384-512.c
+$(OPATH)sha384-512.o: $(SPATH)sha384-512.c
+	$(CC) -c $(SPATH)sha384-512.c -o $(OPATH)sha384-512.o
 
 clean:
-	rm *.o 
+	rm obj/*
 	rm neopak

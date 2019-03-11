@@ -140,7 +140,8 @@ void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char
 }
 
 
-long readFileIntoByteArrayAndReturnLength(char *paramFileName, char *paramFileContents)
+/*
+long readFileIntoByteArrayAndReturnLength(int paramFileLength, char *paramFileContents)
 {
     FILE *filePointer;
     long fileLength;
@@ -151,10 +152,10 @@ long readFileIntoByteArrayAndReturnLength(char *paramFileName, char *paramFileCo
     rewind(filePointer);                      // Jump back to the beginning of the file
 
     paramFileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
-    fread(paramFileContents, fileLength, 1, filePointer); // Read in the entire file
+    fread(paramFileContents, paramFileLength, 1, filePointer); // Read in the entire file
     fclose(filePointer); // Close the file
 
-    printf("\n");
+    printf("\ntesting file content string inside readFile function:");
     for (int i = 0; i < fileLength; i++)
     {
         printf("%c", paramFileContents[i]);
@@ -163,3 +164,4 @@ long readFileIntoByteArrayAndReturnLength(char *paramFileName, char *paramFileCo
 
     return fileLength;
 }
+*/
