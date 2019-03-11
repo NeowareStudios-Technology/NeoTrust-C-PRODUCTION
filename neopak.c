@@ -37,12 +37,12 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
 void DisplayUsageInfo()
 {
     printf("\nNeoPak\nCopywrite NeoWare 2019\n");
-    printf("Created by David Lee Ramirez 2/12/2019\n\n");
+    printf("Created by David Lee Ramirez 2/12/2019 \n");
     printf("Usage:\n");
     printf("./neopak                                  Show usage info\n");
     printf("./neopak test                             Sign with test priv key and message hash\n");
-    printf("./neopak <privKey> <messageHash>          Sign with provided priv key and message hash\n");
-    printf("\n *Note: <privKey> and <messageHash> must be supplied \n        as a string of hex numbers with length 64\n\n");
+    printf("./neopak <privKey> <filePath>             Sign with provided priv key and file\n");
+    printf("\n *Note: <privKey> and <messageHash> must be supplied \n        as a string of hex numbers with length 64 \n");
 }
 
 
@@ -67,7 +67,7 @@ enum commands ParseArgumentsIntoCommand(int paramArgc)
     //else, too many args passed
     else
     {
-        printf("\nError: incorrect usage, run program with no args for usage info\n\n");
+        printf("\nError: incorrect usage, run program with no args for usage info \n");
         exit(1);
     }
 }
@@ -108,7 +108,7 @@ void CompleteTestSigProcess()
     serializedSignatureDer = malloc(sizeof(unsigned char)*72);
     secp256k1_scalar myMessageHash, myPrivateKey;
 
-    printf("\nStarting signing test with test pub/priv keys and test message hash\n\n");
+    printf("\nStarting signing test with test pub/priv keys and test message hash");
     //generate random message hash and private key?
     random_scalar_order_test_new(&myMessageHash);
     random_scalar_order_test_new(&myPrivateKey);
@@ -136,38 +136,13 @@ void CompleteTestSigProcess()
 //  -serialized signature in DER format
 void CompleteSigProcess(char *paramSecKey, char *paramFileName)
 {
+    //for calculating digest
     uint8_t fileDigest[32];
     char *fileContents;
     FILE *filePointer;
     long fileLength;
 
-    filePointer = fopen(paramFileName, "r");  // Open the file in binary mode
-    fseek(filePointer, 0, SEEK_END);          // Jump to the end of the file
-    fileLength = ftell(filePointer);             // Get the current byte offset in the file
-    rewind(filePointer);                      // Jump back to the beginning of the file
-
-    fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
-    fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
-    fclose(filePointer); // Close the file
-
-    printf("\ntesting file content string inside completeSig function:");
-    for (int i = 0; i < fileLength; i++)
-    {
-        printf("%c", fileContents[i]);
-    }
-    printf("\n");
-
-    ComputeSha256FromCharArray(fileContents, fileLength, fileDigest);
-
-    printf("\nmessage digest in completeSigProcess function:");
-    for (int i = 0; i < 32; i++)
-        printf("%02x", fileDigest[i]);
-    printf("\n");
-
-
-    
-    //old code where the message digest has to be passed to this function, instead of it being calculated from a file
-    /*
+    //for signing with private key
     unsigned char* serializedDigest;
     unsigned char* serializedSecKey;
     unsigned char* serializedPubKeyCompressed;
@@ -183,29 +158,34 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName)
     serializedSignatureDer = malloc(sizeof(unsigned char)*72);
     secp256k1_scalar myMessageHash, myPrivateKey;
 
-    //make sure passed private key and digest are exactly 64 chars long
+    //make sure passed private key is exactly 64 chars long
     if (strlen(paramSecKey) != 64)
     {
-        printf("\nError: incorrect usage, private key and message hash must be exaclty 64 chars long\n\n");
+        printf("\nError: incorrect usage, private key and message hash must be exaclty 64 chars long");
         exit(0);
     }
+
+    filePointer = fopen(paramFileName, "r");  // Open the file in binary mode
+    fseek(filePointer, 0, SEEK_END);          // Jump to the end of the file
+    fileLength = ftell(filePointer);             // Get the current byte offset in the file
+    rewind(filePointer);                      // Jump back to the beginning of the file
+
+    fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
+    fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
+    fclose(filePointer); // Close the file
+
+    ComputeSha256FromCharArray(fileContents, fileLength, fileDigest);
     
     //add space between each hex number in private key and digest 
     const char* secKey = insertSpaces(paramSecKey);
-    const char* digest = insertSpaces(paramDigest);
     int lengthKey = strlen(secKey);
-    int lengthDigest = strlen(digest);
     int *keyLengthPtr = &lengthKey;
-    int *digestLengthPtr = &lengthKey;
-    //convert args (string) into array of hex numbers stored
-    //as unsigned chars
     serializedSecKey = convert(secKey, keyLengthPtr);
-    serializedDigest = convert(digest, digestLengthPtr);
 
-    VerifyParamsAndSignMessageWithEcdsa(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
+    VerifyParamsAndSignMessageWithEcdsa(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigest, serializedSignatureComp, serializedSignatureDer);
 
-    printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
-    */
+    printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigest, serializedSignatureComp, serializedSignatureDer);
+    
 }
 
 
@@ -214,28 +194,26 @@ void ComputeSha256FromCharArray(char *paramFileContents, long paramFileLength, u
     USHAContext shaContext;
     uint8_t messageDigest[32];
 
-    printf("\ntesting file content string inside computeSha function:");
-    for (int i = 0; i < paramFileLength; i++)
-    {
-        printf("%c", paramFileContents[i]);
-    }
-    printf("\n");
-
     int errorCode;
 
     errorCode = USHAReset(&shaContext, SHA256);
-    printf("%d", errorCode);
+    if (errorCode == 0)
+        printf("\nSHA context reset successful");
+    else
+        printf("\nSHA context reset failed");
+    
 
     errorCode = USHAInput(&shaContext, (const uint8_t *) paramFileContents, paramFileLength);
-    printf("%d", errorCode);
+    if (errorCode == 0)
+        printf("\nSHA input successful");
+    else
+        printf("\nSHA input failed");
 
     errorCode = USHAResult(&shaContext, paramFileDigest);
-    printf("%d", errorCode);
-
-    printf("\nmessage digest in computeSha function:");
-    for (int i = 0; i < 32; i++)
-        printf("%02x", paramFileDigest[i]);
-    printf("\n");
+    if (errorCode == 0)
+        printf("\nSHA result successful");
+    else
+        printf("\nSHA result failed");
 }
 
 //DESC: 
@@ -268,22 +246,22 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     //verify the private key
     if(1 == secp256k1_ec_seckey_verify(myContext, secKey))
     {
-        printf("Private key verified\n\n");
+        printf("\nPrivate key verified \n");
     }
     else
     {
-        printf("Private key failed verification\n\n");
+        printf("Private key failed verification \n");
         exit(1);
     }
 
     //construct the corresponding public key
     if(1 == secp256k1_ec_pubkey_create(myContext, &myPublicKey, secKey))
     {
-        printf("Public key created\n\n");
+        printf("Public key created \n");
     }
     else
     {
-        printf("Public key could not be created\n\n");
+        printf("Public key could not be created \n");
         exit(1);
     }
 
@@ -293,11 +271,11 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     secp256k1_pubkey pubkeytest0;
     if (1 == secp256k1_ec_pubkey_parse(myContext, &pubkeytest0, pubKeyComp, pubKeyCompLen)) 
     {
-        printf("Compressed public key able to be parsed\n\n");
+        printf("Compressed public key able to be parsed \n\n");
     }
     else
     {
-        printf("Error parsing compressed public key\n\n");
+        printf("Error parsing compressed public key \n");
         exit(1);
     }
 
@@ -307,26 +285,26 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     secp256k1_pubkey pubkeytest1;
     if (1 == secp256k1_ec_pubkey_parse(myContext, &pubkeytest1, pubKeyUncomp, pubKeyUncompLen)) 
     {
-        printf("Uncompressed public key able to be parsed\n\n");
+        printf("Uncompressed public key able to be parsed \n");
     }
     else
     {
-        printf("Error parsing uncompressed public key\n\n");
+        printf("Error parsing uncompressed public key \n");
         exit(1);
     }
     
     //sign message hash with private key
     secp256k1_ecdsa_sign(myContext, &mySig, digest, secKey, NULL, NULL);
-    printf("Signature created\n\n");
+    printf("Signature created \n");
 
     //verify signature
     if (1 == secp256k1_ecdsa_verify(myContext, &mySig, digest, &myPublicKey))
     {
-        printf("Signature verified\n\n");
+        printf("Signature verified \n");
     }
     else
     {
-        printf("Signature could not be verified\n\n");
+        printf("Signature could not be verified \n");
         exit(1);
     }
 
@@ -340,11 +318,11 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     secp256k1_ecdsa_signature sigTest0;
     if (1 == secp256k1_ecdsa_signature_parse_compact(myContext, &sigTest0, signatureComp))
     {
-        printf("Compact signature able to be parsed\n\n");
+        printf("Compact signature able to be parsed \n");
     }
     else
     {
-        printf("Compact signature could not be parsed\n\n");
+        printf("Compact signature could not be parsed \n");
         exit(1);
     }
 
@@ -352,11 +330,11 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     secp256k1_ecdsa_signature sigTest1;
     if (1 == secp256k1_ecdsa_signature_parse_der(myContext, &sigTest1, signatureDer, derLen))
     {
-        printf("DER encoded signature able to be parsed\n\n");
+        printf("DER encoded signature able to be parsed \n");
     }
     else
     {
-        printf("DER encoded signature could not be parsed\n\n");
+        printf("DER encoded signature could not be parsed \n");
         exit(1);
     }
 
@@ -379,7 +357,3 @@ int main(int argc, char **argv)
 
 //TEST WITH THIS:
 //private key: 6f910beb039b93eba3bf95eb9ab2610855f18a7512463c78bc9ebf774535e89f
-//digest: 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
-//message: hello
-
-//**Message has no spaces
