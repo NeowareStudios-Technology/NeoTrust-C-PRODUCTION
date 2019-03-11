@@ -28,7 +28,7 @@ void DisplayUsageInfo();
 enum commands ParseArgumentsIntoCommand(int paramArgc);
 void ExecuteCommand(char **paramArgs, enum commands paramCommand);
 char* ReadFileIntoByteArray(char *paramFileName);
-char* ComputeSha256FromByteArray(uint8_t* paramFileContents, int paramFileContentsLength);
+void ComputeSha256FromByteArray(char *paramFileContents, int paramFileContentsLength, uint8_t *paramFileDigest);
 void CompleteTestSigProcess();
 void CompleteSigProcess(char *paramSecKey, char *paramFileName);
 int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
@@ -136,12 +136,12 @@ void CompleteTestSigProcess()
 //  -serialized signature in DER format
 void CompleteSigProcess(char *paramSecKey, char *paramFileName)
 {
-    char* fileDigest;
-    uint8_t fileContents;
+    uint8_t fileDigest[32];
+    char fileContents;
 
     int fileContentsLength = readFileIntoByteArrayAndReturnLength(paramFileName, &fileContents);
 
-    ComputeSha256FromByteArray(&fileContents, fileContentsLength);
+    ComputeSha256FromByteArray(&fileContents, fileContentsLength, fileDigest);
     
     //old code where the message digest has to be passed to this function, instead of it being calculated from a file
     /*
@@ -186,29 +186,27 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName)
 }
 
 
-char* ComputeSha256FromByteArray(uint8_t* paramFileContents, int paramFileContentsLength)
+void ComputeSha256FromByteArray(char *paramFileContents, int paramFileContentsLength, uint8_t *paramFileDigest)
 {
-    SHA256Context digestContext;
+    USHAContext shaContext;
     uint8_t messageDigest[32];
-    unsigned char printedMessageDigest[32];
+    char testArray[5] = {'h','e', 'l', 'l', 'o'};
 
     int errorCode;
 
-    errorCode = SHA256Reset(&digestContext);
+    errorCode = USHAReset(&shaContext, SHA256);
     printf("%d", errorCode);
 
-    errorCode = SHA256Input(&digestContext,paramFileContents,paramFileContentsLength);
+    errorCode = USHAInput(&shaContext, (const uint8_t *) testArray, 5);
     printf("%d", errorCode);
 
-    errorCode = SHA256Result(&digestContext, messageDigest);
-    memcpy(printedMessageDigest, messageDigest, 32);
+    errorCode = USHAResult(&shaContext, messageDigest);
     printf("%d", errorCode);
 
     printf("\n");
     for (int i = 0; i < 32; i++)
-        printf("%02x", printedMessageDigest[i]);
+        printf("%02x", messageDigest[i]);
     printf("\n");
-
 }
 
 //DESC: 
