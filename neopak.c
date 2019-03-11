@@ -271,7 +271,7 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     secp256k1_pubkey pubkeytest0;
     if (1 == secp256k1_ec_pubkey_parse(myContext, &pubkeytest0, pubKeyComp, pubKeyCompLen)) 
     {
-        printf("Compressed public key able to be parsed \n\n");
+        printf("Compressed public key able to be parsed \n");
     }
     else
     {
@@ -330,7 +330,7 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     secp256k1_ecdsa_signature sigTest1;
     if (1 == secp256k1_ecdsa_signature_parse_der(myContext, &sigTest1, signatureDer, derLen))
     {
-        printf("DER encoded signature able to be parsed \n");
+        printf("DER encoded signature able to be parsed \n\n");
     }
     else
     {
