@@ -50,20 +50,14 @@ enum commands ParseArgumentsIntoCommand(int paramArgc)
 {
     //if no args passed, display usage info
     if (paramArgc == 1)
-    {
         return usage;
-    }
     //if only "test" is passed as arg, start test sign
     else if (paramArgc == 2)
-    {
         return testSign;
-    }
     //if private key and message hash are passed as args, start
     //production sign
     else if (paramArgc == 3)
-    {
         return sign;
-    }
     //else, too many args passed
     else
     {
@@ -193,7 +187,6 @@ void ComputeSha256FromCharArray(char *paramFileContents, long paramFileLength, u
 {
     USHAContext shaContext;
     uint8_t messageDigest[32];
-
     int errorCode;
 
     errorCode = USHAReset(&shaContext, SHA256);
@@ -245,9 +238,7 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
 
     //verify the private key
     if(1 == secp256k1_ec_seckey_verify(myContext, secKey))
-    {
         printf("\nPrivate key verified \n");
-    }
     else
     {
         printf("Private key failed verification \n");
@@ -256,9 +247,7 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
 
     //construct the corresponding public key
     if(1 == secp256k1_ec_pubkey_create(myContext, &myPublicKey, secKey))
-    {
         printf("Public key created \n");
-    }
     else
     {
         printf("Public key could not be created \n");
@@ -270,9 +259,7 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     secp256k1_ec_pubkey_serialize(myContext, pubKeyComp, &pubKeyCompLen, &myPublicKey, SECP256K1_EC_COMPRESSED);
     secp256k1_pubkey pubkeytest0;
     if (1 == secp256k1_ec_pubkey_parse(myContext, &pubkeytest0, pubKeyComp, pubKeyCompLen)) 
-    {
         printf("Compressed public key able to be parsed \n");
-    }
     else
     {
         printf("Error parsing compressed public key \n");
@@ -284,9 +271,7 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     secp256k1_ec_pubkey_serialize(myContext, pubKeyUncomp, &pubKeyUncompLen, &myPublicKey, SECP256K1_EC_UNCOMPRESSED);
     secp256k1_pubkey pubkeytest1;
     if (1 == secp256k1_ec_pubkey_parse(myContext, &pubkeytest1, pubKeyUncomp, pubKeyUncompLen)) 
-    {
         printf("Uncompressed public key able to be parsed \n");
-    }
     else
     {
         printf("Error parsing uncompressed public key \n");
@@ -299,9 +284,7 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
 
     //verify signature
     if (1 == secp256k1_ecdsa_verify(myContext, &mySig, digest, &myPublicKey))
-    {
         printf("Signature verified \n");
-    }
     else
     {
         printf("Signature could not be verified \n");
@@ -317,9 +300,7 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     //check if compact signature can be parsed
     secp256k1_ecdsa_signature sigTest0;
     if (1 == secp256k1_ecdsa_signature_parse_compact(myContext, &sigTest0, signatureComp))
-    {
         printf("Compact signature able to be parsed \n");
-    }
     else
     {
         printf("Compact signature could not be parsed \n");
@@ -329,9 +310,7 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
     //check if DER encoded signature can be parsed
     secp256k1_ecdsa_signature sigTest1;
     if (1 == secp256k1_ecdsa_signature_parse_der(myContext, &sigTest1, signatureDer, derLen))
-    {
         printf("DER encoded signature able to be parsed \n\n");
-    }
     else
     {
         printf("DER encoded signature could not be parsed \n");
@@ -344,13 +323,8 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
 
 int main(int argc, char **argv)
 {
-    //seed random for rng
-    srand(time(NULL));
-
-    //check args to see which command should be triggered (usage info, test sign, sign)
     command = ParseArgumentsIntoCommand(argc);
 
-    //execute command (only outputs to console at the moment)
     ExecuteCommand(argv, command);
     return 0;
 }
