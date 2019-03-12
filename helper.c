@@ -168,6 +168,8 @@ long readFileIntoByteArrayAndReturnLength(int paramFileLength, char *paramFileCo
 
 long GetFileLength(char* paramFileName, FILE *paramFilePointer)
 {
+    long fileLength;
+    
     fseek(paramFilePointer, 0, SEEK_END);
     fileLength = ftell(paramFilePointer);
     rewind(paramFilePointer);

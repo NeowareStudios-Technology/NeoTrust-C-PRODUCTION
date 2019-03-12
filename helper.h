@@ -34,4 +34,4 @@ void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char
 long readFileIntoByteArrayAndReturnLength(int paramFileLength, char *paramFileContents);
 */
 
-long GetFileLength(char* paramFileName, FILE *paramFilePointer)
+long GetFileLength(char* paramFileName, FILE *paramFilePointer);
