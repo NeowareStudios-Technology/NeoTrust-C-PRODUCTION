@@ -12,8 +12,6 @@
 #include "include/scalar_4x64.h"
 #include "include/testrand_impl.h"
 
-//helper function for testSignEcdsa()
-void random_scalar_order_test_new(secp256k1_scalar *num);
 
 //helper function for calculating size of string
 size_t strlen(const char *str);
@@ -34,4 +32,4 @@ void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char
 long readFileIntoByteArrayAndReturnLength(int paramFileLength, char *paramFileContents);
 */
 
-long GetFileLength(char* paramFileName, FILE *paramFilePointer);
+long getFileLength(char* paramFileName, FILE *paramFilePointer);

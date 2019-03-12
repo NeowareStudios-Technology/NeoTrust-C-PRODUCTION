@@ -15,20 +15,6 @@
 #include "include/testrand_impl.h"
 #include "helper.h"
 
-//helper function for testSignEcdsa()
-void random_scalar_order_test_new(secp256k1_scalar *num) {
-   do {
-       unsigned char b32[32];
-       int overflow = 0;
-       secp256k1_rand256(b32);
-       secp256k1_scalar_set_b32(num, b32, &overflow);
-       if (overflow || secp256k1_scalar_is_zero(num)) {
-           continue;
-       }
-       break;
-   } while(1);
-}
-
 //helper function for calculating size of string
 size_t strlen(const char *str)
 {
@@ -166,7 +152,7 @@ long readFileIntoByteArrayAndReturnLength(int paramFileLength, char *paramFileCo
 }
 */
 
-long GetFileLength(char* paramFileName, FILE *paramFilePointer)
+long getFileLength(char* paramFileName, FILE *paramFilePointer)
 {
     long fileLength;
     

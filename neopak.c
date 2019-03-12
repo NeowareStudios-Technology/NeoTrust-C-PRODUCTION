@@ -10,6 +10,7 @@
 #include <time.h>
 #include <assert.h>
 #include <ctype.h>
+#include <dirent.h>
 
 #include "include/secp256k1.h"
 #include "include/scalar.h"
@@ -27,10 +28,11 @@ enum commands{usage, testSign, sign}command;
 void DisplayUsageInfo();
 enum commands ParseArgumentsIntoCommand(int paramArgc);
 void ExecuteCommand(char **paramArgs, enum commands paramCommand);
-void ComputeSha256FromCharArray(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 void CompleteTestSigProcess();
 void CompleteSigProcess(char *paramSecKey, char *paramFileName);
+void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
+void random_scalar_order_test_new(secp256k1_scalar *num);
 
 
 void DisplayUsageInfo()
@@ -116,11 +118,25 @@ void CompleteTestSigProcess()
 }
 
 
-void CompleteSigProcess(char *paramSecKey, char *paramFileName)
+void random_scalar_order_test_new(secp256k1_scalar *num) {
+   do {
+       unsigned char b32[32];
+       int overflow = 0;
+       secp256k1_rand256(b32);
+       secp256k1_scalar_set_b32(num, b32, &overflow);
+       if (overflow || secp256k1_scalar_is_zero(num)) {
+           continue;
+       }
+       break;
+   } while(1);
+}
+
+
+void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 {
     //for calculating digest
     uint8_t fileDigest[32];
-    char *fileContents;
+    char **fileContents;
     FILE *filePointer;
     long fileLength;
 
@@ -140,6 +156,24 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName)
     serializedSignatureDer = malloc(sizeof(unsigned char)*72);
     secp256k1_scalar myMessageHash, myPrivateKey;
 
+    DIR *d;
+    struct dirent *dirToSign;
+    d = opendir(paramDirName);
+    if (d)
+    {
+        while ((dirToSign = readdir(d)) != NULL)
+        {
+            printf("%s\n", dirToSign -> d_name);
+        }
+        closedir(d);
+    }
+    else
+    {
+        printf("dir could not be opened;\n");
+    }
+    
+/*
+
     //make sure passed private key is exactly 64 chars long
     if (strlen(paramSecKey) != 64)
     {
@@ -147,15 +181,14 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName)
         exit(0);
     }
 
-    // Open the file to generate SHA256 digest from
+    //read file into string
     filePointer = fopen(paramFileName, "r");
-    fileLength = GetFileLength(paramFileName, filePointer);
-
+    fileLength = getFileLength(paramFileName, filePointer);
     fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
     fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
     fclose(filePointer); // Close the file
 
-    ComputeSha256FromCharArray(fileContents, fileLength, fileDigest);
+    ComputeSha256FromString(fileContents, fileLength, fileDigest);
     
     //add space between each hex number in private key and digest 
     const char* secKey = insertSpaces(paramSecKey);
@@ -166,11 +199,11 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName)
     VerifyParamsAndSignMessageWithEcdsa(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigest, serializedSignatureComp, serializedSignatureDer);
 
     printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigest, serializedSignatureComp, serializedSignatureDer);
-    
+    */
 }
 
 
-void ComputeSha256FromCharArray(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)
+void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)
 {
     USHAContext shaContext;
     uint8_t messageDigest[32];
