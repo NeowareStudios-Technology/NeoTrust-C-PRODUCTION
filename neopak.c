@@ -27,11 +27,10 @@ enum commands{usage, testSign, sign}command;
 void DisplayUsageInfo();
 enum commands ParseArgumentsIntoCommand(int paramArgc);
 void ExecuteCommand(char **paramArgs, enum commands paramCommand);
-char* ReadFileIntoByteArray(char *paramFileName);
 void ComputeSha256FromCharArray(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 void CompleteTestSigProcess();
 void CompleteSigProcess(char *paramSecKey, char *paramFileName);
-int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
+void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
 
 
 void DisplayUsageInfo()
@@ -42,7 +41,7 @@ void DisplayUsageInfo()
     printf("./neopak                                  Show usage info\n");
     printf("./neopak test                             Sign with test priv key and message hash\n");
     printf("./neopak <privKey> <filePath>             Sign with provided priv key and file\n");
-    printf("\n *Note: <privKey> and <messageHash> must be supplied \n        as a string of hex numbers with length 64 \n");
+    printf("\n *Note: <privKey> must be supplied \n        as a string of hex numbers with length 64 \n");
 }
 
 
@@ -117,17 +116,6 @@ void CompleteTestSigProcess()
 }
 
 
-//DESC: 
-// Sets up all data structures necessary to sign a message digest (sha256; 32 bytes; provided by user)
-// with a key (ECDSA; 32 bytes; provided by user) and signs in ECDSA
-//OUTPUT:
-// Prints the following to consol:
-//  -serialized private (secret) key
-//  -serialized compressed public key
-//  -serialized uncompressed public key
-//  -serialized message digest
-//  -serialized compressed signature
-//  -serialized signature in DER format
 void CompleteSigProcess(char *paramSecKey, char *paramFileName)
 {
     //for calculating digest
@@ -209,18 +197,8 @@ void ComputeSha256FromCharArray(char *paramFileContents, long paramFileLength, u
         printf("\nSHA result failed");
 }
 
-//DESC: 
-// Creates an ECDSA signature using a passed in message hash and private key
-//PARAMS:
-// 1)secKey - holds serialized secret key (console arg provided by user)
-// 2)pubKeyComp - will hold serialized compressed pub key (gets derived from private key in this func)
-// 3)pubKeyUncomp - will hold will hold serialized uncompressed pub key (gets derived from mprivate key in this func)
-// 4)digest - holds serialized message digest (console arg provided by user)
-// 5)signatureComp - will hold the serialized compressed signature (gets created in this function)
-// 6)signatureDer - will hold the serialized DER signature (gets created in this function)
-//OUTPUT:
-// pubKeyComp, pubKeyUncomp, signatureComp, signatureDer
-int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)
+
+void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)
 {
     /*a general template for this function can be found in 
     go-ethereum-master\crypto\secp256k1\libsecp256k1\src\modules\recovery\tests_impl.h
@@ -316,8 +294,6 @@ int VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pu
         printf("DER encoded signature could not be parsed \n");
         exit(1);
     }
-
-    return 1;
 }
 
 
