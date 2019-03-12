@@ -33,6 +33,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName);
 void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
 void random_scalar_order_test_new(secp256k1_scalar *num);
+void tree(char *basePath, const int root);
 
 
 void DisplayUsageInfo()
@@ -156,21 +157,8 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     serializedSignatureDer = malloc(sizeof(unsigned char)*72);
     secp256k1_scalar myMessageHash, myPrivateKey;
 
-    DIR *d;
-    struct dirent *dirToSign;
-    d = opendir(paramDirName);
-    if (d)
-    {
-        while ((dirToSign = readdir(d)) != NULL)
-        {
-            printf("%s\n", dirToSign -> d_name);
-        }
-        closedir(d);
-    }
-    else
-    {
-        printf("dir could not be opened;\n");
-    }
+
+    tree(paramDirName,0);
     
 /*
 
@@ -200,6 +188,37 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 
     printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigest, serializedSignatureComp, serializedSignatureDer);
     */
+}
+
+void tree(char *basePath, const int root)
+{
+    int i;
+    char path[1000];
+    struct dirent *dp;
+    DIR *dir = opendir(basePath);
+
+    if (!dir)
+        return; 
+    while ((dp = readdir(dir)) != NULL)
+    {
+        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+        {
+           for (i=0; i<root; i++)
+           {
+               if (i%2 == 0 || i == 0)
+                {   
+                }
+               else
+                   printf(" "); 
+           }    
+           printf("%s\n", dp->d_name);  
+           strcpy(path, basePath);
+           strcat(path, "/");
+           strcat(path, dp->d_name);
+           tree(path, root + 2);    
+        }
+    }
+    closedir(dir);
 }
 
 
