@@ -147,10 +147,9 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName)
         exit(0);
     }
 
-    filePointer = fopen(paramFileName, "r");  // Open the file in binary mode
-    fseek(filePointer, 0, SEEK_END);          // Jump to the end of the file
-    fileLength = ftell(filePointer);             // Get the current byte offset in the file
-    rewind(filePointer);                      // Jump back to the beginning of the file
+    // Open the file to generate SHA256 digest from
+    filePointer = fopen(paramFileName, "r");
+    fileLength = GetFileLength(paramFileName, filePointer);
 
     fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
     fread(fileContents, fileLength, 1, filePointer); // Read in the entire file

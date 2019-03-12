@@ -165,3 +165,11 @@ long readFileIntoByteArrayAndReturnLength(int paramFileLength, char *paramFileCo
     return fileLength;
 }
 */
+
+long GetFileLength(char* paramFileName, FILE *paramFilePointer)
+{
+    fseek(paramFilePointer, 0, SEEK_END);
+    fileLength = ftell(paramFilePointer);
+    rewind(paramFilePointer);
+    return fileLength;
+}
