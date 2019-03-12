@@ -1,5 +1,5 @@
 CC = gcc
-OBJ = neopak.o helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
+OBJ = $(OPATH)neopak.o $(OPATH)helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
 OPATH = ./obj/
 SPATH = ./sha/
 LDIR = lib
