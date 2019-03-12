@@ -33,7 +33,8 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName);
 void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
 void random_scalar_order_test_new(secp256k1_scalar *num);
-void tree(char *basePath, const int root);
+void countFilesInDirectory(char *basePath, const int root, long *count);
+void MakeDigestForEachFile(char *basePath, const int root);
 
 
 void DisplayUsageInfo()
@@ -140,6 +141,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     char **fileContents;
     FILE *filePointer;
     long fileLength;
+    long fileCount = 0;
 
     //for signing with private key
     unsigned char* serializedDigest;
@@ -158,7 +160,9 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     secp256k1_scalar myMessageHash, myPrivateKey;
 
 
-    tree(paramDirName,0);
+    countFilesInDirectory(paramDirName, 0, &fileCount);
+    printf("\n%d\n", fileCount);
+   // MakeDigestForEachFile(paramDirName,0);
     
 /*
 
@@ -190,12 +194,52 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     */
 }
 
-void tree(char *basePath, const int root)
+void countFilesInDirectory(char *basePath, const int root, long *count)
+{
+   int i;
+   char path[1000];
+   struct dirent *dp;
+   DIR *dir = opendir(basePath);
+
+   if (!dir)
+       return;
+
+   while ((dp = readdir(dir)) != NULL)
+   {
+       if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+       {
+           for (i=0; i<root; i++)
+           {
+               if (i%2 == 0 || i == 0)
+                {
+                    
+                }
+               else
+                   printf(" ");
+
+           }
+            if (dp->d_type != DT_DIR)
+                *count = *count + 1;
+
+           strcpy(path, basePath);
+           strcat(path, "/");
+           strcat(path, dp->d_name);
+           countFilesInDirectory(path, root + 2, count);
+       }
+   }
+
+   closedir(dir);
+}
+
+/*
+void MakeDigestForEachFile(char *basePath, const int root)
 {
     int i;
     char path[1000];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
+    FILE* filePointer;
+    long fileLength;
 
     if (!dir)
         return; 
@@ -211,16 +255,27 @@ void tree(char *basePath, const int root)
                else
                    printf(" "); 
            }    
-           printf("%s\n", dp->d_name);  
+
+           char *fileContents;
            strcpy(path, basePath);
            strcat(path, "/");
            strcat(path, dp->d_name);
+           printf("%s\n", path);  
+           //read file into string
+            filePointer = fopen(path, "r");
+            fileLength = getFileLength(path, filePointer);
+            fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
+            fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
+            fclose(filePointer); // Close the file
+
+            ComputeSha256FromString(fileContents, fileLength, fileDigest);
+
            tree(path, root + 2);    
         }
     }
     closedir(dir);
 }
-
+*/
 
 void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)
 {
