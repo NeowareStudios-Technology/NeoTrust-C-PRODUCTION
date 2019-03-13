@@ -29,3 +29,5 @@ char* insertSpaces(const char *s);
 void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
 
 long getFileLength(char* paramFileName, FILE *paramFilePointer);
+
+void countFilesInDirectory(char *basePath, const int root, long *count);

@@ -7,6 +7,7 @@
 
 #include <assert.h>
 #include <time.h>
+#include <dirent.h>
 
 #include "include/secp256k1.h"
 #include "include/scalar.h"
@@ -14,6 +15,7 @@
 #include "include/scalar_4x64.h"
 #include "include/testrand_impl.h"
 #include "helper.h"
+
 
 //helper function for calculating size of string
 size_t strlen(const char *str)
@@ -133,4 +135,40 @@ long getFileLength(char* paramFileName, FILE *paramFilePointer)
     fileLength = ftell(paramFilePointer);
     rewind(paramFilePointer);
     return fileLength;
+}
+
+void countFilesInDirectory(char *basePath, const int root, long *count)
+{
+   int i;
+   char path[1000];
+   struct dirent *dp;
+   DIR *dir = opendir(basePath);
+
+   if (!dir)
+       return;
+
+   while ((dp = readdir(dir)) != NULL)
+   {
+       if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+       {
+           for (i=0; i<root; i++)
+           {
+               if (i%2 == 0 || i == 0)
+                {
+                    
+                }
+               else
+                   printf(" ");
+
+           }
+            if (dp->d_type != DT_DIR)
+                *count = *count + 1;
+
+           strcpy(path, basePath);
+           strcat(path, "/");
+           strcat(path, dp->d_name);
+           countFilesInDirectory(path, root + 2, count);
+       }
+   }
+   closedir(dir);
 }

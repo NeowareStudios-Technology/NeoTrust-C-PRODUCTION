@@ -33,7 +33,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramFileName);
 void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey,unsigned char* secKey,unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
 void random_scalar_order_test_new(secp256k1_scalar *num);
-void countFilesInDirectory(char *basePath, const int root, long *count);
 void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramworkingFileIndex);
 secp256k1_pubkey GenerateAndVerifyPubKey(secp256k1_context *paramMyContext, unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp);
 
@@ -183,72 +182,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
         VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
         printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
     }
-    
-/*
-
-    //make sure passed private key is exactly 64 chars long
-    if (strlen(paramSecKey) != 64)
-    {
-        printf("\nError: incorrect usage, private key and message hash must be exaclty 64 chars long");
-        exit(0);
-    }
-
-    //read file into string
-    filePointer = fopen(paramFileName, "r");
-    fileLength = getFileLength(paramFileName, filePointer);
-    fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
-    fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
-    fclose(filePointer); // Close the file
-
-    ComputeSha256FromString(fileContents, fileLength, fileDigest);
-    
-    //add space between each hex number in private key and digest 
-    const char* secKey = insertSpaces(paramSecKey);
-    int lengthKey = strlen(secKey);
-    int *keyLengthPtr = &lengthKey;
-    serializedSecKey = convert(secKey, keyLengthPtr);
-
-    VerifyParamsAndSignMessageWithEcdsa(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigest, serializedSignatureComp, serializedSignatureDer);
-
-    printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigest, serializedSignatureComp, serializedSignatureDer);
-    */
-}
-
-void countFilesInDirectory(char *basePath, const int root, long *count)
-{
-   int i;
-   char path[1000];
-   struct dirent *dp;
-   DIR *dir = opendir(basePath);
-
-   if (!dir)
-       return;
-
-   while ((dp = readdir(dir)) != NULL)
-   {
-       if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
-       {
-           for (i=0; i<root; i++)
-           {
-               if (i%2 == 0 || i == 0)
-                {
-                    
-                }
-               else
-                   printf(" ");
-
-           }
-            if (dp->d_type != DT_DIR)
-                *count = *count + 1;
-
-           strcpy(path, basePath);
-           strcat(path, "/");
-           strcat(path, dp->d_name);
-           countFilesInDirectory(path, root + 2, count);
-       }
-   }
-
-   closedir(dir);
 }
 
 void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramworkingFileIndex)
@@ -264,19 +197,12 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
     while ((dp = readdir(dir)) != NULL)
     {
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
-        {
-           for (i=0; i<root; i++)
-           {
-               if (i%2 == 0 || i == 0)
-                {   
-                }
-               else
-                   printf(" "); 
-           }    
+        {  
 
            strcpy(path, basePath);
            strcat(path, "/");
            strcat(path, dp->d_name);
+
            //if it is a file, read file into string
            if (dp->d_type != DT_DIR)
             {
@@ -306,10 +232,8 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
                     printf("%02x", paramFileDigests[*paramworkingFileIndex][i]);
                 }
                 printf("\n");
-
                 free(fileContents);
             }
-
            MakeDigestForEachFile(path, root + 2, paramFileDigests, paramworkingFileIndex);    
         }
     }
