@@ -258,7 +258,7 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
            strcpy(path, basePath);
            strcat(path, "/");
            strcat(path, dp->d_name);
-           //read file into string
+           //if it is a file, read file into string
            if (dp->d_type != DT_DIR)
             {
                 *paramWorkingFileCount= *paramWorkingFileCount + 1;

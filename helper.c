@@ -125,33 +125,6 @@ void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char
     printf("\n\n");
 }
 
-
-/*
-long readFileIntoByteArrayAndReturnLength(int paramFileLength, char *paramFileContents)
-{
-    FILE *filePointer;
-    long fileLength;
-
-    filePointer = fopen(paramFileName, "r");  // Open the file in binary mode
-    fseek(filePointer, 0, SEEK_END);          // Jump to the end of the file
-    fileLength = ftell(filePointer);             // Get the current byte offset in the file
-    rewind(filePointer);                      // Jump back to the beginning of the file
-
-    paramFileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
-    fread(paramFileContents, paramFileLength, 1, filePointer); // Read in the entire file
-    fclose(filePointer); // Close the file
-
-    printf("\ntesting file content string inside readFile function:");
-    for (int i = 0; i < fileLength; i++)
-    {
-        printf("%c", paramFileContents[i]);
-    }
-    printf("\n");
-
-    return fileLength;
-}
-*/
-
 long getFileLength(char* paramFileName, FILE *paramFilePointer)
 {
     long fileLength;
