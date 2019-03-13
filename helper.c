@@ -8,8 +8,7 @@
 #include "helper.h"
 
 
-//helper function for calculating size of string
-size_t strlen(const char *str)
+size_t stringLength(const char *str)
 {
     const char *s;
     for (s = str; *s; ++s);
@@ -17,26 +16,53 @@ size_t strlen(const char *str)
 }
 
 
-//helper function to get hex from string char
-static unsigned char gethex(const char *s, char **endptr) {
- assert(s);
- assert(*s);
- return strtoul(s, endptr, 16);
-}
-
-//helper function to convert from string to unsigned char array of hex
-unsigned char *convert(const char *s, int *length) 
+unsigned char *stringToHex(const char *s, int *length) 
 {
-    unsigned char *answer = malloc((strlen(s) + 1) / 3);
+    unsigned char *answer = malloc((stringLength(s) + 1) / 3);
     unsigned char *p;
     for (p = answer; *s; p++)
     {
-        *p = gethex(s, (char **)&s);
+        *p = charToHex(s, (char **)&s);
         s++;
     }
     *length = p - answer;
     return answer;
 }
+
+
+static unsigned char charToHex(const char *s, char **endptr) {
+ assert(s);
+ assert(*s);
+ return strtoul(s, endptr, 16);
+}
+
+
+void countFilesInDirectory(char *basePath, const int root, long *count)
+{
+   int i;
+   char path[1000];
+   struct dirent *dp;
+   DIR *dir = opendir(basePath);
+
+   if (!dir)
+       return;
+
+   while ((dp = readdir(dir)) != NULL)
+   {
+       if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+       {
+            if (dp->d_type != DT_DIR)
+                *count = *count + 1;
+
+            strcpy(path, basePath);
+            strcat(path, "/");
+            strcat(path, dp->d_name);
+            countFilesInDirectory(path, root + 2, count);
+       }
+   }
+   closedir(dir);
+}
+
 
 //insert spaces between each hex number in string
 char* insertSpaces(const char *s)
@@ -65,7 +91,7 @@ char* insertSpaces(const char *s)
     return returnString;
 }
 
-//prints the secret key, public key, digest, and signature
+
 void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)
 {
     //print the private key
@@ -118,6 +144,7 @@ void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char
     printf("\n\n");
 }
 
+
 long getFileLength(char* paramFileName, FILE *paramFilePointer)
 {
     long fileLength;
@@ -126,40 +153,4 @@ long getFileLength(char* paramFileName, FILE *paramFilePointer)
     fileLength = ftell(paramFilePointer);
     rewind(paramFilePointer);
     return fileLength;
-}
-
-void countFilesInDirectory(char *basePath, const int root, long *count)
-{
-   int i;
-   char path[1000];
-   struct dirent *dp;
-   DIR *dir = opendir(basePath);
-
-   if (!dir)
-       return;
-
-   while ((dp = readdir(dir)) != NULL)
-   {
-       if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
-       {
-           for (i=0; i<root; i++)
-           {
-               if (i%2 == 0 || i == 0)
-                {
-                    
-                }
-               else
-                   printf(" ");
-
-           }
-            if (dp->d_type != DT_DIR)
-                *count = *count + 1;
-
-           strcpy(path, basePath);
-           strcat(path, "/");
-           strcat(path, dp->d_name);
-           countFilesInDirectory(path, root + 2, count);
-       }
-   }
-   closedir(dir);
 }

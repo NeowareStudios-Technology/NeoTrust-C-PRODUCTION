@@ -12,5 +12,7 @@
 
 #include "./sha/sha.h"
 
-void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
+
 void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramworkingFileIndex);
+
+void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);

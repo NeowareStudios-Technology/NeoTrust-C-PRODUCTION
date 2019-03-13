@@ -15,14 +15,14 @@
 #include "include/testrand_impl.h"
 
 
-//helper function for calculating size of string
-size_t strlen(const char *str);
 
-//helper function to get hex from string char
-static unsigned char gethex(const char *s, char **endptr);
+size_t stringLength(const char *str);
 
-//helper function to convert from string to unsigned char array of hex
-unsigned char *convert(const char *s, int *length);
+unsigned char *stringToHex(const char *s, int *length);
+
+static unsigned char charToHex(const char *s, char **endptr);
+
+void countFilesInDirectory(char *basePath, const int root, long *count);
 
 //insert spaces between each hex number for parsing into unsigned char array
 char* insertSpaces(const char *s);
@@ -31,5 +31,3 @@ char* insertSpaces(const char *s);
 void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
 
 long getFileLength(char* paramFileName, FILE *paramFilePointer);
-
-void countFilesInDirectory(char *basePath, const int root, long *count);

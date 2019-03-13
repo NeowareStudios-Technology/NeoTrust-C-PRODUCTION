@@ -6,29 +6,15 @@
  * *********************************/
 
 #include <stdio.h>
-
 #include "sign.h"
 
 
 //global
 enum commands{usage, testSign, sign}command;
 
-//function declarations
-void DisplayUsageInfo();
 enum commands ParseArgumentsIntoCommand(int paramArgc);
 void ExecuteCommand(char **paramArgs, enum commands paramCommand);
-
-
-void DisplayUsageInfo()
-{
-    printf("\nNeoPak\nCopywrite NeoWare 2019\n");
-    printf("Created by David Lee Ramirez 2/12/2019 \n");
-    printf("Usage:\n");
-    printf("./neopak                                  Show usage info\n");
-    printf("./neopak test                             Sign with test priv key and message hash\n");
-    printf("./neopak <privKey> <filePath>             Sign with provided priv key and file\n");
-    printf("\n *Note: <privKey> must be supplied \n        as a string of hex numbers with length 64 \n");
-}
+void DisplayUsageInfo();
 
 
 enum commands ParseArgumentsIntoCommand(int paramArgc)
@@ -68,11 +54,25 @@ void ExecuteCommand(char **paramArgs, enum commands paramCommand)
     }
 }
 
+
+void DisplayUsageInfo()
+{
+    printf("\nNeoPak\nCopywrite NeoWare 2019\n");
+    printf("Created by David Lee Ramirez 2/12/2019 \n");
+    printf("Usage:\n");
+    printf("./neopak                                  Show usage info\n");
+    printf("./neopak test                             Sign with test priv key and message hash\n");
+    printf("./neopak <privKey> <directoryPath>        Sign all files in directory with private key\n");
+    printf("\n *Note: <privKey> must be supplied as a string of hex numbers with length 64 \n");
+}
+
+
 int main(int argc, char **argv)
 {
     command = ParseArgumentsIntoCommand(argc);
 
     ExecuteCommand(argv, command);
+
     return 0;
 }
 

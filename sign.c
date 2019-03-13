@@ -36,6 +36,9 @@ void CompleteTestSigProcess()
 
     //replace this with generatePubKey() + SignMessage() combo
     //VerifyParamsAndSignMessageWithEcdsa(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
+    secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
+    secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
+    VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, serializedDigest, serializedSignatureComp, serializedSignatureDer);
 
     printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
 }
@@ -79,9 +82,9 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 
     //add space between each hex number in private key and convert to unsigned char *
     const char* secKey = insertSpaces(paramSecKey);
-    int lengthKey = strlen(secKey);
+    int lengthKey = stringLength(secKey);
     int *keyLengthPtr = &lengthKey;
-    serializedSecKey = convert(secKey, keyLengthPtr);
+    serializedSecKey = stringToHex(secKey, keyLengthPtr);
 
     //sign each file in the directory (after converting each to sha256 hash)
     countFilesInDirectory(paramDirName, 0, &fileCount);

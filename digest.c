@@ -47,7 +47,7 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
                 printf("\n");
 
                 printf("file count: %d", *paramworkingFileIndex);
-                ComputeSha256FromString(fileContents, fileLength, paramFileDigests[*paramworkingFileIndex]);
+                GenerateDigestFromString(fileContents, fileLength, paramFileDigests[*paramworkingFileIndex]);
 
                 printf("\n");
                 for (int i = 0; i<32; i++)
@@ -63,7 +63,7 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
     closedir(dir);
 }
 
-void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)
+void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)
 {
     USHAContext shaContext;
     uint8_t messageDigest[32];
