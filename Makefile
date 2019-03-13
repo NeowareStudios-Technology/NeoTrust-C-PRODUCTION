@@ -1,5 +1,5 @@
 CC = gcc -g --std=c17 -Wall
-OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
+OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
 OPATH = ./obj/
 SPATH = ./sha/
 LDIR = lib
@@ -13,6 +13,9 @@ $(OPATH)neopak.o: neopak.c
 
 $(OPATH)sign.o: sign.c
 	$(CC) -c sign.c -o $(OPATH)sign.o
+
+$(OPATH)digest.o: digest.c
+	$(CC) -c digest.c -o $(OPATH)digest.o
 
 $(OPATH)helper.o: helper.c
 	$(CC) -c helper.c -o $(OPATH)helper.o

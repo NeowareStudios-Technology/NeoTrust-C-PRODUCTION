@@ -5,7 +5,9 @@
  * Copywrite NeoWare 2019
  * *********************************/
 
-#include <time.h>
+#include <assert.h>
+#include <dirent.h>
+
 #include "include/secp256k1.h"
 #include "include/scalar.h"
 #include "include/scalar_4x64_impl.h"

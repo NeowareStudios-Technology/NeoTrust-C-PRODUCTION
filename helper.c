@@ -5,10 +5,6 @@
  * Copywrite NeoWare 2019
  * *********************************/
 
-#include <assert.h>
-#include <time.h>
-#include <dirent.h>
-
 #include "helper.h"
 
 

@@ -40,6 +40,19 @@ void CompleteTestSigProcess()
     printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
 }
 
+void random_scalar_order_test_new(secp256k1_scalar *num) {
+   do {
+       unsigned char b32[32];
+       int overflow = 0;
+       secp256k1_rand256(b32);
+       secp256k1_scalar_set_b32(num, b32, &overflow);
+       if (overflow || secp256k1_scalar_is_zero(num)) {
+           continue;
+       }
+       break;
+   } while(1);
+}
+
 void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 {
     //for calculating digest
