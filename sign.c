@@ -71,6 +71,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     unsigned char* serializedPubKeyUncompressed;
     unsigned char* serializedSignatureComp;
     unsigned char* serializedSignatureDer;
+    uint8_t manifestDigest[32];
     serializedDigest = malloc(sizeof(unsigned char)*32);
     serializedSecKey = malloc(sizeof(unsigned char)*32);
     serializedPubKeyCompressed = malloc(sizeof(unsigned char)*33);
@@ -97,12 +98,13 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
     secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
 
-    //sign each file digest
-    for(int i = 0; i < fileCount; i++)
-    {
-        VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
-        printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
-    }
+    //need to do here:
+    //-create manifest file from all hashe and names of files
+    //-create a digest of the entire manifest file (manifestDigest)
+  
+    //VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, manifestDigest, serializedSignatureComp, serializedSignatureDer);
+    //printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
+   
 }
 
 void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, unsigned char* secKey, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)

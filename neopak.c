@@ -22,11 +22,10 @@ enum commands ParseArgumentsIntoCommand(int paramArgc)
     //if no args passed, display usage info
     if (paramArgc == 1)
         return usage;
-    //if only "test" is passed as arg, start test sign
+    //if only "test" is passed,, start test sign
     else if (paramArgc == 2)
         return testSign;
-    //if private key and message hash are passed as args, start
-    //production sign
+    //if private key and directory path are passed, start production sign
     else if (paramArgc == 3)
         return sign;
     //else, too many args passed

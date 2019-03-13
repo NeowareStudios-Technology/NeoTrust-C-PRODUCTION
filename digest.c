@@ -45,8 +45,8 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
                     printf("%c", fileContents[i]);
                 }
                 printf("\n");
-
                 printf("file count: %d", *paramworkingFileIndex);
+
                 GenerateDigestFromString(fileContents, fileLength, paramFileDigests[*paramworkingFileIndex]);
 
                 printf("\n");
