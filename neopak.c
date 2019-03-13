@@ -34,7 +34,7 @@ void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint
 void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
 void random_scalar_order_test_new(secp256k1_scalar *num);
 void countFilesInDirectory(char *basePath, const int root, long *count);
-void MakeDigestForEachFile(char *basePath, const int root);
+void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramWorkingFileCount);
 
 
 void DisplayUsageInfo()
@@ -137,7 +137,6 @@ void random_scalar_order_test_new(secp256k1_scalar *num) {
 void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 {
     //for calculating digest
-    uint8_t fileDigest[32];
     char **fileContents;
     FILE *filePointer;
     long fileLength;
@@ -161,8 +160,10 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 
 
     countFilesInDirectory(paramDirName, 0, &fileCount);
-    printf("\n%d\n", fileCount);
-   // MakeDigestForEachFile(paramDirName,0);
+    uint8_t fileDigests[fileCount][32];
+    long workingFileCount = -1;
+    printf("\nnumber of files: %d\n", fileCount);
+    MakeDigestForEachFile(paramDirName,0, fileDigests, &workingFileCount);
     
 /*
 
@@ -231,14 +232,12 @@ void countFilesInDirectory(char *basePath, const int root, long *count)
    closedir(dir);
 }
 
-/*
-void MakeDigestForEachFile(char *basePath, const int root)
+void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramWorkingFileCount)
 {
     int i;
     char path[1000];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
-    FILE* filePointer;
     long fileLength;
 
     if (!dir)
@@ -256,26 +255,47 @@ void MakeDigestForEachFile(char *basePath, const int root)
                    printf(" "); 
            }    
 
-           char *fileContents;
            strcpy(path, basePath);
            strcat(path, "/");
            strcat(path, dp->d_name);
-           printf("%s\n", path);  
            //read file into string
-            filePointer = fopen(path, "r");
-            fileLength = getFileLength(path, filePointer);
-            fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
-            fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
-            fclose(filePointer); // Close the file
+           if (dp->d_type != DT_DIR)
+            {
+                *paramWorkingFileCount= *paramWorkingFileCount + 1;
+                FILE* filePointer = fopen(path, "r");
+                if (!filePointer)
+                    printf("%s file coud not be opened to read",path);
+                fileLength = getFileLength(path, filePointer);
+                char *fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
+                fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
+                fclose(filePointer); // Close the file
 
-            ComputeSha256FromString(fileContents, fileLength, fileDigest);
+                printf("\n");
+                printf("file contents: ");
+                for (int i = 0; i<fileLength; i++)
+                {
+                    printf("%c", fileContents[i]);
+                }
+                printf("\n");
 
-           tree(path, root + 2);    
+                printf("file count: %d", *paramWorkingFileCount);
+                ComputeSha256FromString(fileContents, fileLength, paramFileDigests[*paramWorkingFileCount]);
+
+                printf("\n");
+                for (int i = 0; i<32; i++)
+                {
+                    printf("%02x", paramFileDigests[*paramWorkingFileCount][i]);
+                }
+                printf("\n");
+
+                free(fileContents);
+            }
+
+           MakeDigestForEachFile(path, root + 2, paramFileDigests, paramWorkingFileCount);    
         }
     }
     closedir(dir);
 }
-*/
 
 void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)
 {
