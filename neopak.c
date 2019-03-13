@@ -31,10 +31,11 @@ void ExecuteCommand(char **paramArgs, enum commands paramCommand);
 void CompleteTestSigProcess();
 void CompleteSigProcess(char *paramSecKey, char *paramFileName);
 void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
-void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
+void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey,unsigned char* secKey,unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
 void random_scalar_order_test_new(secp256k1_scalar *num);
 void countFilesInDirectory(char *basePath, const int root, long *count);
-void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramWorkingFileCount);
+void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramworkingFileIndex);
+secp256k1_pubkey GenerateAndVerifyPubKey(secp256k1_context *paramMyContext, unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp);
 
 
 void DisplayUsageInfo()
@@ -114,7 +115,8 @@ void CompleteTestSigProcess()
     secp256k1_scalar_get_b32(serializedDigest, &myMessageHash);
     secp256k1_scalar_get_b32(serializedSecKey, &myPrivateKey);
 
-    VerifyParamsAndSignMessageWithEcdsa(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
+    //replace this with generatePubKey() + SignMessage() combo
+    //VerifyParamsAndSignMessageWithEcdsa(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
 
     printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
 }
@@ -154,16 +156,33 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     serializedPubKeyCompressed = malloc(sizeof(unsigned char)*33);
     serializedPubKeyUncompressed = malloc(sizeof(unsigned char)*65);
     serializedSignatureComp = malloc(sizeof(unsigned char)*64);
-    //72 is max length for DER sig, but can be shorters
+    //72 is max length for DER sig, but can be shorter
     serializedSignatureDer = malloc(sizeof(unsigned char)*72);
     secp256k1_scalar myMessageHash, myPrivateKey;
 
+    //add space between each hex number in private key and convert to unsigned char *
+    const char* secKey = insertSpaces(paramSecKey);
+    int lengthKey = strlen(secKey);
+    int *keyLengthPtr = &lengthKey;
+    serializedSecKey = convert(secKey, keyLengthPtr);
 
+    //sign each file in the directory (after converting each to sha256 hash)
     countFilesInDirectory(paramDirName, 0, &fileCount);
     uint8_t fileDigests[fileCount][32];
-    long workingFileCount = -1;
+    long workingFileIndex = -1;
     printf("\nnumber of files: %d\n", fileCount);
-    MakeDigestForEachFile(paramDirName,0, fileDigests, &workingFileCount);
+    MakeDigestForEachFile(paramDirName,0, fileDigests, &workingFileIndex);       
+
+    //generate public key from private key
+    secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
+    secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
+
+    //sign each file digest
+    for(int i = 0; i < fileCount; i++)
+    {
+        VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
+        printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
+    }
     
 /*
 
@@ -232,7 +251,7 @@ void countFilesInDirectory(char *basePath, const int root, long *count)
    closedir(dir);
 }
 
-void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramWorkingFileCount)
+void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramworkingFileIndex)
 {
     int i;
     char path[1000];
@@ -261,7 +280,7 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
            //if it is a file, read file into string
            if (dp->d_type != DT_DIR)
             {
-                *paramWorkingFileCount= *paramWorkingFileCount + 1;
+                *paramworkingFileIndex= *paramworkingFileIndex + 1;
                 FILE* filePointer = fopen(path, "r");
                 if (!filePointer)
                     printf("%s file coud not be opened to read",path);
@@ -278,20 +297,20 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
                 }
                 printf("\n");
 
-                printf("file count: %d", *paramWorkingFileCount);
-                ComputeSha256FromString(fileContents, fileLength, paramFileDigests[*paramWorkingFileCount]);
+                printf("file count: %d", *paramworkingFileIndex);
+                ComputeSha256FromString(fileContents, fileLength, paramFileDigests[*paramworkingFileIndex]);
 
                 printf("\n");
                 for (int i = 0; i<32; i++)
                 {
-                    printf("%02x", paramFileDigests[*paramWorkingFileCount][i]);
+                    printf("%02x", paramFileDigests[*paramworkingFileIndex][i]);
                 }
                 printf("\n");
 
                 free(fileContents);
             }
 
-           MakeDigestForEachFile(path, root + 2, paramFileDigests, paramWorkingFileCount);    
+           MakeDigestForEachFile(path, root + 2, paramFileDigests, paramworkingFileIndex);    
         }
     }
     closedir(dir);
@@ -323,8 +342,50 @@ void ComputeSha256FromString(char *paramFileContents, long paramFileLength, uint
         printf("\nSHA result failed");
 }
 
+secp256k1_pubkey GenerateAndVerifyPubKey(secp256k1_context *paramMyContext, unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp)
+{
+    secp256k1_pubkey myPublicKey;
+    size_t pubKeyCompLen;
+    size_t pubKeyUncompLen;
 
-void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)
+    //construct the corresponding public key
+    if(1 == secp256k1_ec_pubkey_create(paramMyContext, &myPublicKey, secKey))
+        printf("Public key created \n");
+    else
+    {
+        printf("Public key could not be created \n");
+        exit(1);
+    }
+
+    //get seralized public key (compressed)
+    pubKeyCompLen = 33;
+    secp256k1_ec_pubkey_serialize(paramMyContext, pubKeyComp, &pubKeyCompLen, &myPublicKey, SECP256K1_EC_COMPRESSED);
+    secp256k1_pubkey pubkeytest0;
+    if (1 == secp256k1_ec_pubkey_parse(paramMyContext, &pubkeytest0, pubKeyComp, pubKeyCompLen)) 
+        printf("Compressed public key able to be parsed \n");
+    else
+    {
+        printf("Error parsing compressed public key \n");
+        exit(1);
+    }
+
+    //get seralized public key (uncompressed)
+    pubKeyUncompLen = 65;
+    secp256k1_ec_pubkey_serialize(paramMyContext, pubKeyUncomp, &pubKeyUncompLen, &myPublicKey, SECP256K1_EC_UNCOMPRESSED);
+    secp256k1_pubkey pubkeytest1;
+    if (1 == secp256k1_ec_pubkey_parse(paramMyContext, &pubkeytest1, pubKeyUncomp, pubKeyUncompLen)) 
+        printf("Uncompressed public key able to be parsed \n");
+    else
+    {
+        printf("Error parsing uncompressed public key \n");
+        exit(1);
+    }
+
+    return myPublicKey;
+}
+
+
+void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, unsigned char* secKey, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)
 {
     /*a general template for this function can be found in 
     go-ethereum-master\crypto\secp256k1\libsecp256k1\src\modules\recovery\tests_impl.h
@@ -336,9 +397,7 @@ void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* p
     secp256k1_ecdsa_signature mySig;
     //holds four 64 bit uints (0 to 18,446,744,073,709,551,615) in an array
     secp256k1_scalar myMessageHash, myPrivateKey;
-    secp256k1_pubkey myPublicKey;
-    size_t pubKeyCompLen;
-    size_t pubKeyUncompLen;
+    
 
     //verify the private key
     if(1 == secp256k1_ec_seckey_verify(myContext, secKey))
@@ -348,46 +407,13 @@ void VerifyParamsAndSignMessageWithEcdsa(unsigned char* secKey, unsigned char* p
         printf("Private key failed verification \n");
         exit(1);
     }
-
-    //construct the corresponding public key
-    if(1 == secp256k1_ec_pubkey_create(myContext, &myPublicKey, secKey))
-        printf("Public key created \n");
-    else
-    {
-        printf("Public key could not be created \n");
-        exit(1);
-    }
-
-    //get seralized public key (compressed)
-    pubKeyCompLen = 33;
-    secp256k1_ec_pubkey_serialize(myContext, pubKeyComp, &pubKeyCompLen, &myPublicKey, SECP256K1_EC_COMPRESSED);
-    secp256k1_pubkey pubkeytest0;
-    if (1 == secp256k1_ec_pubkey_parse(myContext, &pubkeytest0, pubKeyComp, pubKeyCompLen)) 
-        printf("Compressed public key able to be parsed \n");
-    else
-    {
-        printf("Error parsing compressed public key \n");
-        exit(1);
-    }
-
-    //get seralized public key (uncompressed)
-    pubKeyUncompLen = 65;
-    secp256k1_ec_pubkey_serialize(myContext, pubKeyUncomp, &pubKeyUncompLen, &myPublicKey, SECP256K1_EC_UNCOMPRESSED);
-    secp256k1_pubkey pubkeytest1;
-    if (1 == secp256k1_ec_pubkey_parse(myContext, &pubkeytest1, pubKeyUncomp, pubKeyUncompLen)) 
-        printf("Uncompressed public key able to be parsed \n");
-    else
-    {
-        printf("Error parsing uncompressed public key \n");
-        exit(1);
-    }
     
     //sign message hash with private key
     secp256k1_ecdsa_sign(myContext, &mySig, digest, secKey, NULL, NULL);
     printf("Signature created \n");
 
     //verify signature
-    if (1 == secp256k1_ecdsa_verify(myContext, &mySig, digest, &myPublicKey))
+    if (1 == secp256k1_ecdsa_verify(myContext, &mySig, digest, &paramMyPublicKey))
         printf("Signature verified \n");
     else
     {
