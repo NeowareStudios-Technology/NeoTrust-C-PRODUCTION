@@ -11,8 +11,11 @@
 #include <stdio.h>
 
 #include "./sha/sha.h"
+#include "helper.h"
 
 
-void GetNameAndDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], uint8_t paramFileNames[9999999][500], long *paramWorkingFileIndex);
+void GetNameAndDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], char paramFileNames[9999999][500], long *paramWorkingFileIndex);
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
+
+FILE* CreateBaseManifestFile(char *paramTargetDirectoryName);

@@ -70,7 +70,8 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     FILE *filePointer;
     long fileLength;
     long fileCount = 0;
-
+    static char fileNames[9999999][500];
+    uint8_t **fileDigests;
     //for signing with private key
     unsigned char* serializedDigest;
     unsigned char* serializedSecKey;
@@ -78,8 +79,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     unsigned char* serializedPubKeyUncompressed;
     unsigned char* serializedSignatureComp;
     unsigned char* serializedSignatureDer;
-    static char fileNames[9999999][500];
-    uint8_t **fileDigests;
     //uint8_t manifestDigest[32];
     serializedDigest = malloc(sizeof(unsigned char)*32);
     serializedSecKey = malloc(sizeof(unsigned char)*32);
@@ -96,6 +95,10 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     int *keyLengthPtr = &lengthKey;
     serializedSecKey = stringToHex(secKey, keyLengthPtr);
 
+    //generate public key from private key
+    secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
+    secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
+
     //count number of files in target directory
     countFilesInDirectory(paramDirName, 0, &fileCount);
     printf("\n(CompleteSigProcess) number of files: %d\n", fileCount);
@@ -111,6 +114,8 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     long workingFileIndex = -1;
     GetNameAndDigestForEachFile(paramDirName,0, fileDigests, fileNames, &workingFileIndex);     
 
+    CreateBaseManifestFile(paramDirName);
+
     //print file names
     printf("\n");
     printf("(CompleteSigProcess) file names: \n");
@@ -120,10 +125,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     }
 
     printf("\n");  
-
-    //generate public key from private key
-    secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
-    secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
 
     //need to do here:
     //-create manifest file from all hashe and names of files

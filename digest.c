@@ -7,7 +7,7 @@
 
 #include "digest.h"
 
-void GetNameAndDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], uint8_t paramFileNames[9999999][500], long *paramWorkingFileIndex)
+void GetNameAndDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], char paramFileNames[9999999][500], long *paramWorkingFileIndex)
 {
     int i;
     char path[1000];
@@ -89,7 +89,6 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
     else
         printf("(GenerateDigestFromString) SHA result failed\n");
 }
-<<<<<<< HEAD
 
 FILE* CreateBaseManifestFile(char *paramTargetDirectoryName)
 {
@@ -99,6 +98,6 @@ FILE* CreateBaseManifestFile(char *paramTargetDirectoryName)
         printf("error: file cant be opened\n");
 
     fputs("Manifest-Version: 0.1\nCreated-By: NeoPak (neopak 0.1 Beta)\nPublic Key: ", manifestFile);
+
+    return(manifestFile);
 }
-=======
->>>>>>> parent of 64e8f9f... META-INF directory and manifest file now created (but not filled out)

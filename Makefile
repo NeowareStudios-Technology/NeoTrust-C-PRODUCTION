@@ -1,4 +1,4 @@
-CC = gcc -g --std=c17 -Wall
+CC = gcc -g --std=c17
 OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
 OPATH = ./obj/
 SPATH = ./sha/
