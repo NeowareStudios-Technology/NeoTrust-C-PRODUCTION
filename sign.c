@@ -65,13 +65,16 @@ void random_scalar_order_test_new(secp256k1_scalar *num) {
 
 void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 {
-    //for calculating digest
+       //for calculating digest
     char **fileContents;
     FILE *filePointer;
     long fileLength;
     long fileCount = 0;
     static char fileNames[9999999][500];
     uint8_t **fileDigests;
+    char* metaInfDirPath;
+    //uint8_t manifestDigest[32];
+
     //for signing with private key
     unsigned char* serializedDigest;
     unsigned char* serializedSecKey;
@@ -79,7 +82,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     unsigned char* serializedPubKeyUncompressed;
     unsigned char* serializedSignatureComp;
     unsigned char* serializedSignatureDer;
-    //uint8_t manifestDigest[32];
     serializedDigest = malloc(sizeof(unsigned char)*32);
     serializedSecKey = malloc(sizeof(unsigned char)*32);
     serializedPubKeyCompressed = malloc(sizeof(unsigned char)*33);
@@ -95,7 +97,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     int *keyLengthPtr = &lengthKey;
     serializedSecKey = stringToHex(secKey, keyLengthPtr);
 
-    //generate public key from private key
+        //generate public key from private key
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
     secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
 
@@ -110,11 +112,14 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
        fileDigests[i] = (uint8_t*)malloc(32);
     }
 
+
     //make a digest for each file, saving to the fileDigests 2d array
     long workingFileIndex = -1;
-    GetNameAndDigestForEachFile(paramDirName,0, fileDigests, fileNames, &workingFileIndex);     
+    GetNameAndDigestForEachFile(paramDirName,0, fileDigests, fileNames, &workingFileIndex); 
 
-    CreateBaseManifestFile(paramDirName);
+    metaInfDirPath = strcat(paramDirName, "/META-INF");
+    mkdir(metaInfDirPath, 0700);
+    CreateBaseManifestFile(metaInfDirPath);    
 
     //print file names
     printf("\n");

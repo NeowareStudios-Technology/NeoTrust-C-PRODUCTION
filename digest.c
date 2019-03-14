@@ -98,6 +98,4 @@ FILE* CreateBaseManifestFile(char *paramTargetDirectoryName)
         printf("error: file cant be opened\n");
 
     fputs("Manifest-Version: 0.1\nCreated-By: NeoPak (neopak 0.1 Beta)\nPublic Key: ", manifestFile);
-
-    return(manifestFile);
 }
