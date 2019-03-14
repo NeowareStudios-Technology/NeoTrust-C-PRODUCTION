@@ -89,6 +89,7 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
     else
         printf("(GenerateDigestFromString) SHA result failed\n");
 }
+<<<<<<< HEAD
 
 FILE* CreateBaseManifestFile(char *paramTargetDirectoryName)
 {
@@ -99,3 +100,5 @@ FILE* CreateBaseManifestFile(char *paramTargetDirectoryName)
 
     fputs("Manifest-Version: 0.1\nCreated-By: NeoPak (neopak 0.1 Beta)\nPublic Key: ", manifestFile);
 }
+=======
+>>>>>>> parent of 64e8f9f... META-INF directory and manifest file now created (but not filled out)

@@ -70,10 +70,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     FILE *filePointer;
     long fileLength;
     long fileCount = 0;
-    static char fileNames[9999999][500];
-    uint8_t **fileDigests;
-    char* metaInfDirPath;
-    //uint8_t manifestDigest[32];
 
     //for signing with private key
     unsigned char* serializedDigest;
@@ -82,6 +78,9 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     unsigned char* serializedPubKeyUncompressed;
     unsigned char* serializedSignatureComp;
     unsigned char* serializedSignatureDer;
+    static char fileNames[9999999][500];
+    uint8_t **fileDigests;
+    //uint8_t manifestDigest[32];
     serializedDigest = malloc(sizeof(unsigned char)*32);
     serializedSecKey = malloc(sizeof(unsigned char)*32);
     serializedPubKeyCompressed = malloc(sizeof(unsigned char)*33);
@@ -108,10 +107,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
        fileDigests[i] = (uint8_t*)malloc(32);
     }
 
-    metaInfDirPath = strcat(paramDirName, "/META-INF");
-    mkdir(metaInfDirPath, 0700);
-    CreateBaseManifestFile(metaInfDirPath);
-/*
     //make a digest for each file, saving to the fileDigests 2d array
     long workingFileIndex = -1;
     GetNameAndDigestForEachFile(paramDirName,0, fileDigests, fileNames, &workingFileIndex);     
@@ -143,7 +138,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     free(serializedPubKeyUncompressed);
     free(serializedSignatureComp);
     free(serializedSignatureDer);
-*/
 }
 
 void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, unsigned char* secKey, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)
