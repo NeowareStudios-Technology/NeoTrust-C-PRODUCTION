@@ -89,3 +89,11 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
     else
         printf("(GenerateDigestFromString) SHA result failed\n");
 }
+
+FILE* CreateBaseManifestFile(char *paramTargetDirectoryName)
+{
+    char *manifestFilePath = strcat(paramTargetDirectoryName, "/manifest");
+    FILE *manifestFile = fopen(manifestFilePath, "a+");
+    if (!manifestFile)
+        printf("error: file cant be opened\n");
+}
