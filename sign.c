@@ -80,7 +80,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     unsigned char* serializedSignatureDer;
     static char fileNames[9999999][500];
     uint8_t **fileDigests;
-    uint8_t manifestDigest[32];
+    //uint8_t manifestDigest[32];
     serializedDigest = malloc(sizeof(unsigned char)*32);
     serializedSecKey = malloc(sizeof(unsigned char)*32);
     serializedPubKeyCompressed = malloc(sizeof(unsigned char)*33);
@@ -96,26 +96,29 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     int *keyLengthPtr = &lengthKey;
     serializedSecKey = stringToHex(secKey, keyLengthPtr);
 
-    //sign each file in the directory (after converting each to sha256 hash)
+    //count number of files in target directory
     countFilesInDirectory(paramDirName, 0, &fileCount);
+    printf("\n(CompleteSigProcess) number of files: %d\n", fileCount);
 
     //allocate enough memory for a digest for each file
     fileDigests = (uint8_t**)malloc(fileCount);
     for (int i = 0; i < fileCount; i++)
     {
-       fileDigests[i] = (int*)malloc(32);
+       fileDigests[i] = (uint8_t*)malloc(32);
     }
 
+    //make a digest for each file, saving to the fileDigests 2d array
     long workingFileIndex = -1;
-    printf("\nnumber of files: %d\n", fileCount);
-    MakeDigestForEachFile(paramDirName,0, fileDigests, fileNames, &workingFileIndex);     
+    GetNameAndDigestForEachFile(paramDirName,0, fileDigests, fileNames, &workingFileIndex);     
 
+    //print file names
     printf("\n");
-    printf("CompleteSigProcess: file names: \n");
+    printf("(CompleteSigProcess) file names: \n");
     for (int p = 0; p<fileCount; p++)
     {
         printf("%s\n", fileNames[p]);
     }
+
     printf("\n");  
 
     //generate public key from private key

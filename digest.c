@@ -7,7 +7,7 @@
 
 #include "digest.h"
 
-void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], uint8_t paramFileNames[9999999][500], long *paramWorkingFileIndex)
+void GetNameAndDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], uint8_t paramFileNames[9999999][500], long *paramWorkingFileIndex)
 {
     int i;
     char path[1000];
@@ -33,24 +33,24 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
                 strcpy(paramFileNames[*paramWorkingFileIndex], dp->d_name);
                 FILE* filePointer = fopen(path, "r");
                 if (!filePointer)
-                    printf("%s file coud not be opened to read",path);
+                    printf("(GetNameAndDigestForEachFile) %s file coud not be opened to read",path);
                 fileLength = getFileLength(path, filePointer);
                 char *fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
                 fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
                 fclose(filePointer); // Close the file
 
                 printf("\n");
-                printf("MakeDigestForEachFile: file contents: ");
+                printf("(GetNameAndDigestForEachFile) file contents: ");
                 for (int i = 0; i<fileLength; i++)
                 {
                     printf("%c", fileContents[i]);
                 }
                 printf("\n");
-                printf("MakeDigestForEachFile: file count: %d", *paramWorkingFileIndex);
+                printf("(GetNameAndDigestForEachFile) file count: %d \n", *paramWorkingFileIndex);
 
                 GenerateDigestFromString(fileContents, fileLength, paramFileDigests[*paramWorkingFileIndex]);
 
-                printf("\n");
+                printf("(GetNameAndDigestForEachFile) file digest: \n");
                 for (int i = 0; i<32; i++)
                 {
                     printf("%02x", paramFileDigests[*paramWorkingFileIndex][i]);
@@ -58,7 +58,7 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
                 printf("\n");
                 free(fileContents);
             }
-           MakeDigestForEachFile(path, root + 2, paramFileDigests, paramFileNames, paramWorkingFileIndex);    
+           GetNameAndDigestForEachFile(path, root + 2, paramFileDigests, paramFileNames, paramWorkingFileIndex);    
         }
     }
     closedir(dir);
@@ -72,20 +72,20 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
 
     errorCode = USHAReset(&shaContext, SHA256);
     if (errorCode == 0)
-        printf("\nSHA context reset successful");
+        printf("(GenerateDigestFromString) SHA context reset successful\n");
     else
-        printf("\nSHA context reset failed");
+        printf("(GenerateDigestFromString) SHA context reset failed\n");
     
 
     errorCode = USHAInput(&shaContext, (const uint8_t *) paramFileContents, paramFileLength);
     if (errorCode == 0)
-        printf("\nSHA input successful");
+        printf("(GenerateDigestFromString) SHA input successful\n");
     else
-        printf("\nSHA input failed");
+        printf("(GenerateDigestFromString) SHA input failed\n");
 
     errorCode = USHAResult(&shaContext, paramFileDigest);
     if (errorCode == 0)
-        printf("\nSHA result successful");
+        printf("(GenerateDigestFromString) SHA result successful\n");
     else
-        printf("\nSHA result failed");
+        printf("(GenerateDigestFromString) SHA result failed\n");
 }
