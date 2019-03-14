@@ -41,6 +41,13 @@ void CompleteTestSigProcess()
     VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, serializedDigest, serializedSignatureComp, serializedSignatureDer);
 
     printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
+
+    free(serializedDigest);
+    free(serializedSecKey);
+    free(serializedPubKeyCompressed);
+    free(serializedPubKeyUncompressed);
+    free(serializedSignatureComp);
+    free(serializedSignatureDer);
 }
 
 void random_scalar_order_test_new(secp256k1_scalar *num) {
@@ -105,6 +112,12 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     //VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, manifestDigest, serializedSignatureComp, serializedSignatureDer);
     //printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
    
+    free(serializedDigest);
+    free(serializedSecKey);
+    free(serializedPubKeyCompressed);
+    free(serializedPubKeyUncompressed);
+    free(serializedSignatureComp);
+    free(serializedSignatureDer);
 }
 
 void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, unsigned char* secKey, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)
