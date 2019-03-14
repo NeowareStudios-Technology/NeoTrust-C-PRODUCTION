@@ -10,19 +10,19 @@
 //sets up all data structures necessary to sign a test message with a test private key and signs in ECDSA
 void CompleteTestSigProcess()
 {
-    unsigned char* serializedDigest;
-    unsigned char* serializedSecKey;
-    unsigned char* serializedPubKeyCompressed;
-    unsigned char* serializedPubKeyUncompressed;
-    unsigned char* serializedSignatureComp;
-    unsigned char* serializedSignatureDer;
-    serializedDigest = malloc(sizeof(unsigned char)*32);
-    serializedSecKey = malloc(sizeof(unsigned char)*32);
-    serializedPubKeyCompressed = malloc(sizeof(unsigned char)*33);
-    serializedPubKeyUncompressed = malloc(sizeof(unsigned char)*65);
-    serializedSignatureComp = malloc(sizeof(unsigned char)*64);
+    uint8_t* serializedDigest;
+    uint8_t* serializedSecKey;
+    uint8_t* serializedPubKeyCompressed;
+    uint8_t* serializedPubKeyUncompressed;
+    uint8_t* serializedSignatureComp;
+    uint8_t* serializedSignatureDer;
+    serializedDigest = malloc(sizeof(uint8_t)*32);
+    serializedSecKey = malloc(sizeof(uint8_t)*32);
+    serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
+    serializedPubKeyUncompressed = malloc(sizeof(uint8_t)*65);
+    serializedSignatureComp = malloc(sizeof(uint8_t)*64);
     //72 is max length for DER sig, but can be shorters
-    serializedSignatureDer = malloc(sizeof(unsigned char)*72);
+    serializedSignatureDer = malloc(sizeof(uint8_t)*72);
     secp256k1_scalar myMessageHash, myPrivateKey;
 
     printf("\nStarting signing test with test pub/priv keys and test message hash");
@@ -30,7 +30,7 @@ void CompleteTestSigProcess()
     random_scalar_order_test_new(&myMessageHash);
     random_scalar_order_test_new(&myPrivateKey);
     
-    //convert message hash to unsigned char 32 bytes?
+    //convert message hash to uint8_t 32 bytes?
     secp256k1_scalar_get_b32(serializedDigest, &myMessageHash);
     secp256k1_scalar_get_b32(serializedSecKey, &myPrivateKey);
 
@@ -52,7 +52,7 @@ void CompleteTestSigProcess()
 
 void random_scalar_order_test_new(secp256k1_scalar *num) {
    do {
-       unsigned char b32[32];
+       uint8_t b32[32];
        int overflow = 0;
        secp256k1_rand256(b32);
        secp256k1_scalar_set_b32(num, b32, &overflow);
@@ -76,22 +76,22 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     //uint8_t manifestDigest[32];
 
     //for signing with private key
-    unsigned char* serializedDigest;
-    unsigned char* serializedSecKey;
-    unsigned char* serializedPubKeyCompressed;
-    unsigned char* serializedPubKeyUncompressed;
-    unsigned char* serializedSignatureComp;
-    unsigned char* serializedSignatureDer;
-    serializedDigest = malloc(sizeof(unsigned char)*32);
-    serializedSecKey = malloc(sizeof(unsigned char)*32);
-    serializedPubKeyCompressed = malloc(sizeof(unsigned char)*33);
-    serializedPubKeyUncompressed = malloc(sizeof(unsigned char)*65);
-    serializedSignatureComp = malloc(sizeof(unsigned char)*64);
+    uint8_t* serializedDigest;
+    uint8_t* serializedSecKey;
+    uint8_t* serializedPubKeyCompressed;
+    uint8_t* serializedPubKeyUncompressed;
+    uint8_t* serializedSignatureComp;
+    uint8_t* serializedSignatureDer;
+    serializedDigest = malloc(sizeof(uint8_t)*32);
+    serializedSecKey = malloc(sizeof(uint8_t)*32);
+    serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
+    serializedPubKeyUncompressed = malloc(sizeof(uint8_t)*65);
+    serializedSignatureComp = malloc(sizeof(uint8_t)*64);
     //72 is max length for DER sig, but can be shorter
-    serializedSignatureDer = malloc(sizeof(unsigned char)*72);
+    serializedSignatureDer = malloc(sizeof(uint8_t)*72);
     secp256k1_scalar myMessageHash, myPrivateKey;
 
-    //add space between each hex number in private key and convert to unsigned char *
+    //add space between each hex number in private key and convert to uint8_t *
     const char* secKey = insertSpaces(paramSecKey);
     int lengthKey = stringLength(secKey);
     int *keyLengthPtr = &lengthKey;
@@ -146,7 +146,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     free(serializedSignatureDer);
 }
 
-void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, unsigned char* secKey, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)
+void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint8_t* secKey, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer)
 {
     /*a general template for this function can be found in 
     go-ethereum-master\crypto\secp256k1\libsecp256k1\src\modules\recovery\tests_impl.h
@@ -209,7 +209,7 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, unsi
     }
 }
 
-secp256k1_pubkey GenerateAndVerifyPubKey(secp256k1_context *paramMyContext, unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp)
+secp256k1_pubkey GenerateAndVerifyPubKey(secp256k1_context *paramMyContext, uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp)
 {
     secp256k1_pubkey myPublicKey;
     size_t pubKeyCompLen;

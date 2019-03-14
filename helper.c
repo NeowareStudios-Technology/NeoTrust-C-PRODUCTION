@@ -16,10 +16,10 @@ size_t stringLength(const char *str)
 }
 
 
-unsigned char *stringToHex(const char *s, int *length) 
+uint8_t *stringToHex(const char *s, int *length) 
 {
-    unsigned char *answer = malloc((stringLength(s) + 1) / 3);
-    unsigned char *p;
+    uint8_t *answer = malloc((stringLength(s) + 1) / 3);
+    uint8_t *p;
     for (p = answer; *s; p++)
     {
         *p = charToHex(s, (char **)&s);
@@ -30,7 +30,7 @@ unsigned char *stringToHex(const char *s, int *length)
 }
 
 
-static unsigned char charToHex(const char *s, char **endptr) {
+static uint8_t charToHex(const char *s, char **endptr) {
  assert(s);
  assert(*s);
  return strtoul(s, endptr, 16);
@@ -92,7 +92,7 @@ char* insertSpaces(const char *s)
 }
 
 
-void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer)
+void printValues(uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer)
 {
     //print the private key
     printf("Private key: \n");

@@ -18,16 +18,16 @@
 
 size_t stringLength(const char *str);
 
-unsigned char *stringToHex(const char *s, int *length);
+uint8_t *stringToHex(const char *s, int *length);
 
-static unsigned char charToHex(const char *s, char **endptr);
+static uint8_t charToHex(const char *s, char **endptr);
 
 void countFilesInDirectory(char *basePath, const int root, long *count);
 
-//insert spaces between each hex number for parsing into unsigned char array
+//insert spaces between each hex number for parsing into uint8_t array
 char* insertSpaces(const char *s);
 
 //print secret key, public key, digest, and signature
-void printValues(unsigned char* secKey, unsigned char* pubKeyComp, unsigned char* pubKeyUncomp, unsigned char* digest, unsigned char* signatureComp, unsigned char* signatureDer);
+void printValues(uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer);
 
 long getFileLength(char* paramFileName, FILE *paramFilePointer);

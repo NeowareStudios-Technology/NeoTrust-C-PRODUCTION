@@ -24,8 +24,8 @@ void random_scalar_order_test_new(secp256k1_scalar *num);
 
 void CompleteSigProcess(char *paramSecKey, char *paramFileName);
 
-void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey,unsigned char* secKey,unsigned char* digest, 
-    unsigned char* signatureComp, unsigned char* signatureDer);
+void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey,uint8_t* secKey,uint8_t* digest, 
+    uint8_t* signatureComp, uint8_t* signatureDer);
 
-secp256k1_pubkey GenerateAndVerifyPubKey(secp256k1_context *paramMyContext, unsigned char* secKey, unsigned char* pubKeyComp,
-    unsigned char* pubKeyUncomp);
+secp256k1_pubkey GenerateAndVerifyPubKey(secp256k1_context *paramMyContext, uint8_t* secKey, uint8_t* pubKeyComp,
+    uint8_t* pubKeyUncomp);
