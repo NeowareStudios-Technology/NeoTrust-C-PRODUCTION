@@ -78,6 +78,8 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     unsigned char* serializedPubKeyUncompressed;
     unsigned char* serializedSignatureComp;
     unsigned char* serializedSignatureDer;
+    static char fileNames[9999999][500];
+    uint8_t **fileDigests;
     uint8_t manifestDigest[32];
     serializedDigest = malloc(sizeof(unsigned char)*32);
     serializedSecKey = malloc(sizeof(unsigned char)*32);
@@ -96,10 +98,25 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 
     //sign each file in the directory (after converting each to sha256 hash)
     countFilesInDirectory(paramDirName, 0, &fileCount);
-    uint8_t fileDigests[fileCount][32];
+
+    //allocate enough memory for a digest for each file
+    fileDigests = (uint8_t**)malloc(fileCount);
+    for (int i = 0; i < fileCount; i++)
+    {
+       fileDigests[i] = (int*)malloc(32);
+    }
+
     long workingFileIndex = -1;
     printf("\nnumber of files: %d\n", fileCount);
-    MakeDigestForEachFile(paramDirName,0, fileDigests, &workingFileIndex);       
+    MakeDigestForEachFile(paramDirName,0, fileDigests, fileNames, &workingFileIndex);     
+
+    printf("\n");
+    printf("CompleteSigProcess: file names: \n");
+    for (int p = 0; p<fileCount; p++)
+    {
+        printf("%s\n", fileNames[p]);
+    }
+    printf("\n");  
 
     //generate public key from private key
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);

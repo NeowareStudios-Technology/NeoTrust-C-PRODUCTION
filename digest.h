@@ -13,6 +13,6 @@
 #include "./sha/sha.h"
 
 
-void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramworkingFileIndex);
+void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], uint8_t paramFileNames[9999999][500], long *paramWorkingFileIndex);
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);

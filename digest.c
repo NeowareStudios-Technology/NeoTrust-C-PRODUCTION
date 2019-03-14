@@ -7,7 +7,7 @@
 
 #include "digest.h"
 
-void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], long *paramworkingFileIndex)
+void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], uint8_t paramFileNames[9999999][500], long *paramWorkingFileIndex)
 {
     int i;
     char path[1000];
@@ -29,7 +29,8 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
            //if it is a file, read file into string
            if (dp->d_type != DT_DIR)
             {
-                *paramworkingFileIndex= *paramworkingFileIndex + 1;
+                *paramWorkingFileIndex= *paramWorkingFileIndex + 1;
+                strcpy(paramFileNames[*paramWorkingFileIndex], dp->d_name);
                 FILE* filePointer = fopen(path, "r");
                 if (!filePointer)
                     printf("%s file coud not be opened to read",path);
@@ -39,25 +40,25 @@ void MakeDigestForEachFile(char *basePath, const int root, uint8_t paramFileDige
                 fclose(filePointer); // Close the file
 
                 printf("\n");
-                printf("file contents: ");
+                printf("MakeDigestForEachFile: file contents: ");
                 for (int i = 0; i<fileLength; i++)
                 {
                     printf("%c", fileContents[i]);
                 }
                 printf("\n");
-                printf("file count: %d", *paramworkingFileIndex);
+                printf("MakeDigestForEachFile: file count: %d", *paramWorkingFileIndex);
 
-                GenerateDigestFromString(fileContents, fileLength, paramFileDigests[*paramworkingFileIndex]);
+                GenerateDigestFromString(fileContents, fileLength, paramFileDigests[*paramWorkingFileIndex]);
 
                 printf("\n");
                 for (int i = 0; i<32; i++)
                 {
-                    printf("%02x", paramFileDigests[*paramworkingFileIndex][i]);
+                    printf("%02x", paramFileDigests[*paramWorkingFileIndex][i]);
                 }
                 printf("\n");
                 free(fileContents);
             }
-           MakeDigestForEachFile(path, root + 2, paramFileDigests, paramworkingFileIndex);    
+           MakeDigestForEachFile(path, root + 2, paramFileDigests, paramFileNames, paramWorkingFileIndex);    
         }
     }
     closedir(dir);
