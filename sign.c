@@ -76,12 +76,12 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     //uint8_t manifestDigest[32];
 
     //for signing with private key
-    uint8_t* serializedDigest;
-    uint8_t* serializedSecKey;
-    uint8_t* serializedPubKeyCompressed;
-    uint8_t* serializedPubKeyUncompressed;
-    uint8_t* serializedSignatureComp;
-    uint8_t* serializedSignatureDer;
+    uint8_t *serializedDigest;
+    uint8_t *serializedSecKey;
+    uint8_t *serializedPubKeyCompressed;
+    uint8_t *serializedPubKeyUncompressed;
+    uint8_t *serializedSignatureComp;
+    uint8_t *serializedSignatureDer;
     serializedDigest = malloc(sizeof(uint8_t)*32);
     serializedSecKey = malloc(sizeof(uint8_t)*32);
     serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
