@@ -67,10 +67,10 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 {
     char **fileContents;
     FILE *manifestFilePointer;
+    FILE *signatureFilePointer;
     long fileLength;
     long fileCount = 0;
-    char* metaInfDirPath;
-    char *paramDirNameCopy[stringLength(paramDirName)];
+    char* metaInfDirPath[1000];
     //for signing with private key
     uint8_t *serializedDigest;
     uint8_t *serializedSecKey;
@@ -101,12 +101,13 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     countFilesInDirectory(paramDirName, 0, &fileCount);
     printf("\n(CompleteSigProcess) number of files: %d\n", fileCount);
 
-    strcpy(paramDirNameCopy, paramDirName);
-    metaInfDirPath = strcat(paramDirNameCopy, "/META-INF");
+    strcpy(metaInfDirPath, paramDirName);
+    strcat(metaInfDirPath, "/META-INF");
     mkdir(metaInfDirPath, 0700);
-    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, serializedPubKeyUncompressed);    
+    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, serializedPubKeyUncompressed);   
+    signatureFilePointer = CreateBaseSignatureFile(metaInfDirPath); 
 
-    //make a digest for each file, saving to the fileDigests 2d array
+    //make a digest for each file, saving to manifest file
     long workingFileIndex = -1;
     SaveFileNameAndDigestToManifest(paramDirName, 0, &workingFileIndex, manifestFilePointer); 
 

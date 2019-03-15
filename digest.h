@@ -19,3 +19,5 @@ void SaveFileNameAndDigestToManifest(char *basePath, const int root, long *param
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 
 FILE* CreateBaseManifestFile(char *paramTargetDirectoryName, uint8_t *paramPublicKey);
+
+FILE* CreateBaseSignatureFile(char *paramTargetDirectoryName);
