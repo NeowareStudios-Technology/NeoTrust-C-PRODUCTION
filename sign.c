@@ -65,12 +65,13 @@ void random_scalar_order_test_new(secp256k1_scalar *num) {
 
 void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 {
-       //for calculating digest
+    //for calculating digest
     char **fileContents;
     FILE *filePointer;
     long fileLength;
     long fileCount = 0;
     char* metaInfDirPath;
+    char *paramDirNameCopy[stringLength(paramDirName)];
     //uint8_t manifestDigest[32];
 
     //for signing with private key
@@ -95,7 +96,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     int *keyLengthPtr = &lengthKey;
     serializedSecKey = stringToHex(secKey, keyLengthPtr);
 
-        //generate public key from private key
+    //generate public key from private key
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
     secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
 
@@ -103,14 +104,14 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     countFilesInDirectory(paramDirName, 0, &fileCount);
     printf("\n(CompleteSigProcess) number of files: %d\n", fileCount);
 
+    strcpy(paramDirNameCopy, paramDirName);
+    metaInfDirPath = strcat(paramDirNameCopy, "/META-INF");
+    mkdir(metaInfDirPath, 0700);
+    CreateBaseManifestFile(metaInfDirPath);    
 
     //make a digest for each file, saving to the fileDigests 2d array
     long workingFileIndex = -1;
     GetNameAndDigestForEachFile(paramDirName, 0, &workingFileIndex); 
-
-    metaInfDirPath = strcat(paramDirName, "/META-INF");
-    mkdir(metaInfDirPath, 0700);
-    CreateBaseManifestFile(metaInfDirPath);    
 
     printf("\n");  
 
