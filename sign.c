@@ -65,15 +65,12 @@ void random_scalar_order_test_new(secp256k1_scalar *num) {
 
 void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 {
-    //for calculating digest
     char **fileContents;
-    FILE *filePointer;
+    FILE *manifestFilePointer;
     long fileLength;
     long fileCount = 0;
     char* metaInfDirPath;
     char *paramDirNameCopy[stringLength(paramDirName)];
-    //uint8_t manifestDigest[32];
-
     //for signing with private key
     uint8_t *serializedDigest;
     uint8_t *serializedSecKey;
@@ -107,11 +104,11 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     strcpy(paramDirNameCopy, paramDirName);
     metaInfDirPath = strcat(paramDirNameCopy, "/META-INF");
     mkdir(metaInfDirPath, 0700);
-    CreateBaseManifestFile(metaInfDirPath, serializedPubKeyUncompressed);    
+    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, serializedPubKeyUncompressed);    
 
     //make a digest for each file, saving to the fileDigests 2d array
     long workingFileIndex = -1;
-    GetNameAndDigestForEachFile(paramDirName, 0, &workingFileIndex); 
+    SaveFileNameAndDigestToManifest(paramDirName, 0, &workingFileIndex, manifestFilePointer); 
 
     printf("\n");  
 
