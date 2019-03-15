@@ -107,7 +107,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     strcpy(paramDirNameCopy, paramDirName);
     metaInfDirPath = strcat(paramDirNameCopy, "/META-INF");
     mkdir(metaInfDirPath, 0700);
-    CreateBaseManifestFile(metaInfDirPath);    
+    CreateBaseManifestFile(metaInfDirPath, serializedPubKeyUncompressed);    
 
     //make a digest for each file, saving to the fileDigests 2d array
     long workingFileIndex = -1;

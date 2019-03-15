@@ -92,7 +92,7 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
         printf("(GenerateDigestFromString) SHA result failed\n");
 }
 
-FILE* CreateBaseManifestFile(char *paramTargetDirectoryName)
+FILE* CreateBaseManifestFile(char *paramTargetDirectoryName, uint8_t *paramPublicKey)
 {
     char *manifestFilePath = strcat(paramTargetDirectoryName, "/manifest");
     FILE *manifestFilePointer = fopen(manifestFilePath, "a+");
@@ -100,6 +100,9 @@ FILE* CreateBaseManifestFile(char *paramTargetDirectoryName)
         printf("error: file cant be opened\n");
 
     fputs("Manifest-Version: 0.1\nCreated-By: NeoPak (neopak 0.1 Beta)\nPublic Key: ", manifestFilePointer);
+
+    for (int i = 0; i < 65; i++)
+        fprintf(manifestFilePointer, "%02x", paramPublicKey[i]);
 
     return manifestFilePointer;
 }

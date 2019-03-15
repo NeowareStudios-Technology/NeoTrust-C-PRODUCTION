@@ -18,4 +18,4 @@ void GetNameAndDigestForEachFile(char *basePath, const int root, long *paramWork
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 
-FILE* CreateBaseManifestFile(char *paramTargetDirectoryName);
+FILE* CreateBaseManifestFile(char *paramTargetDirectoryName, uint8_t *paramPublicKey);
