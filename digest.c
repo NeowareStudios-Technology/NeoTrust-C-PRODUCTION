@@ -7,13 +7,14 @@
 
 #include "digest.h"
 
-void GetNameAndDigestForEachFile(char *basePath, const int root, uint8_t paramFileDigests[9999999][32], char paramFileNames[9999999][500], long *paramWorkingFileIndex)
+void GetNameAndDigestForEachFile(char *basePath, const int root, long *paramWorkingFileIndex)
 {
     int i;
     char path[1000];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
     long fileLength;
+    uint8_t fileDigest[32];
 
     if (!dir)
         return; 
@@ -30,7 +31,6 @@ void GetNameAndDigestForEachFile(char *basePath, const int root, uint8_t paramFi
            if (dp->d_type != DT_DIR)
             {
                 *paramWorkingFileIndex= *paramWorkingFileIndex + 1;
-                strcpy(paramFileNames[*paramWorkingFileIndex], dp->d_name);
                 FILE* filePointer = fopen(path, "r");
                 if (!filePointer)
                     printf("(GetNameAndDigestForEachFile) %s file coud not be opened to read",path);
@@ -38,7 +38,7 @@ void GetNameAndDigestForEachFile(char *basePath, const int root, uint8_t paramFi
                 char *fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
                 fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
                 fclose(filePointer); // Close the file
-
+/*
                 printf("\n");
                 printf("(GetNameAndDigestForEachFile) file contents: ");
                 for (int i = 0; i<fileLength; i++)
@@ -47,18 +47,20 @@ void GetNameAndDigestForEachFile(char *basePath, const int root, uint8_t paramFi
                 }
                 printf("\n");
                 printf("(GetNameAndDigestForEachFile) file count: %d \n", *paramWorkingFileIndex);
+*/
+                printf("(GetNameAndDigestForEachFile) file : %s\n", dp->d_name);
 
-                GenerateDigestFromString(fileContents, fileLength, paramFileDigests[*paramWorkingFileIndex]);
+                GenerateDigestFromString(fileContents, fileLength, fileDigest);
 
                 printf("(GetNameAndDigestForEachFile) file digest: \n");
                 for (int i = 0; i<32; i++)
                 {
-                    printf("%02x", paramFileDigests[*paramWorkingFileIndex][i]);
+                    printf("%02x", fileDigest[i]);
                 }
                 printf("\n");
                 free(fileContents);
             }
-           GetNameAndDigestForEachFile(path, root + 2, paramFileDigests, paramFileNames, paramWorkingFileIndex);    
+           GetNameAndDigestForEachFile(path, root + 2, paramWorkingFileIndex);    
         }
     }
     closedir(dir);
@@ -93,9 +95,11 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
 FILE* CreateBaseManifestFile(char *paramTargetDirectoryName)
 {
     char *manifestFilePath = strcat(paramTargetDirectoryName, "/manifest");
-    FILE *manifestFile = fopen(manifestFilePath, "a+");
-    if (!manifestFile)
+    FILE *manifestFilePointer = fopen(manifestFilePath, "a+");
+    if (!manifestFilePointer)
         printf("error: file cant be opened\n");
 
-    fputs("Manifest-Version: 0.1\nCreated-By: NeoPak (neopak 0.1 Beta)\nPublic Key: ", manifestFile);
+    fputs("Manifest-Version: 0.1\nCreated-By: NeoPak (neopak 0.1 Beta)\nPublic Key: ", manifestFilePointer);
+
+    return manifestFilePointer;
 }

@@ -70,8 +70,6 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     FILE *filePointer;
     long fileLength;
     long fileCount = 0;
-    static char fileNames[9999999][500];
-    uint8_t **fileDigests;
     char* metaInfDirPath;
     //uint8_t manifestDigest[32];
 
@@ -105,29 +103,14 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     countFilesInDirectory(paramDirName, 0, &fileCount);
     printf("\n(CompleteSigProcess) number of files: %d\n", fileCount);
 
-    //allocate enough memory for a digest for each file
-    fileDigests = (uint8_t**)malloc(fileCount);
-    for (int i = 0; i < fileCount; i++)
-    {
-       fileDigests[i] = (uint8_t*)malloc(32);
-    }
-
 
     //make a digest for each file, saving to the fileDigests 2d array
     long workingFileIndex = -1;
-    GetNameAndDigestForEachFile(paramDirName,0, fileDigests, fileNames, &workingFileIndex); 
+    GetNameAndDigestForEachFile(paramDirName, 0, &workingFileIndex); 
 
     metaInfDirPath = strcat(paramDirName, "/META-INF");
     mkdir(metaInfDirPath, 0700);
     CreateBaseManifestFile(metaInfDirPath);    
-
-    //print file names
-    printf("\n");
-    printf("(CompleteSigProcess) file names: \n");
-    for (int p = 0; p<fileCount; p++)
-    {
-        printf("%s\n", fileNames[p]);
-    }
 
     printf("\n");  
 
