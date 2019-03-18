@@ -18,15 +18,26 @@
 
 int stringToHex_test()
 {
-    const char *testKey = "6f910beb039b93eba3bf95eb9ab2610855f18a7512463c78bc9ebf774535e89f";
-    const char* spacedTestKey = insertSpaces(testKey);  //add spaces to string to separate hex values
+    const char *hexPool = "0123456789abcdef";
+    char testKey[65];
+    const char* spacedTestKey; 
     uint8_t *serializedTestKey = malloc(sizeof(uint8_t)*32);
     FILE *testStringFilePointer = fopen("testStringFile", "a+");
     FILE *testHexFilePointer = fopen("testHexFile", "a+");
     char readTestHexFile[65];
     char readTestStringFile[65];
 
-    //convert hardcoded testKey to hex (uint8_t)
+    //randomly generate test key
+    for (int i = 0; i < 64; i++)
+    {
+        testKey[i] = hexPool[rand() % 16];
+    }
+    testKey[64] = "\0";
+
+    //add spaces to string to separate hex values
+    spacedTestKey = insertSpaces(testKey);
+
+    //convert test key (with spaces) into hex
     serializedTestKey = stringToHex(spacedTestKey);
 
     //print original testKey string into test file
@@ -39,10 +50,8 @@ int stringToHex_test()
     {
         fprintf(testHexFilePointer, "%02x", serializedTestKey[i]);
     }
-
     rewind(testStringFilePointer);
     rewind(testHexFilePointer);
-
 
     //read both strings from test files into seperate strings
     fgets(readTestStringFile, 65, (FILE*)testStringFilePointer);
@@ -63,6 +72,8 @@ int stringToHex_test()
         printf("1) stringToHex_test FAILED\n");
         return 1;
     }
+
+    free(serializedTestKey);
 
     return 0;
 }
