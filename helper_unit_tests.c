@@ -8,6 +8,7 @@
 //The following tests are very basic, and should incorporate RANDOM TESTING and EDGE TESTING in the future
 
 #include <time.h>
+#include <stdio.h>
 #include "helper.h"
 
 #define NUM_TESTS 2
@@ -22,8 +23,8 @@ int stringToHex_test()
     uint8_t *serializedTestKey = malloc(sizeof(uint8_t)*32);
     FILE *testStringFilePointer = fopen("testStringFile", "a+");
     FILE *testHexFilePointer = fopen("testHexFile", "a+");
-    char *readTestHexFile = malloc(sizeof(char)*64);
-    char *readTestStringFile = malloc(sizeof(char)*64);
+    char readTestHexFile[65];
+    char readTestStringFile[65];
 
     //convert hardcoded testKey to hex (uint8_t)
     serializedTestKey = stringToHex(spacedTestKey);
@@ -39,9 +40,13 @@ int stringToHex_test()
         fprintf(testHexFilePointer, "%02x", serializedTestKey[i]);
     }
 
+    rewind(testStringFilePointer);
+    rewind(testHexFilePointer);
+
+
     //read both strings from test files into seperate strings
-    fgets(readTestStringFile, 64, testStringFilePointer);
-    fgets(readTestHexFile, 64, testHexFilePointer);
+    fgets(readTestStringFile, 65, (FILE*)testStringFilePointer);
+    fgets(readTestHexFile, 65, (FILE*)testHexFilePointer);
 
     remove("testStringFile");
     remove("testHexFile");
