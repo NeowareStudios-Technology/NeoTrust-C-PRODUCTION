@@ -67,7 +67,7 @@ int stringToHex_test()
         fclose(testHexFilePointer);
         fclose(testStringFilePointer);
 
-        //compare both strings from test files, if same then test passes
+        //compare both strings from test files, if not matching then test fails
         if (strcmp(readTestStringFile, readTestHexFile) != 0)
         {
             printf("1) stringToHex_test FAILED\n");
@@ -76,6 +76,7 @@ int stringToHex_test()
         free(serializedTestKey);
     }
 
+    //test passes if all repeated test loops pass
     printf("1) stringToHex_test passed\n");
     return 0;
 }
