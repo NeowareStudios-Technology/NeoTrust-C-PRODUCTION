@@ -19,8 +19,6 @@
 
 uint8_t *stringToHex(const char *s, int *length);
 
-static uint8_t charToHex(const char *s, char **endptr);
-
 void countFilesInDirectory(char *basePath, const int root, long *count);
 
 //insert spaces between each hex number for parsing into uint8_t array

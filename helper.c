@@ -9,25 +9,17 @@
 
 
 
-
 uint8_t *stringToHex(const char *s, int *length) 
 {
     uint8_t *answer = malloc(65 / 3);
     uint8_t *p;
     for (p = answer; *s; p++)
     {
-        *p = charToHex(s, (char **)&s);
+        *p = strtoul(s, (char**)&s, 16);
         s++;
     }
     *length = p - answer;
     return answer;
-}
-
-
-static uint8_t charToHex(const char *s, char **endptr) {
- assert(s);
- assert(*s);
- return strtoul(s, endptr, 16);
 }
 
 
