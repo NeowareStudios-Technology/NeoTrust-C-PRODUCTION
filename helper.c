@@ -9,7 +9,7 @@
 
 
 
-uint8_t *stringToHex(const char *s, int *length) 
+uint8_t *stringToHex(const char *s) 
 {
     uint8_t *answer = malloc(65 / 3);
     uint8_t *p;
@@ -18,7 +18,6 @@ uint8_t *stringToHex(const char *s, int *length)
         *p = strtoul(s, (char**)&s, 16);
         s++;
     }
-    *length = p - answer;
     return answer;
 }
 

@@ -89,9 +89,14 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 
     //add space between each hex number in private key and convert to uint8_t *
     const char* secKey = insertSpaces(paramSecKey);
-    int lengthKey = 64;
-    int *keyLengthPtr = &lengthKey;
-    serializedSecKey = stringToHex(secKey, keyLengthPtr);
+    serializedSecKey = stringToHex(secKey);
+
+    printf("\n");
+    for (int i = 0; i < 32; i++)
+    {
+        printf("%02x",serializedSecKey[i]);
+    }
+    printf("\n");
 
     //generate public key from private key
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);

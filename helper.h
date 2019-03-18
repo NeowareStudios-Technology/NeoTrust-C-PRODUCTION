@@ -17,7 +17,7 @@
 
 
 
-uint8_t *stringToHex(const char *s, int *length);
+uint8_t *stringToHex(const char *s);
 
 void countFilesInDirectory(char *basePath, const int root, long *count);
 
