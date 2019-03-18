@@ -65,7 +65,7 @@ int stringToHex_test()
 int countFilesInDirectory_test()
 {
     long count = 0;
-    countFilesInDirectory(TEST_DIR_NAME,0, &count);
+    countFilesInDirectory(TEST_DIR_NAME, &count);
 
     if (count == NUM_FILES_TEST_DIR)
     {

@@ -22,7 +22,7 @@ uint8_t *stringToHex(const char *s)
 }
 
 
-void countFilesInDirectory(char *basePath, const int root, long *count)
+void countFilesInDirectory(char *basePath, long *count)
 {
    int i;
    char path[1000];
@@ -42,7 +42,7 @@ void countFilesInDirectory(char *basePath, const int root, long *count)
             strcpy(path, basePath);
             strcat(path, "/");
             strcat(path, dp->d_name);
-            countFilesInDirectory(path, root + 2, count);
+            countFilesInDirectory(path, count);
        }
    }
    closedir(dir);

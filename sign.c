@@ -103,7 +103,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
 
     //count number of files in target directory
-    countFilesInDirectory(paramDirName, 0, &fileCount);
+    countFilesInDirectory(paramDirName, &fileCount);
     printf("\n(CompleteSigProcess) number of files: %d\n", fileCount);
 
     strcpy(metaInfDirPath, paramDirName);

@@ -19,7 +19,7 @@
 
 uint8_t *stringToHex(const char *s);
 
-void countFilesInDirectory(char *basePath, const int root, long *count);
+void countFilesInDirectory(char *basePath, long *count);
 
 //insert spaces between each hex number for parsing into uint8_t array
 char* insertSpaces(const char *s);
