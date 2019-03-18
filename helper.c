@@ -8,17 +8,11 @@
 #include "helper.h"
 
 
-size_t stringLength(const char *str)
-{
-    const char *s;
-    for (s = str; *s; ++s);
-    return(s - str);
-}
 
 
 uint8_t *stringToHex(const char *s, int *length) 
 {
-    uint8_t *answer = malloc((stringLength(s) + 1) / 3);
+    uint8_t *answer = malloc(65 / 3);
     uint8_t *p;
     for (p = answer; *s; p++)
     {

@@ -89,7 +89,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 
     //add space between each hex number in private key and convert to uint8_t *
     const char* secKey = insertSpaces(paramSecKey);
-    int lengthKey = stringLength(secKey);
+    int lengthKey = 64;
     int *keyLengthPtr = &lengthKey;
     serializedSecKey = stringToHex(secKey, keyLengthPtr);
 

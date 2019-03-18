@@ -1,6 +1,7 @@
 CC = gcc 
 CFLAGS = -g --std=c17 -coverage
 OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
+TEST_OBJ = $(OPATH)helper_unit_tests.o $(OPATH)helper.o
 OPATH = ./obj/
 SPATH = ./sha/
 LDIR = lib
@@ -32,6 +33,12 @@ $(OPATH)sha1.o: $(SPATH)sha1.c
 
 $(OPATH)sha384-512.o: $(SPATH)sha384-512.c
 	$(CC) -c $(SPATH)sha384-512.c -o $(OPATH)sha384-512.o $(CFLAGS)
+
+test: $(TEST_OBJ)
+	$(CC) -o test $(TEST_OBJ) $(CFLAGS)
+
+$(OPATH)helper_unit_tests.o: helper_unit_tests.c 
+	$(CC) -c helper_unit_tests.c -o $(OPATH)helper_unit_tests.o $(CFLAGS)
 
 clean:
 	rm obj/*
