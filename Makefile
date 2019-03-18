@@ -37,6 +37,7 @@ $(OPATH)sha384-512.o: $(SPATH)sha384-512.c
 test: $(TEST_OBJ)
 	$(CC) -o test $(TEST_OBJ) $(CFLAGS)
 	./test
+	rm ./test
 
 $(OPATH)helper_unit_tests.o: helper_unit_tests.c 
 	$(CC) -c helper_unit_tests.c -o $(OPATH)helper_unit_tests.o $(CFLAGS)
@@ -44,4 +45,3 @@ $(OPATH)helper_unit_tests.o: helper_unit_tests.c
 clean:
 	rm obj/*
 	rm neopak
-	rm test
