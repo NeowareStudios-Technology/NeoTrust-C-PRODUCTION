@@ -7,7 +7,7 @@
 
 #include "digest.h"
 
-void SaveFileNameAndDigestToManifest(char *basePath, const int root, long *paramWorkingFileIndex, FILE* paramManifestFilePointer)
+void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex, FILE* paramManifestFilePointer)
 {
     int i;
     char path[1000];
@@ -55,7 +55,7 @@ void SaveFileNameAndDigestToManifest(char *basePath, const int root, long *param
 
                 free(fileContents);
             }
-           SaveFileNameAndDigestToManifest(path, root + 2, paramWorkingFileIndex, paramManifestFilePointer);    
+           SaveFileNameAndDigestToManifest(path, paramWorkingFileIndex, paramManifestFilePointer);    
         }
     }
     closedir(dir);

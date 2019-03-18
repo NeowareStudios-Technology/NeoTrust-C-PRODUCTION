@@ -14,7 +14,7 @@
 #include "helper.h"
 
 
-void SaveFileNameAndDigestToManifest(char *basePath, const int root, long *paramWorkingFileIndex, FILE* paramManifestFilePointer);
+void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex, FILE* paramManifestFilePointer);
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 

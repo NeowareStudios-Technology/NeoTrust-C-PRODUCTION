@@ -114,7 +114,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 
     //make a digest for each file, saving to manifest file
     long workingFileIndex = -1;
-    SaveFileNameAndDigestToManifest(paramDirName, 0, &workingFileIndex, manifestFilePointer); 
+    SaveFileNameAndDigestToManifest(paramDirName, &workingFileIndex, manifestFilePointer); 
 
     printf("\n");  
 
