@@ -49,7 +49,7 @@ void countFilesInDirectory(char *basePath, const int root, long *count)
 }
 
 
-//insert spaces between each hex number in string
+//insert spaces between each hex number in string (passed string must be length 64)
 char* insertSpaces(const char *s)
 {
     char *returnString = malloc(sizeof(char)*97);

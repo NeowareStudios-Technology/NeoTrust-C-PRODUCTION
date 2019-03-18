@@ -5,10 +5,15 @@
  * Copywrite NeoWare 2019
  * *********************************/
 
+//The following tests are very basic, and should incorporate RANDOM TESTING and EDGE TESTING in the future
+
 #include <time.h>
 #include "helper.h"
 
-#define NUM_TESTS 1
+#define NUM_TESTS 2
+#define TEST_DIR_NAME "testdir"
+#define NUM_FILES_TEST_DIR 4
+
 
 int stringToHex_test()
 {
@@ -50,7 +55,25 @@ int stringToHex_test()
     }
     else
     {
-        printf("1) stringToHex_test failed\n");
+        printf("1) stringToHex_test FAILED\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+int countFilesInDirectory_test()
+{
+    long count = 0;
+    countFilesInDirectory(TEST_DIR_NAME,0, &count);
+
+    if (count == NUM_FILES_TEST_DIR)
+    {
+        printf("2) countFilesInDirectory_test passed\n");
+    }
+    else
+    {
+        printf("2) countFilesInDirectory_test FAILED\n");
         return 1;
     }
 
@@ -66,6 +89,7 @@ int main()
     printf("\n");
 
     testStatuses[0] = stringToHex_test();
+    testStatuses[1] = countFilesInDirectory_test();
 
     printf("\n");
     for (int i = 0; i < NUM_TESTS; i++)
