@@ -1,7 +1,8 @@
 CC = gcc 
 CFLAGS = -g --std=c99
 OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
-TEST_OBJ = $(OPATH)helper_unit_tests.o $(OPATH)helper.o
+TEST_HELPER_OBJ = $(OPATH)helper_unit_tests.o $(OPATH)helper.o
+TEST_DIGEST_OBJ = $(OPATH)digest_unit_tests.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
 OPATH = ./obj/
 SPATH = ./sha/
 LDIR = lib
@@ -34,14 +35,23 @@ $(OPATH)sha1.o: $(SPATH)sha1.c
 $(OPATH)sha384-512.o: $(SPATH)sha384-512.c
 	$(CC) -c $(SPATH)sha384-512.c -o $(OPATH)sha384-512.o $(CFLAGS)
 
-test: $(TEST_OBJ)
-	$(CC) -o test $(TEST_OBJ) $(CFLAGS)
-	./test
-	rm ./test
+test_helper: $(TEST_HELPER_OBJ)
+	$(CC) -o test_helper $(TEST_HELPER_OBJ) $(CFLAGS)
+	./test_helper
+	rm ./test_helper
 	rm obj/*
 
 $(OPATH)helper_unit_tests.o: helper_unit_tests.c 
 	$(CC) -c helper_unit_tests.c -o $(OPATH)helper_unit_tests.o $(CFLAGS)
+
+test_digest: $(TEST_DIGEST_OBJ)
+	$(CC) -o test_digest $(TEST_DIGEST_OBJ) $(CFLAGS)
+	./test_digest
+	rm ./test_digest
+	rm obj/*
+
+$(OPATH)digest_unit_tests.o: digest_unit_tests.c 
+	$(CC) -c digest_unit_tests.c -o $(OPATH)digest_unit_tests.o $(CFLAGS)
 
 clean:
 	rm obj/*

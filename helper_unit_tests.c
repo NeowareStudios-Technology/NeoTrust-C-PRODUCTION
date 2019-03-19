@@ -5,7 +5,6 @@
  * Copywrite NeoWare 2019
  * *********************************/
 
-//The following tests are very basic, and should incorporate RANDOM TESTING and EDGE TESTING in the future
 
 #include <time.h>
 #include <stdio.h>

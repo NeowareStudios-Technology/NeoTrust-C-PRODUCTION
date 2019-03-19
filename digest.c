@@ -68,23 +68,28 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
     int errorCode;
 
     errorCode = USHAReset(&shaContext, SHA256);
-    if (errorCode == 0)
-        printf("(GenerateDigestFromString) SHA context reset successful\n");
-    else
+    if (errorCode != 0)
+    {
         printf("(GenerateDigestFromString) SHA context reset failed\n");
+        exit(1);
+    }
     
 
     errorCode = USHAInput(&shaContext, (const uint8_t *) paramFileContents, paramFileLength);
-    if (errorCode == 0)
-        printf("(GenerateDigestFromString) SHA input successful\n");
-    else
+    if (errorCode != 0)
+    {
         printf("(GenerateDigestFromString) SHA input failed\n");
+        exit(1);
+    }
+
 
     errorCode = USHAResult(&shaContext, paramFileDigest);
-    if (errorCode == 0)
-        printf("(GenerateDigestFromString) SHA result successful\n");
-    else
+    if (errorCode != 0)
+    {
         printf("(GenerateDigestFromString) SHA result failed\n");
+        exit(1);
+    }
+
 }
 
 FILE* CreateBaseManifestFile(char *paramMetaInfPath, uint8_t *paramPublicKey)
