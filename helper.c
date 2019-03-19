@@ -130,7 +130,7 @@ void printValues(uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp, ui
 }
 
 
-long getFileLength(char* paramFileName, FILE *paramFilePointer)
+long getFileLength(FILE *paramFilePointer)
 {
     long fileLength;
     

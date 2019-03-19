@@ -120,7 +120,7 @@ int getFileLength_test()
 
         fputs(fileContents, testFilePointer);
 
-        fileLength = getFileLength("testLength", testFilePointer);
+        fileLength = getFileLength(testFilePointer);
 
         if (stringLength != fileLength)
         {

@@ -27,4 +27,4 @@ char* insertSpaces(const char *s);
 //print secret key, public key, digest, and signature
 void printValues(uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer);
 
-long getFileLength(char* paramFileName, FILE *paramFilePointer);
+long getFileLength(FILE *paramFilePointer);

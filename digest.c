@@ -37,7 +37,7 @@ void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex
                 FILE* filePointer = fopen(path, "r");
                 if (!filePointer)
                     printf("(SaveFileNameAndDigestToManifest) %s file coud not be opened to read",path);
-                fileLength = getFileLength(path, filePointer);
+                fileLength = getFileLength(filePointer);
                 char *fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
                 fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
                 fclose(filePointer); // Close the file
