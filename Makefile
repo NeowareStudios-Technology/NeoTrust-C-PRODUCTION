@@ -35,20 +35,24 @@ $(OPATH)sha1.o: $(SPATH)sha1.c
 $(OPATH)sha384-512.o: $(SPATH)sha384-512.c
 	$(CC) -c $(SPATH)sha384-512.c -o $(OPATH)sha384-512.o $(CFLAGS)
 
+test: test_helper test_digest
+	$(test_helper)
+	$(test_digest)
+	rm obj/*
+
 test_helper: $(TEST_HELPER_OBJ)
 	$(CC) -o test_helper $(TEST_HELPER_OBJ) $(CFLAGS)
-	./test_helper
+	./test_helper >> unittestresults.out
 	rm ./test_helper
-	rm obj/*
+	
 
 $(OPATH)helper_unit_tests.o: helper_unit_tests.c 
 	$(CC) -c helper_unit_tests.c -o $(OPATH)helper_unit_tests.o $(CFLAGS)
 
 test_digest: $(TEST_DIGEST_OBJ)
 	$(CC) -o test_digest $(TEST_DIGEST_OBJ) $(CFLAGS)
-	./test_digest
+	./test_digest >> unittestresults.out
 	rm ./test_digest
-	rm obj/*
 
 $(OPATH)digest_unit_tests.o: digest_unit_tests.c 
 	$(CC) -c digest_unit_tests.c -o $(OPATH)digest_unit_tests.o $(CFLAGS)
