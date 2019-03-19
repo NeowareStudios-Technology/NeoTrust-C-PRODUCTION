@@ -14,6 +14,8 @@ int GenerateDigestFromString_test()
         char actualDigest[65];
         FILE* filePointer;
         FILE* testHexFilePointer;
+
+        //hash and check all 7 test files
         switch(i)
         {
             case 0:
@@ -45,6 +47,8 @@ int GenerateDigestFromString_test()
                 strcpy(expectedDigest, "a3cf159bf3eeaf0d9e600985d55b43127a4f1b07cfaa000cf50a85a746b38f90");
                 break;
         }
+
+        //read contents of file into string
         filePointer = fopen(path, "r");
         if (!filePointer)
             printf("(SaveFileNameAndDigestToManifest) %s file coud not be opened to read",path);
@@ -55,16 +59,18 @@ int GenerateDigestFromString_test()
 
         GenerateDigestFromString(fileContents, fileLength, fileDigest);
 
+        //print hex digest uint8_t into test file
         testHexFilePointer = fopen("testHexFile", "a+");
-        //print hex converted testKey uint8_t into test file
         for (int i = 0; i < 32; i++)
         {
             fprintf(testHexFilePointer, "%02x", fileDigest[i]);
         }
         rewind(testHexFilePointer);
 
+        //convert contents of hex digest file to string
         fgets(actualDigest, 65, (FILE*)testHexFilePointer);
 
+        //if generated digest does not match the expected digest, test fails
         if (strcmp(actualDigest, expectedDigest) != 0)
         {
             printf("1) GenerateDigestFromString_test FAILED\n");
@@ -72,7 +78,6 @@ int GenerateDigestFromString_test()
         }
 
         remove("testHexFile");
-
     }
 
     printf("1) GenerateDigestFromString_test passed\n");
