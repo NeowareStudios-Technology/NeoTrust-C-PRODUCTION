@@ -45,7 +45,6 @@ void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex
                 GenerateDigestFromString(fileContents, fileLength, fileDigest);
 
                 //save file names and digests to manifest file
-                printf("(SaveFileNameAndDigestToManifest) file : %s\n", dp->d_name);
                 fputs("\n\nName: ", paramManifestFilePointer);
                 fputs(dp->d_name, paramManifestFilePointer);
                 fputs("\nDigest-Algorithms: SHA256\n", paramManifestFilePointer);
