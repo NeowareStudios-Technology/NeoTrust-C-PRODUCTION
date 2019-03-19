@@ -38,6 +38,7 @@ test: $(TEST_OBJ)
 	$(CC) -o test $(TEST_OBJ) $(CFLAGS)
 	./test
 	rm ./test
+	rm obj/*
 
 $(OPATH)helper_unit_tests.o: helper_unit_tests.c 
 	$(CC) -c helper_unit_tests.c -o $(OPATH)helper_unit_tests.o $(CFLAGS)

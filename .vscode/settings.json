@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "secp256k1.h": "c",
-        "sign.h": "c"
+        "sign.h": "c",
+        "time.h": "c"
     }
 }
