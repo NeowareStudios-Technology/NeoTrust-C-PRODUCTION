@@ -16,7 +16,11 @@
 #define LONG_TEST_REPEATS 20
 #define SHORT_TEST_REPEATS 1000
 
-//this is a short test
+
+//creates a random hex key using chars, converts that key to uint8_t hex values, reads both the char hex string and
+//the uint8_t hex string to 2 seperate files, reads both of those files into seperate strings, then compares both string
+//-if the string smatch, the test passes
+//-this test is repeated SHORT_TEST_REPEATS times
 int stringToHex_test()
 {
     const char *hexPool = "0123456789abcdef";
@@ -81,8 +85,9 @@ int stringToHex_test()
     return 0;
 }
 
-//this test requires you to reference an existing directory with TEST_DIR_NAME and to set NUM_FILES_TEST_DIR
-//to the number of files in this directory
+
+//counts files in "testdir" directory and compares to known value for number of files
+//-if generated file number matches expected known file number, test passes
 int countFilesInDirectory_test()
 {
     long count = 0;
@@ -101,7 +106,11 @@ int countFilesInDirectory_test()
     return 0;
 }
 
-//this is a long test
+
+//creates a file of random length between 0 and 9999999, calculates file length, and compares calculated file length to 
+//known file length
+//-if calculated file length matches known file length, test passes
+//-this test is repeated LONG_TEST_REPEATS times
 int getFileLength_test()
 {
     for (int repeat = 0; repeat < LONG_TEST_REPEATS; repeat++)
@@ -136,6 +145,7 @@ int getFileLength_test()
     return 0;
 }
 
+
 void printTestStatuses(int paramTestStatuses[NUM_TESTS])
 {
     for (int i = 0; i < NUM_TESTS; i++)
@@ -146,10 +156,12 @@ void printTestStatuses(int paramTestStatuses[NUM_TESTS])
     printf("\n");
 }
 
+
 void printHeader()
 {
     printf("\n***** Unit Tests: helper.c *****\n");
 }
+
 
 int main()
 {

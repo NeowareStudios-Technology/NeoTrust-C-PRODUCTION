@@ -12,6 +12,9 @@
 #define NUM_TESTS 4
 #define TEST_DIR_NAME "testdir"
 
+
+//converts each file in the "testdir" directory to sha256 digests and compares to known correct values
+//-if values match, test passes
 int GenerateDigestFromString_test()
 {
     long fileLength = 0;
@@ -94,6 +97,9 @@ int GenerateDigestFromString_test()
     return 0;
 }
 
+
+//creates a sample manifest file with header and ensures the content matches the expected content
+//-if header matches expected content, test passes
 int CreateBaseManifestFile_test()
 {
     FILE *manifestFilePointer;
@@ -130,6 +136,9 @@ int CreateBaseManifestFile_test()
 
 }
 
+
+//creates a sample signature file with header and ensures the content matches the expected content
+//-if header matches expected content, test passes
 int CreateBaseSignatureFile_test()
 {
     FILE *signatureFilePointer;
@@ -165,6 +174,9 @@ int CreateBaseSignatureFile_test()
 
 }
 
+
+//creates full manifest file using digests from files in testdir and matches file contents with expected correct content
+//-if content matches, test passes
 int SaveFileNameAndDigestToManifest_test()
 {
     long workingFileIndex = -1;
@@ -202,6 +214,7 @@ int SaveFileNameAndDigestToManifest_test()
     return 0;
 }
 
+
 void printTestStatuses(int paramTestStatuses[NUM_TESTS])
 {
     for (int i = 0; i < NUM_TESTS; i++)
@@ -212,10 +225,12 @@ void printTestStatuses(int paramTestStatuses[NUM_TESTS])
     printf("\n");
 }
 
+
 void printHeader()
 {
     printf("\n***** Unit Tests: digest.c *****\n");
 }
+
 
 int main()
 {

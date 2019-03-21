@@ -11,6 +11,9 @@
 
 #define NUM_TESTS 1
 
+
+//ensures the object returned by CreateTestSecp256k1ScalarObject is 32 bytes in size 
+//-if object is size 32, test passes
 int CreateTestSecp256k1ScalarObject_test()
 {
     secp256k1_scalar testScalarObject;
@@ -27,6 +30,7 @@ int CreateTestSecp256k1ScalarObject_test()
     return 0;
 }
 
+
 void printTestStatuses(int paramTestStatuses[NUM_TESTS])
 {
     for (int i = 0; i < NUM_TESTS; i++)
@@ -37,10 +41,12 @@ void printTestStatuses(int paramTestStatuses[NUM_TESTS])
     printf("\n");
 }
 
+
 void printHeader()
 {
     printf("\n***** Unit Tests: sign.c *****\n");
 }
+
 
 int main()
 {
