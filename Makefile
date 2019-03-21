@@ -36,9 +36,10 @@ $(OPATH)sha1.o: $(SPATH)sha1.c
 $(OPATH)sha384-512.o: $(SPATH)sha384-512.c
 	$(CC) -c $(SPATH)sha384-512.c -o $(OPATH)sha384-512.o $(CFLAGS)
 
-test: test_helper test_digest
+test: test_helper test_digest test_sign
 	$(test_helper)
 	$(test_digest)
+	$(test_sign)
 	rm obj/*
 
 test_helper: $(TEST_HELPER_OBJ)

@@ -29,7 +29,6 @@ void CompleteTestSigProcess()
     //generate random message hash and private key?
     CreateTestSecp256k1ScalarObject(&myMessageHash);
     CreateTestSecp256k1ScalarObject(&myPrivateKey);
-    printf("SIZE::%d", sizeof(myPrivateKey));
     
     //convert message hash to uint8_t 32 bytes
     secp256k1_scalar_get_b32(serializedDigest, &myMessageHash);
@@ -49,6 +48,7 @@ void CompleteTestSigProcess()
     free(serializedSignatureDer);
 }
 
+
 void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
    do {
        uint8_t b32[32];
@@ -61,6 +61,7 @@ void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
        break;
    } while(1);
 }
+
 
 void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 {
@@ -131,6 +132,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
     free(serializedSignatureDer);
 }
 
+
 void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint8_t* secKey, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer)
 {
     /*a general template for this function can be found in 
@@ -154,7 +156,6 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint
     
     //sign message hash with private key
     secp256k1_ecdsa_sign(myContext, &mySig, digest, secKey, NULL, NULL);
-    printf("Signature created \n");
 
     //verify signature
     if (1 != secp256k1_ecdsa_verify(myContext, &mySig, digest, &paramMyPublicKey))
@@ -185,6 +186,7 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint
         exit(1);
     }
 }
+
 
 secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp)
 {

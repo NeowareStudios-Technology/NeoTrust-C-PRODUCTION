@@ -9,7 +9,7 @@
 #include <time.h>
 #include "sign.h"
 
-#define NUM_TESTS 2
+#define NUM_TESTS 3
 
 
 //ensures the object returned by CreateTestSecp256k1ScalarObject is 32 bytes in size 
@@ -47,9 +47,43 @@ int GeneratePubKeyFromPrivKey_test()
     secp256k1_context *testContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
     CreateTestSecp256k1ScalarObject(&testSecKey);
     secp256k1_scalar_get_b32(serializedTestSecKey, &testSecKey);
-    secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(testContext,serializedTestSecKey, serializedTestPubKeyCompressed, serializedTestPubKeyUncompressed);
+    GeneratePubKeyFromPrivKey(testContext,serializedTestSecKey, serializedTestPubKeyCompressed, serializedTestPubKeyUncompressed);
 
     printf("2) GeneratePubKeyFromPrivKey_test passed\n");
+    return 0;
+}
+
+
+int VerifyParamsAndSignMessageWithEcdsa_test()
+{
+    uint8_t* serializedTestDigest;
+    uint8_t* serializedTestSecKey;
+    uint8_t* serializedTestPubKeyComp;
+    uint8_t* serializedTestPubKeyUncomp;
+    uint8_t* serializedSignatureComp;
+    uint8_t* serializedSignatureDer;
+    serializedTestDigest = malloc(sizeof(uint8_t)*32);
+    serializedTestSecKey = malloc(sizeof(uint8_t)*32);
+    serializedTestPubKeyComp = malloc(sizeof(uint8_t)*33);
+    serializedTestPubKeyUncomp = malloc(sizeof(uint8_t)*65);
+    serializedSignatureComp = malloc(sizeof(uint8_t)*64);
+    //72 is max length for DER sig, but can be shorters
+    serializedSignatureDer = malloc(sizeof(uint8_t)*72);
+    secp256k1_scalar testMessageHash, testPrivateKey;
+
+    //generate random message hash and private key?
+    CreateTestSecp256k1ScalarObject(&testMessageHash);
+    CreateTestSecp256k1ScalarObject(&testPrivateKey);
+    
+    //convert message hash to uint8_t 32 bytes
+    secp256k1_scalar_get_b32(serializedTestDigest, &testMessageHash);
+    secp256k1_scalar_get_b32(serializedTestSecKey, &testPrivateKey);
+
+    secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
+    secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(myContext,serializedTestSecKey, serializedTestPubKeyComp, serializedTestPubKeyUncomp);
+    VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedTestSecKey, serializedTestDigest, serializedSignatureComp, serializedSignatureDer);
+
+    printf("3) VerifyParamsAndSignMessageWithEcdsa_test passed\n");
     return 0;
 }
 
@@ -80,6 +114,7 @@ int main()
 
     testStatuses[0] = CreateTestSecp256k1ScalarObject_test();
     testStatuses[1] = GeneratePubKeyFromPrivKey_test();
+    testStatuses[2] = VerifyParamsAndSignMessageWithEcdsa_test();
 
     printTestStatuses(testStatuses);
 
