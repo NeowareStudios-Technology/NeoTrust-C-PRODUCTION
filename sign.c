@@ -146,9 +146,7 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint
     
 
     //verify the private key
-    if(1 == secp256k1_ec_seckey_verify(myContext, secKey))
-        printf("\nPrivate key verified \n");
-    else
+    if(1 != secp256k1_ec_seckey_verify(myContext, secKey))
     {
         printf("Private key failed verification \n");
         exit(1);
@@ -159,9 +157,7 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint
     printf("Signature created \n");
 
     //verify signature
-    if (1 == secp256k1_ecdsa_verify(myContext, &mySig, digest, &paramMyPublicKey))
-        printf("Signature verified \n");
-    else
+    if (1 != secp256k1_ecdsa_verify(myContext, &mySig, digest, &paramMyPublicKey))
     {
         printf("Signature could not be verified \n");
         exit(1);
@@ -175,9 +171,7 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint
 
     //check if compact signature can be parsed
     secp256k1_ecdsa_signature sigTest0;
-    if (1 == secp256k1_ecdsa_signature_parse_compact(myContext, &sigTest0, signatureComp))
-        printf("Compact signature able to be parsed \n");
-    else
+    if (1 != secp256k1_ecdsa_signature_parse_compact(myContext, &sigTest0, signatureComp))
     {
         printf("Compact signature could not be parsed \n");
         exit(1);
@@ -185,9 +179,7 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint
 
     //check if DER encoded signature can be parsed
     secp256k1_ecdsa_signature sigTest1;
-    if (1 == secp256k1_ecdsa_signature_parse_der(myContext, &sigTest1, signatureDer, derLen))
-        printf("DER encoded signature able to be parsed \n\n");
-    else
+    if (1 != secp256k1_ecdsa_signature_parse_der(myContext, &sigTest1, signatureDer, derLen))
     {
         printf("DER encoded signature could not be parsed \n");
         exit(1);
@@ -206,7 +198,7 @@ secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, ui
         printf("Public key could not be created \n");
         exit(1);
     }
-    
+
     //get seralized public key (compressed)
     pubKeyCompLen = 33;
     secp256k1_ec_pubkey_serialize(paramMyContext, pubKeyComp, &pubKeyCompLen, &myPublicKey, SECP256K1_EC_COMPRESSED);
