@@ -29,8 +29,9 @@ void CompleteTestSigProcess()
     //generate random message hash and private key?
     CreateTestSecp256k1ScalarObject(&myMessageHash);
     CreateTestSecp256k1ScalarObject(&myPrivateKey);
+    printf("SIZE::%d", sizeof(myPrivateKey));
     
-    //convert message hash to uint8_t 32 bytes?
+    //convert message hash to uint8_t 32 bytes
     secp256k1_scalar_get_b32(serializedDigest, &myMessageHash);
     secp256k1_scalar_get_b32(serializedSecKey, &myPrivateKey);
 

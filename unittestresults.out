@@ -1,0 +1,5 @@
+
+***** Unit Tests: sign.c *****
+1) CreateTestSecp256k1ScalarObject_test passed
+0
+

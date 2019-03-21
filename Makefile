@@ -3,6 +3,7 @@ CFLAGS = -g --std=c99
 OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
 TEST_HELPER_OBJ = $(OPATH)helper_unit_tests.o $(OPATH)helper.o
 TEST_DIGEST_OBJ = $(OPATH)digest_unit_tests.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
+TEST_SIGN_OBJ = $(OPATH)sign_unit_tests.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
 OPATH = ./obj/
 SPATH = ./sha/
 LDIR = lib
@@ -56,6 +57,14 @@ test_digest: $(TEST_DIGEST_OBJ)
 
 $(OPATH)digest_unit_tests.o: digest_unit_tests.c 
 	$(CC) -c digest_unit_tests.c -o $(OPATH)digest_unit_tests.o $(CFLAGS)
+
+test_sign: $(TEST_SIGN_OBJ)
+	$(CC) -o test_sign $(TEST_SIGN_OBJ) $(LIBS) $(CFLAGS)
+	./test_sign >> unittestresults.out
+	rm ./test_sign
+
+$(OPATH)sign_unit_tests.o: sign_unit_tests.c 
+	$(CC) -c sign_unit_tests.c -o $(OPATH)sign_unit_tests.o $(CFLAGS)
 
 clean:
 	rm obj/*

@@ -6,10 +6,26 @@
  * *********************************/
 
 
+#include <time.h>
 #include "sign.h"
 
 #define NUM_TESTS 1
 
+int CreateTestSecp256k1ScalarObject_test()
+{
+    secp256k1_scalar testScalarObject;
+
+    CreateTestSecp256k1ScalarObject(&testScalarObject);
+
+    if (sizeof(testScalarObject) != 32)
+    {
+        printf("1) CreateTestSecp256k1ScalarObject_test FAILED\n");
+        return 1;
+    }
+
+    printf("1) CreateTestSecp256k1ScalarObject_test passed\n");
+    return 0;
+}
 
 void printTestStatuses(int paramTestStatuses[NUM_TESTS])
 {
@@ -33,7 +49,7 @@ int main()
 
     printHeader();
 
-    testStatuses[0] = GenerateDigestFromString_test();
+    testStatuses[0] = CreateTestSecp256k1ScalarObject_test();
 
     printTestStatuses(testStatuses);
 
