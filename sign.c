@@ -36,7 +36,7 @@ void CompleteTestSigProcess()
     secp256k1_scalar_get_b32(serializedSecKey, &myPrivateKey);
 
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
-    secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
+    secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
     VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, serializedDigest, serializedSignatureComp, serializedSignatureDer);
 
     printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
@@ -99,7 +99,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 
     //generate public key from private key
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
-    secp256k1_pubkey myPublicKey = GenerateAndVerifyPubKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
+    secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
 
     //count number of files in target directory
     countFilesInDirectory(paramDirName, &fileCount);
@@ -119,7 +119,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
   
     //need to create signature file using manifest file entries
     //need to sign digest of entire manifest file
-    
+
     //VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, manifestDigest, serializedSignatureComp, serializedSignatureDer);
     //printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
    
@@ -194,28 +194,24 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint
     }
 }
 
-secp256k1_pubkey GenerateAndVerifyPubKey(secp256k1_context *paramMyContext, uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp)
+secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp)
 {
     secp256k1_pubkey myPublicKey;
     size_t pubKeyCompLen;
     size_t pubKeyUncompLen;
 
     //construct the corresponding public key
-    if(1 == secp256k1_ec_pubkey_create(paramMyContext, &myPublicKey, secKey))
-        printf("Public key created \n");
-    else
+    if(1 != secp256k1_ec_pubkey_create(paramMyContext, &myPublicKey, secKey))
     {
         printf("Public key could not be created \n");
         exit(1);
     }
-
+    
     //get seralized public key (compressed)
     pubKeyCompLen = 33;
     secp256k1_ec_pubkey_serialize(paramMyContext, pubKeyComp, &pubKeyCompLen, &myPublicKey, SECP256K1_EC_COMPRESSED);
     secp256k1_pubkey pubkeytest0;
-    if (1 == secp256k1_ec_pubkey_parse(paramMyContext, &pubkeytest0, pubKeyComp, pubKeyCompLen)) 
-        printf("Compressed public key able to be parsed \n");
-    else
+    if (1 != secp256k1_ec_pubkey_parse(paramMyContext, &pubkeytest0, pubKeyComp, pubKeyCompLen)) 
     {
         printf("Error parsing compressed public key \n");
         exit(1);
@@ -225,9 +221,7 @@ secp256k1_pubkey GenerateAndVerifyPubKey(secp256k1_context *paramMyContext, uint
     pubKeyUncompLen = 65;
     secp256k1_ec_pubkey_serialize(paramMyContext, pubKeyUncomp, &pubKeyUncompLen, &myPublicKey, SECP256K1_EC_UNCOMPRESSED);
     secp256k1_pubkey pubkeytest1;
-    if (1 == secp256k1_ec_pubkey_parse(paramMyContext, &pubkeytest1, pubKeyUncomp, pubKeyUncompLen)) 
-        printf("Uncompressed public key able to be parsed \n");
-    else
+    if (1 != secp256k1_ec_pubkey_parse(paramMyContext, &pubkeytest1, pubKeyUncomp, pubKeyUncompLen)) 
     {
         printf("Error parsing uncompressed public key \n");
         exit(1);
