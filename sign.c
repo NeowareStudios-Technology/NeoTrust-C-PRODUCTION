@@ -27,8 +27,8 @@ void CompleteTestSigProcess()
 
     printf("\nStarting signing test with test pub/priv keys and test message hash");
     //generate random message hash and private key?
-    random_scalar_order_test_new(&myMessageHash);
-    random_scalar_order_test_new(&myPrivateKey);
+    CreateTestSecp256k1ScalarObject(&myMessageHash);
+    CreateTestSecp256k1ScalarObject(&myPrivateKey);
     
     //convert message hash to uint8_t 32 bytes?
     secp256k1_scalar_get_b32(serializedDigest, &myMessageHash);
@@ -50,7 +50,7 @@ void CompleteTestSigProcess()
     free(serializedSignatureDer);
 }
 
-void random_scalar_order_test_new(secp256k1_scalar *num) {
+void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
    do {
        uint8_t b32[32];
        int overflow = 0;

@@ -20,7 +20,7 @@
 
 void CompleteTestSigProcess();
 
-void random_scalar_order_test_new(secp256k1_scalar *num);
+void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num);
 
 void CompleteSigProcess(char *paramSecKey, char *paramFileName);
 

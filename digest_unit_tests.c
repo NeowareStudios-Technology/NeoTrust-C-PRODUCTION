@@ -1,7 +1,14 @@
+/************************************
+ * Project: NeoPak
+ * Author: David Lee Ramirez
+ * Date: 3/18/19
+ * Copywrite NeoWare 2019
+ * *********************************/
+
+
 #include<time.h>
 #include "digest.h"
 
-#define NUM_REPEATS 100
 #define NUM_TESTS 4
 #define TEST_DIR_NAME "testdir"
 
