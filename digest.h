@@ -14,7 +14,7 @@
 #include "helper.h"
 
 
-void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex, FILE* paramManifestFilePointer);
+void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 
@@ -22,4 +22,6 @@ FILE* CreateBaseManifestFile(char *paramTargetDirectoryName, uint8_t *paramPubli
 
 FILE* CreateBaseSignatureFile(char *paramTargetDirectoryName);
 
-void GenerateAndSaveSignFileDigest(uint8_t *paramFileDigest, char *paramFileName);
+void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName, uint8_t *paramFileDigest);
+
+void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, uint8_t *paramFileDigest);
