@@ -73,6 +73,9 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     FILE *tempFilePointer;
     char *signatureFileEntry = malloc(1000);
     char *fileDigestChars = malloc(65); 
+    uint8_t signatureEntryDigest[32];
+    size_t signatureEntryLength;
+
     strcat(signatureFileEntry, "Name: ");
     strcat(signatureFileEntry, paramFileName);
     strcat(signatureFileEntry, "\nDigest-Algorithms: SHA256\n");
@@ -93,11 +96,20 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     fgets(fileDigestChars, 65, tempFilePointer);
     strcat(signatureFileEntry, fileDigestChars);
     strcat(signatureFileEntry, "\0");
+    signatureEntryLength = stringLength(signatureFileEntry);
 
     fclose(tempFilePointer);
     remove("tempFile");
 
-   // printf("\n\n%s\n\n", signatureFileEntry);
+    GenerateDigestFromString(signatureFileEntry, signatureEntryLength, signatureEntryDigest);
+
+    printf("\n");
+    printf("%s\n", paramFileName);
+    for (int i = 0; i < 32; i++)
+    {
+        printf("%02x", signatureEntryDigest[i]);
+    }
+    printf("\n");
 
     free(signatureFileEntry);
     free(fileDigestChars);
@@ -116,7 +128,6 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
         printf("(GenerateDigestFromString) SHA context reset failed\n");
         exit(1);
     }
-    
 
     errorCode = USHAInput(&shaContext, (const uint8_t *) paramFileContents, paramFileLength);
     if (errorCode != 0)
@@ -125,14 +136,12 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
         exit(1);
     }
 
-
     errorCode = USHAResult(&shaContext, paramFileDigest);
     if (errorCode != 0)
     {
         printf("(GenerateDigestFromString) SHA result failed\n");
         exit(1);
     }
-
 }
 
 FILE* CreateBaseManifestFile(char *paramMetaInfPath, uint8_t *paramPublicKey)
