@@ -115,7 +115,7 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
     //make a digest for each file, saving to manifest file
     long workingFileIndex = -1;
     CreateDigestsAndMetaInfEntries(paramDirName, &workingFileIndex, manifestFilePointer, signatureFilePointer); 
-
+    GenerateFullManifestDigestAndSaveInSigFile(manifestFilePointer, signatureFilePointer);
     printf("\n");  
   
     //need to create signature file using manifest file entries
@@ -124,6 +124,8 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
     //VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, manifestDigest, serializedSignatureComp, serializedSignatureDer);
     //printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, fileDigests[i], serializedSignatureComp, serializedSignatureDer);
    
+    fclose(manifestFilePointer);
+    fclose(signatureFilePointer);
     free(serializedDigest);
     free(serializedSecKey);
     free(serializedPubKeyCompressed);

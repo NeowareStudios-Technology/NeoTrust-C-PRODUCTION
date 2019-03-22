@@ -45,7 +45,7 @@ void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex,
                 GenerateDigestFromString(fileContents, fileLength, fileDigest);
 
                 CreateManifestFileEntry(paramManifestFilePointer, dp->d_name, fileDigest);
-                CreateSignatureFileEntry(paramSignatureFilePointer, dp->d_name, fileDigest);
+                CreateSignatureFileEntry(paramSignatureFilePointer, dp->d_name, basePath, fileDigest);
                 
                 free(fileContents);
             }
@@ -68,7 +68,7 @@ void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName
     }
 }
 
-void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, uint8_t *paramFileDigest)
+void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest)
 {
     FILE *tempFilePointer;
     char *signatureFileEntry = malloc(1000);
@@ -111,10 +111,29 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     {
         fprintf(paramSignatureFilePointer, "%02x", signatureEntryDigest[i]);
     }
-
     free(signatureFileEntry);
     free(fileDigestChars);
 
+}
+
+void GenerateFullManifestDigestAndSaveInSigFile(FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer)
+{
+    char *manifestFileContents;
+    long manifestFileLength;
+    uint8_t manifestFileDigest[32];
+
+    //read manifest file contents
+    if (!paramManifestFilePointer || !paramSignatureFilePointer)
+        printf("Manifest file or signature file coud not be opened to read");
+    manifestFileLength = getFileLength(paramManifestFilePointer);
+    manifestFileContents = (char *)malloc((manifestFileLength+1)*sizeof(char)); // Enough memory for file + \0
+    fread(manifestFileContents, manifestFileLength, 1, paramManifestFilePointer); // Read in the entire file
+
+    GenerateDigestFromString(manifestFileContents, manifestFileLength, manifestFileDigest);
+    for (int i = 0; i < 32; i++)
+    {
+        printf("%02x", manifestFileDigest[i]);
+    }
 }
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)
