@@ -7,7 +7,7 @@
 
 #include "digest.h"
 
-void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex, FILE* paramManifestFilePointer, FILE* paramSignatureFilePointer)
+void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex, FILE* paramManifestFilePointer, FILE* paramSignatureFilePointer)
 {
     int i;
     char path[1000];
@@ -16,7 +16,6 @@ void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex
     long fileLength;
     uint8_t fileDigest[32];
     uint8_t manifestEntryDigest[32];
-    FILE *tempFilePointer;
 
     if (!dir)
         return; 
@@ -32,14 +31,12 @@ void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex
            //if it is a file, read file into string
            if (dp->d_type != DT_DIR)
             {
-                char *signatureFileEntry = malloc(1000);
-                char *fileDigestChars = malloc(65); 
                 *paramWorkingFileIndex= *paramWorkingFileIndex + 1;
 
                 //read target file contents
                 FILE* filePointer = fopen(path, "r");
                 if (!filePointer)
-                    printf("(SaveFileNameAndDigestToManifest) %s file coud not be opened to read",path);
+                    printf("(CreateDigestsAndMetaInfEntries) %s file coud not be opened to read",path);
                 fileLength = getFileLength(filePointer);
                 char *fileContents = (char *)malloc((fileLength+1)*sizeof(char)); // Enough memory for file + \0
                 fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
@@ -48,41 +45,11 @@ void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex
                 GenerateDigestFromString(fileContents, fileLength, fileDigest);
 
                 CreateManifestFileEntry(paramManifestFilePointer, dp->d_name, fileDigest);
-                //save file names and digests to manifest file
-                //fputs("\n\nName: ", paramManifestFilePointer);
-                strcat(signatureFileEntry, "Name: ");
-                //fputs(dp->d_name, paramManifestFilePointer);
-                strcat(signatureFileEntry, dp->d_name);
-                //fputs("\nDigest-Algorithms: SHA256\n", paramManifestFilePointer);
-                strcat(signatureFileEntry, "\nDigest-Algorithms: SHA256\n");
-                //fputs("SHA256-Digest: ", paramManifestFilePointer);
-                strcat(signatureFileEntry, "SHA256-Digest: ");
-                
-                tempFilePointer = fopen("tempFile", "a+");
-                if (!tempFilePointer)
-                {
-                    printf("\nerror: tempFile could not be opened\n");
-                    exit(1);
-                }
-                for (int i = 0; i < 32; i++)
-                {
-                    //fprintf(paramManifestFilePointer, "%02x", fileDigest[i]);
-                    fprintf(tempFilePointer,"%02x", fileDigest[i]);
-                }
-                rewind(tempFilePointer);
-                
-                fgets(fileDigestChars, 65, tempFilePointer);
-                strcat(signatureFileEntry, fileDigestChars);
-                strcat(signatureFileEntry, "\0");
-
-                fclose(tempFilePointer);
-                remove("tempFile");
+                CreateSignatureFileEntry(paramSignatureFilePointer, dp->d_name, fileDigest);
                 
                 free(fileContents);
-                free(signatureFileEntry);
-                free(fileDigestChars);
             }
-           SaveFileNameAndDigestToManifest(path, paramWorkingFileIndex, paramManifestFilePointer, paramSignatureFilePointer);    
+           CreateDigestsAndMetaInfEntries(path, paramWorkingFileIndex, paramManifestFilePointer, paramSignatureFilePointer);    
         }
     }
     closedir(dir);
@@ -103,6 +70,37 @@ void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName
 
 void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, uint8_t *paramFileDigest)
 {
+    FILE *tempFilePointer;
+    char *signatureFileEntry = malloc(1000);
+    char *fileDigestChars = malloc(65); 
+    strcat(signatureFileEntry, "Name: ");
+    strcat(signatureFileEntry, paramFileName);
+    strcat(signatureFileEntry, "\nDigest-Algorithms: SHA256\n");
+    strcat(signatureFileEntry, "SHA256-Digest: ");
+
+    tempFilePointer = fopen("tempFile", "a+");
+    if (!tempFilePointer)
+    {
+        printf("\nerror: tempFile could not be opened\n");
+        exit(1);
+    }
+
+    for (int i = 0; i < 32; i++)
+        fprintf(tempFilePointer,"%02x", paramFileDigest[i]);
+    
+    rewind(tempFilePointer);
+                
+    fgets(fileDigestChars, 65, tempFilePointer);
+    strcat(signatureFileEntry, fileDigestChars);
+    strcat(signatureFileEntry, "\0");
+
+    fclose(tempFilePointer);
+    remove("tempFile");
+
+   // printf("\n\n%s\n\n", signatureFileEntry);
+
+    free(signatureFileEntry);
+    free(fileDigestChars);
 
 }
 
