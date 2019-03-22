@@ -103,13 +103,14 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
 
     GenerateDigestFromString(signatureFileEntry, signatureEntryLength, signatureEntryDigest);
 
-    printf("\n");
-    printf("%s\n", paramFileName);
+    fputs("\n\nName: ", paramSignatureFilePointer);
+    fputs(paramFileName, paramSignatureFilePointer);
+    fputs("\nDigest-Algorithms: SHA256\n", paramSignatureFilePointer);
+    fputs("SHA256-Digest: ", paramSignatureFilePointer);
     for (int i = 0; i < 32; i++)
     {
-        printf("%02x", signatureEntryDigest[i]);
+        fprintf(paramSignatureFilePointer, "%02x", signatureEntryDigest[i]);
     }
-    printf("\n");
 
     free(signatureFileEntry);
     free(fileDigestChars);

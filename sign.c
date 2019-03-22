@@ -8,7 +8,7 @@
 #include "sign.h"
 
 //sets up all data structures necessary to sign a test message with a test private key and signs in ECDSA
-void CompleteTestSigProcess()
+void StartTestSignatureProcess()
 {
     uint8_t* serializedDigest;
     uint8_t* serializedSecKey;
@@ -63,7 +63,7 @@ void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
 }
 
 
-void CompleteSigProcess(char *paramSecKey, char *paramDirName)
+void StartSignatureProcess(char *paramSecKey, char *paramDirName)
 {
     char **fileContents;
     FILE *manifestFilePointer;
@@ -104,7 +104,7 @@ void CompleteSigProcess(char *paramSecKey, char *paramDirName)
 
     //count number of files in target directory
     countFilesInDirectory(paramDirName, &fileCount);
-    printf("\n(CompleteSigProcess) number of files: %d\n", fileCount);
+    printf("\n(StartSignatureProcess) number of files: %d\n", fileCount);
 
     strcpy(metaInfDirPath, paramDirName);
     strcat(metaInfDirPath, "/META-INF");

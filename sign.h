@@ -18,11 +18,11 @@
 #include "helper.h"
 #include "digest.h"
 
-void CompleteTestSigProcess();
+void StartTestSignatureProcess();
 
 void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num);
 
-void CompleteSigProcess(char *paramSecKey, char *paramFileName);
+void StartSignatureProcess(char *paramSecKey, char *paramFileName);
 
 void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey,uint8_t* secKey,uint8_t* digest, 
     uint8_t* signatureComp, uint8_t* signatureDer);

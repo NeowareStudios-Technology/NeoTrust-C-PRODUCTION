@@ -45,10 +45,10 @@ void ExecuteCommand(char **paramArgs, enum commands paramCommand)
             DisplayUsageInfo();
             break;
         case testSign:
-            CompleteTestSigProcess();
+            StartTestSignatureProcess();
             break;
         case sign:
-            CompleteSigProcess(paramArgs[1], paramArgs[2]);
+            StartSignatureProcess(paramArgs[1], paramArgs[2]);
             break;
     }
 }
