@@ -75,8 +75,6 @@ void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex
                 strcat(signatureFileEntry, fileDigestChars);
                 strcat(signatureFileEntry, "\0");
 
-                printf("\n\n%s\n\n", signatureFileEntry);
-
                 fclose(tempFilePointer);
                 remove("tempFile");
                 
@@ -101,8 +99,6 @@ void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName
     {
         fprintf(paramManifestFilePointer, "%02x", paramFileDigest[i]);
     }
-
-
 }
 
 void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, uint8_t *paramFileDigest)
