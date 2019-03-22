@@ -21,3 +21,5 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
 FILE* CreateBaseManifestFile(char *paramTargetDirectoryName, uint8_t *paramPublicKey);
 
 FILE* CreateBaseSignatureFile(char *paramTargetDirectoryName);
+
+void GenerateAndSaveSignFileDigest(uint8_t *paramFileDigest, char *paramFileName);

@@ -11,11 +11,15 @@ void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex
 {
     int i;
     char path[1000];
+    char signatureFileEntry[1000];
+    //char *signatureFileEntry = malloc(1000);
     struct dirent *dp;
     DIR *dir = opendir(basePath);
     long fileLength;
     uint8_t fileDigest[32];
     uint8_t manifestEntryDigest[32];
+    FILE *tempFilePointer;
+    char fileDigestChars[65]; 
 
     if (!dir)
         return; 
@@ -44,20 +48,59 @@ void SaveFileNameAndDigestToManifest(char *basePath, long *paramWorkingFileIndex
 
                 GenerateDigestFromString(fileContents, fileLength, fileDigest);
 
+             //GenerateAndSaveSignFileDigest(fileDigest, dp->d_name);
+
                 //save file names and digests to manifest file
                 fputs("\n\nName: ", paramManifestFilePointer);
+                strcat(signatureFileEntry, "Name: ");
                 fputs(dp->d_name, paramManifestFilePointer);
+                strcat(signatureFileEntry, dp->d_name);
                 fputs("\nDigest-Algorithms: SHA256\n", paramManifestFilePointer);
+                strcat(signatureFileEntry, "\nDigest-Algorithms: SHA256\n");
                 fputs("SHA256-Digest: ", paramManifestFilePointer);
+                strcat(signatureFileEntry, "SHA256-Digest: ");
+                
+                tempFilePointer = fopen("tempFile", "a+");
+                if (!tempFilePointer)
+                {
+                    printf("\nerror: tempFile could not be opened\n");
+                    exit(1);
+                }
                 for (int i = 0; i < 32; i++)
+                {
                     fprintf(paramManifestFilePointer, "%02x", fileDigest[i]);
+                    fprintf(tempFilePointer,"%02x", fileDigest[i]);
+                }
+                rewind(tempFilePointer);
+                
+                fgets(fileDigestChars, 65, tempFilePointer);
+                strcat(signatureFileEntry, fileDigestChars);
 
+                fclose(tempFilePointer);
+                remove("tempFile");
+                
                 free(fileContents);
             }
            SaveFileNameAndDigestToManifest(path, paramWorkingFileIndex, paramManifestFilePointer);    
         }
     }
     closedir(dir);
+}
+
+void GenerateAndSaveSignFileDigest(uint8_t *paramFileDigest, char *paramFileName)
+{
+    char *manifestEntry = malloc(1000);
+
+    memcpy(manifestEntry, paramFileName, 5);
+    printf("Name: %s\n", manifestEntry);
+/*
+    fprintf(tempFile, "%s", manifestEntry);
+
+    for (int i = 0; i < 32; i++)
+        fprintf(tempFile, "%02x", paramFileDigest[i]);
+
+    fclose(tempFile);*/
+
 }
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)

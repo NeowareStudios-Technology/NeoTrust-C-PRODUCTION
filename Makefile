@@ -68,5 +68,5 @@ $(OPATH)sign_unit_tests.o: sign_unit_tests.c
 	$(CC) -c sign_unit_tests.c -o $(OPATH)sign_unit_tests.o $(CFLAGS)
 
 clean:
-	rm obj/*
 	rm neopak
+	rm obj/*

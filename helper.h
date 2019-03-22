@@ -16,6 +16,7 @@
 
 
 
+size_t stringLength(const char *str);
 
 uint8_t *stringToHex(const char *s);
 
