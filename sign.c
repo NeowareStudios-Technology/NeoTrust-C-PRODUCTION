@@ -115,7 +115,7 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
     //make a digest for each file, saving to manifest file
     long workingFileIndex = -1;
     CreateDigestsAndMetaInfEntries(paramDirName, &workingFileIndex, manifestFilePointer, signatureFilePointer); 
-    GenerateFullManifestDigestAndSaveInSigFile(manifestFilePointer, signatureFilePointer);
+    GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, manifestFilePointer, signatureFilePointer);
     printf("\n");  
   
     //need to create signature file using manifest file entries
