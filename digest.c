@@ -124,6 +124,7 @@ void GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE 
     long signatureFileLength;
     uint8_t manifestFileDigest[32];
     char signatureFilePath[100];
+    char tempSignatureFilePath[100];
     FILE *finalSignatureFilePointer;
 
     //read manifest file contents
@@ -144,7 +145,7 @@ void GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE 
 
     GenerateDigestFromString(manifestFileContents, manifestFileLength, manifestFileDigest);
     strcpy(signatureFilePath, paramMetaInfDirPath);
-    strcat(signatureFilePath, "/realSignature");
+    strcat(signatureFilePath, "/neopak.sf");
     printf("%s", signatureFilePath);
     finalSignatureFilePointer = fopen(signatureFilePath, "w+");
     if (!finalSignatureFilePointer)
@@ -154,6 +155,10 @@ void GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE 
         fprintf(finalSignatureFilePointer, "%02x", manifestFileDigest[i]);
     fputs(signatureFileContents, finalSignatureFilePointer);
 
+    strcpy(tempSignatureFilePath, paramMetaInfDirPath);
+    strcat(tempSignatureFilePath, "/tempSignature");
+    remove(tempSignatureFilePath);
+    
     fclose(finalSignatureFilePointer);
     free(manifestFileContents);
     free(signatureFileContents);
@@ -209,7 +214,7 @@ FILE* CreateBaseSignatureFile(char *paramMetaInfPath)
 {
     char signatureFilePath[1000];
     strcpy(signatureFilePath, paramMetaInfPath);
-    strcat(signatureFilePath, "/signature");
+    strcat(signatureFilePath, "/tempSignature");
     FILE *signatureFilePointer = fopen(signatureFilePath, "a+");
     
     if (!signatureFilePointer)

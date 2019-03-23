@@ -158,7 +158,7 @@ int CreateBaseSignatureFile_test()
     fread(actualSignatureContents, signatureFileLength, 1, signatureFilePointer); // Read in the entire file
     actualSignatureContents[signatureFileLength] = '\0';
     fclose(signatureFilePointer); // Close the file
-    remove("testdir/signature");
+    remove("testdir/tempSignature");
 
     //compare contents of created base signature file and expected contents, if they don't match the test fails
     if (strcmp(expectedSignatureContents, actualSignatureContents)!= 0)
