@@ -16,14 +16,12 @@ void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex,
     long fileLength;
     uint8_t fileDigest[32];
     uint8_t manifestEntryDigest[32];
-
     if (!dir)
         return; 
     while ((dp = readdir(dir)) != NULL)
     {
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0 && strcmp(dp->d_name, "META-INF") != 0)
         {  
-
            strcpy(path, basePath);
            strcat(path, "/");
            strcat(path, dp->d_name);
@@ -32,7 +30,6 @@ void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex,
            if (dp->d_type != DT_DIR)
             {
                 *paramWorkingFileIndex= *paramWorkingFileIndex + 1;
-
                 //read target file contents
                 FILE* filePointer = fopen(path, "r");
                 if (!filePointer)
@@ -43,7 +40,6 @@ void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex,
                 fclose(filePointer); // Close the file
 
                 GenerateDigestFromString(fileContents, fileLength, fileDigest);
-
                 CreateManifestFileEntry(paramManifestFilePointer, dp->d_name, fileDigest);
                 CreateSignatureFileEntry(paramSignatureFilePointer, dp->d_name, basePath, fileDigest);
                 
