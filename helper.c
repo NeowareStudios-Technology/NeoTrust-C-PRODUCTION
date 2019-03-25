@@ -21,7 +21,7 @@ uint8_t *stringToHex(const char *s)
     return answer;
 }
 
-
+/*
 void countFilesInDirectory(char *basePath, long *count)
 {
    int i;
@@ -47,7 +47,7 @@ void countFilesInDirectory(char *basePath, long *count)
    }
    closedir(dir);
 }
-
+*/
 
 //insert spaces between each hex number in string (passed string must be length 64)
 char* insertSpaces(const char *s)

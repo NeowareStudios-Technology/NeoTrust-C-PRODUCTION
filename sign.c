@@ -69,7 +69,7 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
     FILE *manifestFilePointer;
     FILE *signatureFilePointer;
     long fileLength;
-    long fileCount = 0;
+    //long fileCount = 0;
     char* metaInfDirPath[1000];
     //for signing with private key
     uint8_t *serializedDigest;
@@ -101,10 +101,6 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
     //generate public key from private key
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
     secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
-
-    //count number of files in target directory
-    countFilesInDirectory(paramDirName, &fileCount);
-    printf("\n(StartSignatureProcess) number of files: %d\n", fileCount);
 
     strcpy(metaInfDirPath, paramDirName);
     strcat(metaInfDirPath, "/META-INF");

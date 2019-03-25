@@ -72,11 +72,6 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     uint8_t signatureEntryDigest[32];
     size_t signatureEntryLength;
 
-    strcat(signatureFileEntry, "Name: ");
-    strcat(signatureFileEntry, paramFileName);
-    strcat(signatureFileEntry, "\nDigest-Algorithms: SHA256\n");
-    strcat(signatureFileEntry, "SHA256-Digest: ");
-
     tempFilePointer = fopen("tempFile", "a+");
     if (!tempFilePointer)
     {
@@ -142,7 +137,6 @@ void GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE 
     GenerateDigestFromString(manifestFileContents, manifestFileLength, manifestFileDigest);
     strcpy(signatureFilePath, paramMetaInfDirPath);
     strcat(signatureFilePath, "/neopak.sf");
-    printf("%s", signatureFilePath);
     finalSignatureFilePointer = fopen(signatureFilePath, "w+");
     if (!finalSignatureFilePointer)
         printf("\n error could not open final sig file\n");

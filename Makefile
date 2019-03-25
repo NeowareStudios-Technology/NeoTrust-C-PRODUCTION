@@ -53,7 +53,7 @@ $(OPATH)helper_unit_tests.o: helper_unit_tests.c
 
 test_digest: $(TEST_DIGEST_OBJ)
 	$(CC) -o test_digest $(TEST_DIGEST_OBJ) $(CFLAGS)
-	./test_digest >> unittestresults.out
+	./test_digest
 	rm ./test_digest
 
 $(OPATH)digest_unit_tests.o: digest_unit_tests.c 
