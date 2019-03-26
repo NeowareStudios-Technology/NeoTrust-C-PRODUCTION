@@ -120,6 +120,7 @@ int CreateBaseManifestFile_test()
     fread(actualManifestContents, manifestFileLength, 1, manifestFilePointer); // Read in the entire file
     actualManifestContents[manifestFileLength] = '\0';
     fclose(manifestFilePointer); // Close the file
+    
     remove("testdir/manifest");
 
     //compare contents of created base manifest file and expected contents, if they don't match the test fails
@@ -146,9 +147,18 @@ int CreateBaseSignatureFile_test()
     char expectedSignatureContents[] = "";
     long signatureFileLength;
     char *actualSignatureContents;
+    char *metaInfDirPath[1000];
+    char *signatureFilePath[1000];
+
+    strcpy(metaInfDirPath, dirName);
+    strcat(metaInfDirPath, "/META-INF");
+    mkdir(metaInfDirPath, 0700);
+
+    strcpy(signatureFilePath, dirName);
+    strcat(signatureFilePath, "/META-INF/tempSignature");
     
     //create base signature file
-    signatureFilePointer = CreateBaseSignatureFile(dirName);
+    signatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
 
      //read contents of base signature file into string
     if (!signatureFilePointer)
@@ -158,7 +168,8 @@ int CreateBaseSignatureFile_test()
     fread(actualSignatureContents, signatureFileLength, 1, signatureFilePointer); // Read in the entire file
     actualSignatureContents[signatureFileLength] = '\0';
     fclose(signatureFilePointer); // Close the file
-    remove("testdir/tempSignature");
+    remove(signatureFilePath);
+    rmdir(metaInfDirPath);
 
     //compare contents of created base signature file and expected contents, if they don't match the test fails
     if (strcmp(expectedSignatureContents, actualSignatureContents)!= 0)

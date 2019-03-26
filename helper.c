@@ -21,33 +21,6 @@ uint8_t *stringToHex(const char *s)
     return answer;
 }
 
-/*
-void countFilesInDirectory(char *basePath, long *count)
-{
-   int i;
-   char path[1000];
-   struct dirent *dp;
-   DIR *dir = opendir(basePath);
-
-   if (!dir)
-       return;
-
-   while ((dp = readdir(dir)) != NULL)
-   {
-       if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
-       {
-            if (dp->d_type != DT_DIR)
-                *count = *count + 1;
-
-            strcpy(path, basePath);
-            strcat(path, "/");
-            strcat(path, dp->d_name);
-            countFilesInDirectory(path, count);
-       }
-   }
-   closedir(dir);
-}
-*/
 
 //insert spaces between each hex number in string (passed string must be length 64)
 char* insertSpaces(const char *s)

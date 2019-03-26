@@ -10,9 +10,9 @@
 #include <stdio.h>
 #include "helper.h"
 
-#define NUM_TESTS 3
+#define NUM_TESTS 2
 #define TEST_DIR_NAME "testdir"
-#define NUM_FILES_TEST_DIR 7
+//#define NUM_FILES_TEST_DIR 7
 #define LONG_TEST_REPEATS 20
 #define SHORT_TEST_REPEATS 1000
 
@@ -86,27 +86,6 @@ int stringToHex_test()
 }
 
 
-//counts files in "testdir" directory and compares to known value for number of files
-//-if generated file number matches expected known file number, test passes
-int countFilesInDirectory_test()
-{
-    long count = 0;
-    countFilesInDirectory(TEST_DIR_NAME, &count);
-
-    if (count == NUM_FILES_TEST_DIR)
-    {
-        printf("2) countFilesInDirectory_test passed\n");
-    }
-    else
-    {
-        printf("2) countFilesInDirectory_test FAILED\n");
-        return 1;
-    }
-
-    return 0;
-}
-
-
 //creates a file of random length between 0 and 9999999, calculates file length, and compares calculated file length to 
 //known file length
 //-if calculated file length matches known file length, test passes
@@ -171,8 +150,8 @@ int main()
     printHeader();
 
     testStatuses[0] = stringToHex_test();
-    testStatuses[1] = countFilesInDirectory_test();
-    testStatuses[2] = getFileLength_test();
+    //testStatuses[1] = countFilesInDirectory_test();
+    testStatuses[1] = getFileLength_test();
 
     printTestStatuses(testStatuses);
 
