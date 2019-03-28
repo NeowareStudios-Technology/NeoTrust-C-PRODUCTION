@@ -65,6 +65,8 @@ void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
 }
 */
 
+
+//no return value
 void StartSignatureProcess(char *paramSecKey, char *paramDirName)
 {
     char **fileContents;
@@ -132,7 +134,8 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
 }
 
 
-//returns length of DER encoded signature
+//return value: length of DER encoded signature
+//return params: signatureComp, signatureDer
 size_t VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint8_t* secKey, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer)
 {
     /*a general template for this function can be found in 
@@ -191,6 +194,7 @@ size_t VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, ui
 }
 
 
+//return params: pubKeyComp, pubKeyUncomp
 secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp)
 {
     secp256k1_pubkey myPublicKey;
@@ -228,11 +232,13 @@ secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, ui
 }
 
 
+//no return value
 void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerializedSignatureDer, size_t paramSerializedSignatureDerLength)
 {
     FILE *signatureBlockFilePointer;
     char signatureBlockFilePath[200];
 
+    //create file paths
     strcpy(signatureBlockFilePath, paramMetaInfDirPath);
     strcat(signatureBlockFilePath, "/neopak.ec");
 
@@ -242,8 +248,10 @@ void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerialize
         printf("\n\nCOULD NOT OPEN SIG BLOCK FILE\n\n");
     }
     
+    //write signature (in binary form) to signature block file
     fwrite(paramSerializedSignatureDer, sizeof(uint8_t), paramSerializedSignatureDerLength, signatureBlockFilePointer);
 
+    //debug: print created signature
     printf("\n\nSignature (create)\n");
     for(int i = 0; i < paramSerializedSignatureDerLength; i++)
     {
