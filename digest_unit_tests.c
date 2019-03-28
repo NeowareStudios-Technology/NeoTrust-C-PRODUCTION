@@ -295,10 +295,9 @@ int GenerateFullManifestDigestAndSaveInSigFile_test()
     signatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
     CreateDigestsAndMetaInfEntries(dirName, &workingFileIndex, manifestFilePointer, signatureFilePointer); 
 
-    GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, manifestFilePointer, signatureFilePointer);
+    finalSignatureFilePointer = GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, manifestFilePointer, signatureFilePointer);
 
     //read contents of signature file into string
-    finalSignatureFilePointer = fopen("testdir/META-INF/neopak.sf", "r");
     if (!finalSignatureFilePointer)
         printf("(GenerateFullManifestDigestAndSaveInSigFile_test) testdir/signature file coud not be opened to read");
     finalSignatureFileLength = getFileLength(finalSignatureFilePointer);
@@ -310,7 +309,6 @@ int GenerateFullManifestDigestAndSaveInSigFile_test()
     remove(manifestFilePath);
     remove(signatureFilePath);
     rmdir(metaInfDirPath);
-    
 
     if (strcmp(expectedFinalSignatureContents, actualFinalSignatureContents) != 0)
     {
