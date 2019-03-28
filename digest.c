@@ -107,7 +107,7 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
 
 }
 
-void GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer)
+FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer)
 {
     char *manifestFileContents;
     char *signatureFileContents;
@@ -149,9 +149,10 @@ void GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE 
     strcat(tempSignatureFilePath, "/tempSignature");
     remove(tempSignatureFilePath);
     
-    fclose(finalSignatureFilePointer);
     free(manifestFileContents);
     free(signatureFileContents);
+
+    return(finalSignatureFilePointer);
 }
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest)
@@ -211,4 +212,22 @@ FILE* CreateBaseSignatureFile(char *paramMetaInfPath)
         printf("error: signature file could not be created\n");
 
     return signatureFilePointer;
+}
+
+void GenerateSignatureFileDigest(FILE *paramSignatureFilePointer, uint8_t *paramSignatureFileDigest)
+{
+    long signatureFileLength;
+    char *signatureFileContents;
+
+    //read signature file contents into string
+    rewind(paramSignatureFilePointer);
+    if (!paramSignatureFilePointer)
+        printf("Signature file could not be opened to read");
+    signatureFileLength = getFileLength(paramSignatureFilePointer);
+    signatureFileContents = (char *)malloc((signatureFileLength+1)*sizeof(char)); // Enough memory for file + \0
+    fread(signatureFileContents, signatureFileLength, 1, paramSignatureFilePointer); // Read in the entire file
+
+    GenerateDigestFromString(signatureFileContents, signatureFileLength, paramSignatureFileDigest);
+
+    free(signatureFileContents);
 }

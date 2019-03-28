@@ -18,7 +18,7 @@ void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex,
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 
-void GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
+FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
 
 FILE* CreateBaseManifestFile(char *paramTargetDirectoryName, uint8_t *paramPublicKey);
 
@@ -27,3 +27,5 @@ FILE* CreateBaseSignatureFile(char *paramTargetDirectoryName);
 void CreateManifestFileEntry(FILE *paramManifestFilePointer, char *paramFileName, uint8_t *paramFileDigest);
 
 void CreateSignatureFileEntry(FILE *paramSignatureFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest);
+
+void GenerateSignatureFileDigest(FILE *paramSignatureFilePointer, uint8_t *paramSignatureFileDigest);
