@@ -80,6 +80,7 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
     uint8_t *serializedPubKeyUncompressed;
     uint8_t *serializedSignatureComp;
     uint8_t *serializedSignatureDer;
+    size_t serializedSignatureDerLength;
     serializedDigest = malloc(sizeof(uint8_t)*32);
     serializedSecKey = malloc(sizeof(uint8_t)*32);
     signatureFileDigest = malloc(sizeof(uint8_t)*32);
@@ -114,8 +115,9 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
 
     GenerateSignatureFileDigest(finalSignatureFilePointer, signatureFileDigest);
 
-    VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, signatureFileDigest, serializedSignatureComp, serializedSignatureDer);
-    printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, signatureFileDigest, serializedSignatureComp, serializedSignatureDer);
+    serializedSignatureDerLength = VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, signatureFileDigest, serializedSignatureComp, serializedSignatureDer);
+    CreateSignatureBlockFile(metaInfDirPath, serializedSignatureDer, serializedSignatureDerLength);
+    //printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, signatureFileDigest, serializedSignatureComp, serializedSignatureDer);
    
     fclose(manifestFilePointer);
     fclose(tempSignatureFilePointer);
@@ -128,7 +130,8 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
 }
 
 
-void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint8_t* secKey, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer)
+//returns length of DER encoded signature
+size_t VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint8_t* secKey, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer)
 {
     /*a general template for this function can be found in 
     go-ethereum-master\crypto\secp256k1\libsecp256k1\src\modules\recovery\tests_impl.h
@@ -161,7 +164,8 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint
 
     //serialize signature in compact form
     secp256k1_ecdsa_signature_serialize_compact(myContext, signatureComp, &mySig);
-    //serialize signature in compact form
+    //serialize signature in der form
+
     size_t derLen = 72;
     secp256k1_ecdsa_signature_serialize_der(myContext, signatureDer, &derLen, &mySig);
 
@@ -180,6 +184,8 @@ void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint
         printf("DER encoded signature could not be parsed \n");
         exit(1);
     }
+
+    return(derLen);
 }
 
 
@@ -217,4 +223,22 @@ secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, ui
     }
 
     return myPublicKey;
+}
+
+
+void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerializedSignatureDer, size_t paramSerializedSignatureDerLength)
+{
+    FILE *signatureBlockFilePointer;
+    char signatureBlockFilePath[200];
+
+    strcpy(signatureBlockFilePath, paramMetaInfDirPath);
+    strcat(signatureBlockFilePath, "/neopak.ec");
+
+    signatureBlockFilePointer = fopen(signatureBlockFilePath, "wb");
+    if (!signatureBlockFilePointer)
+    {
+        printf("\n\nCOULD NOT OPEN SIG BLOCK FILE\n\n");
+    }
+    
+    fwrite(paramSerializedSignatureDer, sizeof(uint8_t), paramSerializedSignatureDerLength, signatureBlockFilePointer);
 }
