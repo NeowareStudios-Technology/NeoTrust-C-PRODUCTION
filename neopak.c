@@ -10,7 +10,7 @@
 
 
 //global
-enum commands{usage, testSign, sign}command;
+enum commands{usage, verify, sign}command;
 
 enum commands ParseArgumentsIntoCommand(int paramArgc);
 void ExecuteCommand(char **paramArgs, enum commands paramCommand);
@@ -22,9 +22,9 @@ enum commands ParseArgumentsIntoCommand(int paramArgc)
     //if no args passed, display usage info
     if (paramArgc == 1)
         return usage;
-    //if only "test" is passed,, start test sign
+    //if only target dir path is passed, start verification
     else if (paramArgc == 2)
-        return testSign;
+        return verify;
     //if private key and directory path are passed, start production sign
     else if (paramArgc == 3)
         return sign;
@@ -44,8 +44,8 @@ void ExecuteCommand(char **paramArgs, enum commands paramCommand)
         case usage:
             DisplayUsageInfo();
             break;
-        case testSign:
-            StartTestSignatureProcess();
+        case verify:
+            VerifyNeoPakSignature(paramArgs[1]);
             break;
         case sign:
             StartSignatureProcess(paramArgs[1], paramArgs[2]);

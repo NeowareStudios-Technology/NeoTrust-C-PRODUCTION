@@ -1,6 +1,6 @@
 CC = gcc 
 CFLAGS = -g --std=c99
-OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
+OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)verify.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
 TEST_HELPER_OBJ = $(OPATH)helper_unit_tests.o $(OPATH)helper.o
 TEST_DIGEST_OBJ = $(OPATH)digest_unit_tests.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
 TEST_SIGN_OBJ = $(OPATH)sign_unit_tests.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
@@ -25,6 +25,9 @@ $(OPATH)digest.o: digest.c
 $(OPATH)helper.o: helper.c
 	$(CC) -c helper.c -o $(OPATH)helper.o $(CFLAGS)
 
+$(OPATH)verify.o: verify.c
+	$(CC) -c verify.c -o $(OPATH)verify.o $(CFLAGS)
+
 $(OPATH)usha.o: $(SPATH)usha.c
 	$(CC) -c $(SPATH)usha.c -o $(OPATH)usha.o $(CFLAGS)
 
@@ -36,6 +39,8 @@ $(OPATH)sha1.o: $(SPATH)sha1.c
 
 $(OPATH)sha384-512.o: $(SPATH)sha384-512.c
 	$(CC) -c $(SPATH)sha384-512.c -o $(OPATH)sha384-512.o $(CFLAGS)
+
+
 
 test: test_helper test_digest test_sign
 	$(test_helper)

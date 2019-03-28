@@ -7,6 +7,7 @@
 
 #include "sign.h"
 
+/*
 //sets up all data structures necessary to sign a test message with a test private key and signs in ECDSA
 void StartTestSignatureProcess()
 {
@@ -49,6 +50,7 @@ void StartTestSignatureProcess()
 }
 
 
+
 void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
    do {
        uint8_t b32[32];
@@ -61,7 +63,7 @@ void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
        break;
    } while(1);
 }
-
+*/
 
 void StartSignatureProcess(char *paramSecKey, char *paramDirName)
 {
@@ -241,4 +243,11 @@ void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerialize
     }
     
     fwrite(paramSerializedSignatureDer, sizeof(uint8_t), paramSerializedSignatureDerLength, signatureBlockFilePointer);
+
+    printf("\n\nSignature (create)\n");
+    for(int i = 0; i < paramSerializedSignatureDerLength; i++)
+    {
+        printf("%02x", paramSerializedSignatureDer[i]);
+    }
+    printf("\n");
 }
