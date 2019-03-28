@@ -13,6 +13,7 @@ neopak: $(OBJ)
 	$(CC) -o neopak $(OBJ) $(LIBS) $(CFLAGS)
 
 $(OPATH)neopak.o: neopak.c 
+	mkdir obj
 	$(CC) -c neopak.c -o $(OPATH)neopak.o $(CFLAGS)
 
 $(OPATH)sign.o: sign.c
@@ -41,6 +42,7 @@ test: test_helper test_digest test_sign
 	$(test_digest)
 	$(test_sign)
 	rm obj/*
+	rmdir obj
 
 test_helper: $(TEST_HELPER_OBJ)
 	$(CC) -o test_helper $(TEST_HELPER_OBJ) $(CFLAGS)
@@ -49,6 +51,7 @@ test_helper: $(TEST_HELPER_OBJ)
 	
 
 $(OPATH)helper_unit_tests.o: helper_unit_tests.c 
+	mkdir obj
 	$(CC) -c helper_unit_tests.c -o $(OPATH)helper_unit_tests.o $(CFLAGS)
 
 test_digest: $(TEST_DIGEST_OBJ)
@@ -70,3 +73,4 @@ $(OPATH)sign_unit_tests.o: sign_unit_tests.c
 clean:
 	rm neopak
 	rm obj/*
+	rmdir obj
