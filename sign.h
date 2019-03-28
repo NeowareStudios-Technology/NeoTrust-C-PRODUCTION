@@ -24,8 +24,10 @@ void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num);
 
 void StartSignatureProcess(char *paramSecKey, char *paramFileName);
 
-void VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey,uint8_t* secKey,uint8_t* digest, 
+size_t VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey,uint8_t* secKey,uint8_t* digest, 
     uint8_t* signatureComp, uint8_t* signatureDer);
 
 secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, uint8_t* secKey, uint8_t* pubKeyComp,
     uint8_t* pubKeyUncomp);
+
+void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerializedSignatureDer, size_t paramSerializedSignatureDerLength);
