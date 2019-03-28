@@ -5,6 +5,6 @@
  * Copywrite NeoWare 2019
  * *********************************/
 
-#include "sign.h";
+#include "sign.h"
 
 void VerifyNeoPakSignature(char *paramTargetDir);
