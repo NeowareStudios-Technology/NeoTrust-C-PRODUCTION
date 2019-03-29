@@ -17,7 +17,7 @@ void VerifyNeoPakSignature(char *paramTargetDir)
     char *manifestFilePath[256];
     char *signatureFilePath[256];
     /////////////////////////////////////////////////////////
-    
+
     long signatureBlockFileLength;
     long manifestFileLength;
     long signatureFileLength;
@@ -40,10 +40,7 @@ void VerifyNeoPakSignature(char *paramTargetDir)
     signatureBlockFilePointer = fopen(signatureBlockFilePath, "rb");
     if (!signatureBlockFilePointer)
         printf("Signature file coud not be opened to read");
-
-
     signatureBlockFileLength = getFileLength(signatureBlockFilePointer);
-    
     signatureBlockFileContents = (uint8_t *)malloc((signatureFileLength+1)*sizeof(uint8_t)); // Enough memory for file + \0
     fread(signatureBlockFileContents, signatureFileLength, 1, signatureBlockFilePointer); // Read in the entire file
 
@@ -62,8 +59,8 @@ void VerifyNeoPakSignature(char *paramTargetDir)
     if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, digest, &paramMyPublicKey))
     {
         printf("Signature could not be verified \n");
-        exit(1);
     }
     */
+    
 
 }
