@@ -10,21 +10,14 @@
 
 void VerifyNeoPakSignature(char *paramTargetDir)
 {
-    //these need to be fixed, they are incorrect declarations of strings, but
-    //for some reason they only work this way at the moment
-    char *metaInfDirPath[256];
-    char *signatureBlockFilePath[256];
-    char *manifestFilePath[256];
-    char *signatureFilePath[256];
-    /////////////////////////////////////////////////////////
-
-    long signatureBlockFileLength;
+    char metaInfDirPath[256];
+    char signatureBlockFilePath[256];
+    char manifestFilePath[256];
+    char signatureFilePath[256];
     long manifestFileLength;
     long signatureFileLength;
-    FILE *signatureBlockFilePointer;
     FILE *manifestFilePointer;
     FILE *signatureFilePointer;
-    uint8_t *signatureBlockFileContents;
     secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
     secp256k1_ecdsa_signature sigObject;
 
@@ -36,13 +29,36 @@ void VerifyNeoPakSignature(char *paramTargetDir)
     strcpy(manifestFilePath, metaInfDirPath);
     strcat(manifestFilePath, "/manifest");
 
+    GetSigObjectFromSigBlockFile(metaInfDirPath, &sigObject);
+
+    /*
+    if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, digest, &paramMyPublicKey))
+    {
+        printf("Signature could not be verified \n");
+    }
+    */
+
+}
+
+
+void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_signature *paramSigObject)
+{
+    char signatureBlockFilePath[256];
+    FILE *signatureBlockFilePointer;
+    secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
+    uint8_t *signatureBlockFileContents;
+    long signatureBlockFileLength;
+
+    strcpy(signatureBlockFilePath, paramMetaInfDirPath);
+    strcat(signatureBlockFilePath, "/neopak.ec");
+
     //read signature block file into uint8_t array
     signatureBlockFilePointer = fopen(signatureBlockFilePath, "rb");
     if (!signatureBlockFilePointer)
         printf("Signature file coud not be opened to read");
     signatureBlockFileLength = getFileLength(signatureBlockFilePointer);
-    signatureBlockFileContents = (uint8_t *)malloc((signatureFileLength+1)*sizeof(uint8_t)); // Enough memory for file + \0
-    fread(signatureBlockFileContents, signatureFileLength, 1, signatureBlockFilePointer); // Read in the entire file
+    signatureBlockFileContents = (uint8_t *)malloc((signatureBlockFileLength+1)*sizeof(uint8_t)); // Enough memory for file + \0
+    fread(signatureBlockFileContents, signatureBlockFileLength, 1, signatureBlockFilePointer); // Read in the entire file
 
     //debug: print signature read
     printf("Signature (verify): \n");
@@ -53,14 +69,5 @@ void VerifyNeoPakSignature(char *paramTargetDir)
     printf("\n\n");
 
     //parse DER signature retrieved from signature block file into signature object
-    secp256k1_ecdsa_signature_parse_der(verifyContext, &sigObject, signatureBlockFileContents, signatureBlockFileLength); 
-
-    /*
-    if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, digest, &paramMyPublicKey))
-    {
-        printf("Signature could not be verified \n");
-    }
-    */
-    
-
+    secp256k1_ecdsa_signature_parse_der(verifyContext, paramSigObject, signatureBlockFileContents, signatureBlockFileLength); 
 }

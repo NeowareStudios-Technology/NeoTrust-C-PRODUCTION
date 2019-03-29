@@ -8,3 +8,5 @@
 #include "sign.h"
 
 void VerifyNeoPakSignature(char *paramTargetDir);
+
+void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_signature *paramSigObject);
