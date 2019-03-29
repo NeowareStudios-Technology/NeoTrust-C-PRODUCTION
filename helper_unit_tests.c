@@ -111,7 +111,7 @@ int getFileLength_test()
 
         if (stringLength != fileLength)
         {
-            printf("3) getFileLength_test FAILED");
+            printf("2) getFileLength_test FAILED");
             return 1;
         }
 
@@ -120,7 +120,7 @@ int getFileLength_test()
 
     }
 
-    printf("3) getFileLength_test passed\n");
+    printf("2) getFileLength_test passed\n");
     return 0;
 }
 

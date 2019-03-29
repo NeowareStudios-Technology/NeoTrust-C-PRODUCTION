@@ -45,12 +45,12 @@ test: test_helper test_digest test_sign
 	$(test_helper)
 	$(test_digest)
 	$(test_sign)
+	rm obj/*.o
 
 test_helper: $(TEST_HELPER_OBJ)
 	$(CC) -o test_helper $(TEST_HELPER_OBJ) $(CFLAGS)
 	./test_helper >> unittestresults.out
 	rm ./test_helper
-	rm obj/*.o
 	
 
 $(OPATH)helper_unit_tests.o: helper_unit_tests.c 
@@ -60,7 +60,6 @@ test_digest: $(TEST_DIGEST_OBJ)
 	$(CC) -o test_digest $(TEST_DIGEST_OBJ) $(CFLAGS)
 	./test_digest >> unittestresults.out
 	rm ./test_digest
-	rm obj/*.o
 
 $(OPATH)digest_unit_tests.o: digest_unit_tests.c 
 	$(CC) -c digest_unit_tests.c -o $(OPATH)digest_unit_tests.o $(CFLAGS)
@@ -69,7 +68,6 @@ test_sign: $(TEST_SIGN_OBJ)
 	$(CC) -o test_sign $(TEST_SIGN_OBJ) $(LIBS) $(CFLAGS)
 	./test_sign >> unittestresults.out
 	rm ./test_sign
-	rm obj/*.o
 
 $(OPATH)sign_unit_tests.o: sign_unit_tests.c 
 	$(CC) -c sign_unit_tests.c -o $(OPATH)sign_unit_tests.o $(CFLAGS)
