@@ -48,7 +48,7 @@ void StartTestSignatureProcess()
     free(serializedSignatureComp);
     free(serializedSignatureDer);
 }
-
+*/
 
 
 void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
@@ -63,7 +63,7 @@ void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
        break;
    } while(1);
 }
-*/
+
 
 
 //no return value

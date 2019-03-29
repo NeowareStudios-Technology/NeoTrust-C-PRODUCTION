@@ -67,10 +67,10 @@ void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName
 void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest)
 {
     FILE *tempFilePointer;
-    char *signatureFileEntry = malloc(1000);
-    char *fileDigestChars = malloc(65); 
-    uint8_t signatureEntryDigest[32];
-    size_t signatureEntryLength;
+    char manifestFileEntry[1000];
+    char fileDigestChars[65]; 
+    uint8_t manifestEntryDigest[32];
+    size_t manifestEntryLength;
 
     tempFilePointer = fopen("tempFile", "a+");
     if (!tempFilePointer)
@@ -85,14 +85,20 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     rewind(tempFilePointer);
                 
     fgets(fileDigestChars, 65, tempFilePointer);
-    strcat(signatureFileEntry, fileDigestChars);
-    strcat(signatureFileEntry, "\0");
-    signatureEntryLength = stringLength(signatureFileEntry);
+    strcpy(manifestFileEntry, "Name: ");
+    strcat(manifestFileEntry, paramFileName);
+    strcat(manifestFileEntry, "\n");
+    strcat(manifestFileEntry, "Digest-Algorithms: SHA256\n");
+    strcat(manifestFileEntry, "SHA256-Digest: ");
+    strcat(manifestFileEntry, fileDigestChars);
+    strcat(manifestFileEntry, "\0");
+    manifestEntryLength = stringLength(manifestFileEntry);
 
     fclose(tempFilePointer);
     remove("tempFile");
 
-    GenerateDigestFromString(signatureFileEntry, signatureEntryLength, signatureEntryDigest);
+
+    GenerateDigestFromString(manifestFileEntry, manifestEntryLength, manifestEntryDigest);
 
     fputs("\n\nName: ", paramSignatureFilePointer);
     fputs(paramFileName, paramSignatureFilePointer);
@@ -100,10 +106,8 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     fputs("SHA256-Digest: ", paramSignatureFilePointer);
     for (int i = 0; i < 32; i++)
     {
-        fprintf(paramSignatureFilePointer, "%02x", signatureEntryDigest[i]);
+        fprintf(paramSignatureFilePointer, "%02x", manifestEntryDigest[i]);
     }
-    free(signatureFileEntry);
-    free(fileDigestChars);
 
 }
 
