@@ -1,9 +1,14 @@
 # NeoPak
-Notes:
 
--signature in signature block file is in DER format
+## Build insructions:
 
-Process overview:
+-Neopak: run ```make``` in the NeoPak directory
+
+-unit tests: run ```make test```in NeoPak directory
+
+-unit test results will be in "unittestresults.out"
+
+## Process overview:
 
 1)create manifest file that includes manifest file header and user's public key
 
@@ -20,3 +25,7 @@ Process overview:
 7)create digest from entire manifest file (again) and append this digest to signature file
 
 8)generate digest from entire signature file, sign this digest with user's private key, and save signature in signature block file
+
+## Notes:
+
+-signature in signature block file is in DER format
