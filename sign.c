@@ -69,13 +69,12 @@ void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
 //no return value
 void StartSignatureProcess(char *paramSecKey, char *paramDirName)
 {
-    char **fileContents;
     FILE *manifestFilePointer;
     FILE *tempSignatureFilePointer;
     FILE *finalSignatureFilePointer;
     long fileLength;
     //long fileCount = 0;
-    char* metaInfDirPath[1000];
+    char metaInfDirPath[1000];
     //for signing with private key
     uint8_t *serializedDigest;
     uint8_t *serializedSecKey;

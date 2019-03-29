@@ -10,10 +10,10 @@
 
 void VerifyNeoPakSignature(char *paramTargetDir)
 {
-    char *metaInfDirPath[200];
-    char *signatureBlockFilePath[200];
-    char *manifestFilePath[200];
-    char *signatureFilePath[200];
+    char metaInfDirPath[200];
+    char signatureBlockFilePath[200];
+    char manifestFilePath[200];
+    char signatureFilePath[200];
     long signatureBlockFileLength;
     long manifestFileLength;
     long signatureFileLength;
@@ -31,6 +31,8 @@ void VerifyNeoPakSignature(char *paramTargetDir)
     strcat(signatureBlockFilePath, "/neopak.ec");
     strcpy(manifestFilePath, metaInfDirPath);
     strcat(manifestFilePath, "/manifest");
+
+    printf("\n%s\n", manifestFilePath);
 
     //read signature block file into uint8_t array
     signatureBlockFilePointer = fopen(signatureBlockFilePath, "rb");
