@@ -74,7 +74,7 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
     FILE *finalSignatureFilePointer;
     long fileLength;
     //long fileCount = 0;
-    char metaInfDirPath[1000];
+    char metaInfDirPath[1024];
     //for signing with private key
     uint8_t *serializedDigest;
     uint8_t *serializedSecKey;
@@ -235,7 +235,7 @@ secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, ui
 void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerializedSignatureDer, size_t paramSerializedSignatureDerLength)
 {
     FILE *signatureBlockFilePointer;
-    char signatureBlockFilePath[200];
+    char signatureBlockFilePath[256];
 
     //create file paths
     strcpy(signatureBlockFilePath, paramMetaInfDirPath);

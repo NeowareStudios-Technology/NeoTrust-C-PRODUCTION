@@ -10,10 +10,10 @@
 
 void VerifyNeoPakSignature(char *paramTargetDir)
 {
-    char metaInfDirPath[200];
-    char signatureBlockFilePath[200];
-    char manifestFilePath[200];
-    char signatureFilePath[200];
+    char *metaInfDirPath = malloc(256);
+    char *signatureBlockFilePath = malloc(256);
+    char *manifestFilePath = malloc(256);
+    char *signatureFilePath = malloc(256);
     long signatureBlockFileLength;
     long manifestFileLength;
     long signatureFileLength;
@@ -32,13 +32,14 @@ void VerifyNeoPakSignature(char *paramTargetDir)
     strcpy(manifestFilePath, metaInfDirPath);
     strcat(manifestFilePath, "/manifest");
 
-    printf("\n%s\n", manifestFilePath);
-
     //read signature block file into uint8_t array
     signatureBlockFilePointer = fopen(signatureBlockFilePath, "rb");
     if (!signatureBlockFilePointer)
         printf("Signature file coud not be opened to read");
+
+
     signatureBlockFileLength = getFileLength(signatureBlockFilePointer);
+    
     signatureBlockFileContents = (uint8_t *)malloc((signatureFileLength+1)*sizeof(uint8_t)); // Enough memory for file + \0
     fread(signatureBlockFileContents, signatureFileLength, 1, signatureBlockFilePointer); // Read in the entire file
 
@@ -60,4 +61,5 @@ void VerifyNeoPakSignature(char *paramTargetDir)
         exit(1);
     }
     */
+
 }
