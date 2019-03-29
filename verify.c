@@ -11,11 +11,8 @@
 void VerifyNeoPakSignature(char *paramTargetDir)
 {
     char metaInfDirPath[256];
-    char manifestFilePath[256];
     char signatureFilePath[256];
-    long manifestFileLength;
     long signatureFileLength;
-    FILE *manifestFilePointer;
     FILE *signatureFilePointer;
     secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
     secp256k1_ecdsa_signature sigObject;
@@ -24,8 +21,6 @@ void VerifyNeoPakSignature(char *paramTargetDir)
     //create file paths
     strcpy(metaInfDirPath, paramTargetDir);
     strcat(metaInfDirPath, "/META-INF");
-    strcpy(manifestFilePath, metaInfDirPath);
-    strcat(manifestFilePath, "/manifest");
 
     GetSigObjectFromSigBlockFile(metaInfDirPath, &sigObject, verifyContext);
     GetPubKeyObjectFromManifestFile(metaInfDirPath, &pubKeyObject, verifyContext);
@@ -72,5 +67,11 @@ void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_sig
 
 void GetPubKeyObjectFromManifestFile(char *metaInfDirPath, secp256k1_pubkey *pubKeyObject, secp256k1_context *paramContext)
 {
-    
+    char manifestFilePath[256];
+    long manifestFileLength;
+    FILE *manifestFilePointer;
+
+    strcpy(manifestFilePath, metaInfDirPath);
+    strcat(manifestFilePath, "/manifest");
+
 }
