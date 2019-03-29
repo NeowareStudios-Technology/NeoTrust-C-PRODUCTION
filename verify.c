@@ -10,10 +10,14 @@
 
 void VerifyNeoPakSignature(char *paramTargetDir)
 {
-    char *metaInfDirPath = malloc(256);
-    char *signatureBlockFilePath = malloc(256);
-    char *manifestFilePath = malloc(256);
-    char *signatureFilePath = malloc(256);
+    //these need to be fixed, they are incorrect declarations of strings, but
+    //for some reason they only work this way at the moment
+    char *metaInfDirPath[256];
+    char *signatureBlockFilePath[256];
+    char *manifestFilePath[256];
+    char *signatureFilePath[256];
+    /////////////////////////////////////////////////////////
+    
     long signatureBlockFileLength;
     long manifestFileLength;
     long signatureFileLength;
