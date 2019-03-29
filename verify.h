@@ -9,4 +9,4 @@
 
 void VerifyNeoPakSignature(char *paramTargetDir);
 
-void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_signature *paramSigObject);
+void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_signature *paramSigObject, secp256k1_context *paramContext);
