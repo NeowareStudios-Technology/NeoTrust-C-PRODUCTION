@@ -75,6 +75,7 @@ void MainSign(char *paramSecKey, char *paramDirName)
     long fileLength;
     //long fileCount = 0;
     char metaInfDirPath[1024];
+    char *manifestFileName = "manifest.mf";
     //for signing with private key
     uint8_t *serializedDigest;
     uint8_t *serializedSecKey;
@@ -105,7 +106,7 @@ void MainSign(char *paramSecKey, char *paramDirName)
     strcpy(metaInfDirPath, paramDirName);
     strcat(metaInfDirPath, "/META-INF");
     mkdir(metaInfDirPath, 0700);
-    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, serializedPubKeyCompressed);   
+    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, manifestFileName, serializedPubKeyCompressed);   
     tempSignatureFilePointer = CreateBaseSignatureFile(metaInfDirPath); 
 
     //make a digest for each file, saving to manifest file
@@ -153,6 +154,7 @@ void MainVerify(char *paramTargetDir)
     //get the transaction hash (when it exists) and save it
 
     //create verification manifest file by hashing all files in neopak
+
 
     //create verification sig file from manifest file
 

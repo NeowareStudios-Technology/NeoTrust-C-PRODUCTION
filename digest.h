@@ -20,7 +20,7 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
 
 FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
 
-FILE* CreateBaseManifestFile(char *paramTargetDirectoryName, uint8_t *paramPublicKey);
+FILE* CreateBaseManifestFile(char *paramMetaInfPath, char *paramFileName, uint8_t *paramPublicKey);
 
 FILE* CreateBaseSignatureFile(char *paramTargetDirectoryName);
 

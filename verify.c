@@ -59,7 +59,7 @@ void GetPubKeyObjectFromManifestFile(char *metaInfDirPath, secp256k1_pubkey *par
     uint8_t *serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
 
     strcpy(manifestFilePath, metaInfDirPath);
-    strcat(manifestFilePath, "/manifest");
+    strcat(manifestFilePath, "/manifest.mf");
 
     manifestFilePointer = fopen(manifestFilePath, "r");
     if (!manifestFilePointer)

@@ -83,6 +83,8 @@ int GenerateDigestFromString_test()
         //convert contents of hex digest file to string
         fgets(actualDigest, 65, (FILE*)testHexFilePointer);
 
+        remove("testHexFile");
+
         //if generated digest does not match the expected digest, test fails
         if (strcmp(actualDigest, expectedDigest) != 0)
         {
@@ -90,7 +92,6 @@ int GenerateDigestFromString_test()
             return 1;
         }
 
-        remove("testHexFile");
     }
 
     printf("1) GenerateDigestFromString_test passed\n");
@@ -110,16 +111,18 @@ int CreateBaseManifestFile_test()
     char *actualManifestContents;
     char *metaInfDirPath = malloc(256);
     char *manifestFilePath = malloc(256);
+    char *manifestFileName = "manifest.mf";
 
     strcpy(metaInfDirPath, dirName);
     strcat(metaInfDirPath, "/META-INF");
     mkdir(metaInfDirPath, 0700);
 
     strcpy(manifestFilePath, dirName);
-    strcat(manifestFilePath, "/META-INF/manifest");
+    strcat(manifestFilePath, "/META-INF/");
+    strcat(manifestFilePath, manifestFileName);
     
     //create base manifest file
-    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, pubKeyPlaceholder);
+    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, manifestFileName, pubKeyPlaceholder);
 
      //read contents of base manifest file into string
     if (!manifestFilePointer)
@@ -130,21 +133,24 @@ int CreateBaseManifestFile_test()
     actualManifestContents[manifestFileLength] = '\0';
     fclose(manifestFilePointer); // Close the file
 
+    remove(manifestFilePath);
+    rmdir(metaInfDirPath);
+
     //compare contents of created base manifest file and expected contents, if they don't match the test fails
     if (strcmp(expectedManifestContents, actualManifestContents)!= 0)
     {
         printf("2) CreateBaseManifestFile_test FAILED\n");
+        free(actualManifestContents);
+        free(metaInfDirPath);
+        free(manifestFilePath);
         return 1;
     }
-
-    printf("2) CreateBaseManifestFile_test passed\n");
-
-    remove(manifestFilePath);
-    rmdir(metaInfDirPath);
 
     free(actualManifestContents);
     free(metaInfDirPath);
     free(manifestFilePath);
+
+    printf("2) CreateBaseManifestFile_test passed\n");
     
     return 0;
 }
@@ -181,21 +187,24 @@ int CreateBaseSignatureFile_test()
     actualSignatureContents[signatureFileLength] = '\0';
     fclose(signatureFilePointer); // Close the file
 
+    remove(signatureFilePath);
+    rmdir(metaInfDirPath);
+
     //compare contents of created base signature file and expected contents, if they don't match the test fails
     if (strcmp(expectedSignatureContents, actualSignatureContents)!= 0)
     {
         printf("3) CreateBaseSignatureFile_test FAILED\n");
+        free(metaInfDirPath);
+        free(signatureFilePath);
+        free(actualSignatureContents);
         return 1;
     }
-
-    printf("3) CreateBaseSignatureFile_test passed\n");
-
-    remove(signatureFilePath);
-    rmdir(metaInfDirPath);
 
     free(metaInfDirPath);
     free(signatureFilePath);
     free(actualSignatureContents);
+
+    printf("3) CreateBaseSignatureFile_test passed\n");
     
     return 0;
 
@@ -211,6 +220,7 @@ int CreateDigestsAndMetaInfEntries_test()
     char *metaInfDirPath = malloc(256);
     char *manifestFilePath = malloc(256);
     char *signatureFilePath = malloc(256);
+    char *manifestFileName = "manifest.mf";
     uint8_t pubKeyPlaceholder[] = "000000000000000000000000000000000";
     long manifestFileLength;
     long signatureFileLength;
@@ -226,13 +236,14 @@ int CreateDigestsAndMetaInfEntries_test()
     mkdir(metaInfDirPath, 0700);
 
     strcpy(manifestFilePath, dirName);
-    strcat(manifestFilePath, "/META-INF/manifest");
+    strcat(manifestFilePath, "/META-INF/");
+    strcat(manifestFilePath, manifestFileName);
 
     strcpy(signatureFilePath, dirName);
     strcat(signatureFilePath, "/META-INF/tempSignature");
     
     
-    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath,pubKeyPlaceholder);
+    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, manifestFileName, pubKeyPlaceholder);
     signatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
 
     
@@ -263,24 +274,35 @@ int CreateDigestsAndMetaInfEntries_test()
     actualSignatureContents[signatureFileLength] = '\0';
     fclose(signatureFilePointer); // Close the file
 
-    if (strcmp(expectedManifestContents, actualManifestContents) != 0 && strcmp(expectedSignatureContents, actualSignatureContents) != 0)
-    {
-        printf("4) CreateDigestsAndMetaInfEntries_test FAILED\n");
-        return 1;
-    }
-
-    printf("4) CreateDigestsAndMetaInfEntries_test passed\n");
-
     remove(manifestFilePath);
     remove(signatureFilePath);
     rmdir(metaInfDirPath);
+
+    //uncomment to print results for this test
+    //printf("\n\nEXPECTED MAN\n%s\n\n", expectedManifestContents);
+    //printf("\n\nACTUAL MAN\n%s\n\n", actualManifestContents);
+
+    //uncomment to print results for this test
+    //printf("\n\nEXPECTED SIG\n%s\n\n", expectedSignatureContents);
+    //printf("\n\nACTUAL SIG\n%s\n\n", actualSignatureContents);
+
+    if (strcmp(expectedManifestContents, actualManifestContents) != 0 && strcmp(expectedSignatureContents, actualSignatureContents) != 0)
+    {
+        printf("4) CreateDigestsAndMetaInfEntries_test FAILED\n");
+        free(metaInfDirPath);
+        free(manifestFilePath);
+        free(signatureFilePath);
+        free(actualManifestContents);
+        return 1;
+    }
 
     free(metaInfDirPath);
     free(manifestFilePath);
     free(signatureFilePath);
     free(actualManifestContents);
-    
 
+    printf("4) CreateDigestsAndMetaInfEntries_test passed\n");
+    
     return 0;
 }
 
@@ -291,6 +313,7 @@ int GenerateFullManifestDigestAndSaveInSigFile_test()
     char *metaInfDirPath = malloc(256);
     char *manifestFilePath = malloc(256);
     char *signatureFilePath = malloc(256);
+    char *manifestFileName = "manifest.mf";
     uint8_t pubKeyPlaceholder[] = "000000000000000000000000000000000";
     long finalSignatureFileLength;
     char *actualFinalSignatureContents;
@@ -304,12 +327,13 @@ int GenerateFullManifestDigestAndSaveInSigFile_test()
     mkdir(metaInfDirPath, 0700);
 
     strcpy(manifestFilePath, dirName);
-    strcat(manifestFilePath, "/META-INF/manifest");
+    strcat(manifestFilePath, "/META-INF/");
+    strcat(manifestFilePath, manifestFileName);
 
     strcpy(signatureFilePath, dirName);
     strcat(signatureFilePath, "/META-INF/neopak.sf");
 
-    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath,pubKeyPlaceholder);
+    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, manifestFileName, pubKeyPlaceholder);
     signatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
     CreateDigestsAndMetaInfEntries(dirName, &workingFileIndex, manifestFilePointer, signatureFilePointer); 
 
@@ -328,22 +352,26 @@ int GenerateFullManifestDigestAndSaveInSigFile_test()
     //printf("\n\nEXPECTED\n%s\n\n", expectedFinalSignatureContents);
     //printf("\n\nACTUAL\n%s\n\n", actualFinalSignatureContents);
 
-    if (strcmp(expectedFinalSignatureContents, actualFinalSignatureContents) != 0)
-    {
-        printf("5) GenerateFullManifestDigestAndSaveInSigFile_test FAILED\n");
-        return 1;
-    }
-
-    printf("5) GenerateFullManifestDigestAndSaveInSigFile_test passed\n");
-
     remove(manifestFilePath);
     remove(signatureFilePath);
     rmdir(metaInfDirPath);
+
+    if (strcmp(expectedFinalSignatureContents, actualFinalSignatureContents) != 0)
+    {
+        printf("5) GenerateFullManifestDigestAndSaveInSigFile_test FAILED\n");
+        free(metaInfDirPath);
+        free(manifestFilePath);
+        free(signatureFilePath);
+        free(actualFinalSignatureContents);
+        return 1;
+    }
 
     free(metaInfDirPath);
     free(manifestFilePath);
     free(signatureFilePath);
     free(actualFinalSignatureContents);
+
+    printf("5) GenerateFullManifestDigestAndSaveInSigFile_test passed\n");
     
     return 0;
 }

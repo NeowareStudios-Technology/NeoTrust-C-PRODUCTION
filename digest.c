@@ -186,11 +186,12 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
     }
 }
 
-FILE* CreateBaseManifestFile(char *paramMetaInfPath, uint8_t *paramPublicKey)
+FILE* CreateBaseManifestFile(char *paramMetaInfPath, char *paramFileName, uint8_t *paramPublicKey)
 {
     char manifestFilePath[1024];
     strcpy(manifestFilePath, paramMetaInfPath);
-    strcat(manifestFilePath, "/manifest");
+    strcat(manifestFilePath, "/");
+    strcat(manifestFilePath, paramFileName);
     FILE *manifestFilePointer = fopen(manifestFilePath, "a+");
     
     if (!manifestFilePointer)
