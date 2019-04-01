@@ -133,9 +133,11 @@ void MainVerify(char *paramTargetDir)
     long verificationSignatureFileLength;
     FILE *verificationTempSignatureFilePointer;
     FILE *verificationManifestFilePointer;
-    FILE *verificationFinalSignatureFilePointer;
+    FILE *verificationFinalSigFilePointer;
     char *verificationManifestFileName = "manifest.mf.verify";
     char *verificationFinalSigFileName = "neopak.sf.verify";
+    char verificationManifestFilePath[256];
+    char verificationFinalSigFilePath[256];
     secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
     secp256k1_ecdsa_signature sigObject;
     secp256k1_pubkey pubKeyObject;
@@ -145,6 +147,14 @@ void MainVerify(char *paramTargetDir)
     //create file paths
     strcpy(metaInfDirPath, paramTargetDir);
     strcat(metaInfDirPath, "/META-INF");
+
+    strcpy(verificationManifestFilePath, metaInfDirPath);
+    strcat(verificationManifestFilePath, "/");
+    strcat(verificationManifestFilePath, verificationManifestFileName);
+
+    strcpy(verificationFinalSigFilePath, metaInfDirPath);
+    strcat(verificationFinalSigFilePath, "/");
+    strcat(verificationFinalSigFilePath, verificationFinalSigFileName);
 
     GetSigObjectFromSigBlockFile(metaInfDirPath, &sigObject, verifyContext);
     GetPubKeyObjectFromManifestFile(metaInfDirPath, &pubKeyObject, serializedPubKeyCompressed, verifyContext);
@@ -157,26 +167,22 @@ void MainVerify(char *paramTargetDir)
 
     CreateDigestsAndMetaInfEntries(paramTargetDir, verificationManifestFilePointer, verificationTempSignatureFilePointer); 
 
-    verificationFinalSignatureFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, verificationFinalSigFileName, verificationManifestFilePointer, verificationTempSignatureFilePointer);
+    verificationFinalSigFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, verificationFinalSigFileName, verificationManifestFilePointer, verificationTempSignatureFilePointer);
 
-    GenerateSignatureFileDigest(verificationFinalSignatureFilePointer, signatureFileDigest);
+    GenerateSignatureFileDigest(verificationFinalSigFilePointer, signatureFileDigest);
 
-    
+    remove(verificationFinalSigFilePath);
+    remove(verificationManifestFilePath);
 
-    //decrypt signature using sender's public key (found in manifest file)
-
-    //compare decrypted signature with digest of verification sig file
-        //if matches, verification passes
-        //if doe not match, verification fails
-
-
-    //DEBUG
-    /*
-    if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, digest, &paramMyPublicKey))
+    if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, signatureFileDigest, &pubKeyObject))
     {
-        printf("Signature could not be verified \n");
+        printf("This neopak file could not be verified. This means that is has been tampered with since it was signed.\n");
     }
-    */
+    else
+    {
+        printf("Neopak verification successful.\n");
+    }
+    
 }
 
 

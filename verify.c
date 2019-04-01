@@ -29,14 +29,6 @@ void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_sig
     signatureBlockFileContents = (uint8_t *)malloc((signatureBlockFileLength+1)*sizeof(uint8_t)); // Enough memory for file + \0
     fread(signatureBlockFileContents, signatureBlockFileLength, 1, signatureBlockFilePointer); // Read in the entire file
 
-    //debug: print signature read
-    printf("Signature (verify): \n");
-    for (int i = 0; i < signatureBlockFileLength; i++)
-    {
-        printf("%02x", signatureBlockFileContents[i]);
-    }
-    printf("\n\n");
-
     //parse DER signature retrieved from signature block file into signature object
     if (1 != secp256k1_ecdsa_signature_parse_der(paramContext, paramSigObject, signatureBlockFileContents, signatureBlockFileLength))
     {
