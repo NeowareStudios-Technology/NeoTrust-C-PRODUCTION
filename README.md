@@ -29,3 +29,4 @@
 ## Notes:
 
 -signature in signature block file is in DER format
+-public key in manifest file is in compressed format (33 bytes)
