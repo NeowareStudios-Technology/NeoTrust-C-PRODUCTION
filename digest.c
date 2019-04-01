@@ -7,7 +7,7 @@
 
 #include "digest.h"
 
-void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex, FILE* paramManifestFilePointer, FILE* paramSignatureFilePointer)
+void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePointer, FILE* paramSignatureFilePointer)
 {
     int i;
     char path[1024];
@@ -29,7 +29,6 @@ void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex,
            //if it is a file, read file into string
            if (dp->d_type != DT_DIR)
             {
-                *paramWorkingFileIndex= *paramWorkingFileIndex + 1;
                 //read target file contents
                 FILE* filePointer = fopen(path, "r");
                 if (!filePointer)
@@ -45,7 +44,7 @@ void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex,
                 
                 free(fileContents);
             }
-           CreateDigestsAndMetaInfEntries(path, paramWorkingFileIndex, paramManifestFilePointer, paramSignatureFilePointer);    
+           CreateDigestsAndMetaInfEntries(path, paramManifestFilePointer, paramSignatureFilePointer);    
         }
     }
     closedir(dir);

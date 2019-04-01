@@ -104,8 +104,7 @@ void MainSign(char *paramSecKey, char *paramDirName)
     tempSignatureFilePointer = CreateBaseSignatureFile(metaInfDirPath); 
 
     //make a digest for each file, saving to manifest file
-    long workingFileIndex = -1;
-    CreateDigestsAndMetaInfEntries(paramDirName, &workingFileIndex, manifestFilePointer, tempSignatureFilePointer); 
+    CreateDigestsAndMetaInfEntries(paramDirName, manifestFilePointer, tempSignatureFilePointer); 
     finalSignatureFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, sigFileName, manifestFilePointer, tempSignatureFilePointer);
 
     //-send ethereum transaction containing pub key and full manifest digest (ie. call JavaScript function here using Duktape)
@@ -132,7 +131,7 @@ void MainVerify(char *paramTargetDir)
 {
     char metaInfDirPath[256];
     long verificationSignatureFileLength;
-    FILE *verificationSignatureFilePointer;
+    FILE *verificationTempSignatureFilePointer;
     FILE *verificationManifestFilePointer;
     char *verificationManifestFileName = "manifest.verify";
     secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
@@ -151,6 +150,7 @@ void MainVerify(char *paramTargetDir)
 
     //create verification manifest file by hashing all files in neopak
     verificationManifestFilePointer = CreateBaseManifestFile(metaInfDirPath, verificationManifestFileName, serializedPubKeyCompressed);
+    verificationTempSignatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
 
     //create verification sig file from manifest file
 

@@ -215,7 +215,6 @@ int CreateBaseSignatureFile_test()
 //-if content matches, test passes
 int CreateDigestsAndMetaInfEntries_test()
 {
-    long workingFileIndex = -1;
     char dirName[] = TEST_DIR_NAME;
     char *metaInfDirPath = malloc(256);
     char *manifestFilePath = malloc(256);
@@ -247,7 +246,7 @@ int CreateDigestsAndMetaInfEntries_test()
     signatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
 
     
-    CreateDigestsAndMetaInfEntries(dirName, &workingFileIndex, manifestFilePointer, signatureFilePointer); 
+    CreateDigestsAndMetaInfEntries(dirName, manifestFilePointer, signatureFilePointer); 
     
     rewind(manifestFilePointer);
     rewind(signatureFilePointer);
@@ -308,7 +307,6 @@ int CreateDigestsAndMetaInfEntries_test()
 
 int GenerateFullManifestDigestAndSaveInSigFile_test()
 {
-    long workingFileIndex = -1;
     char dirName[] = TEST_DIR_NAME;
     char *metaInfDirPath = malloc(256);
     char *manifestFilePath = malloc(256);
@@ -336,7 +334,7 @@ int GenerateFullManifestDigestAndSaveInSigFile_test()
 
     manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, manifestFileName, pubKeyPlaceholder);
     signatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
-    CreateDigestsAndMetaInfEntries(dirName, &workingFileIndex, manifestFilePointer, signatureFilePointer); 
+    CreateDigestsAndMetaInfEntries(dirName, manifestFilePointer, signatureFilePointer); 
 
     finalSignatureFilePointer = GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, sigFileName, manifestFilePointer, signatureFilePointer);
 
