@@ -110,7 +110,7 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
 
 }
 
-FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer)
+FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, char *paramFileName, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer)
 {
     char *manifestFileContents;
     char *signatureFileContents;
@@ -139,7 +139,8 @@ FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE
 
     GenerateDigestFromString(manifestFileContents, manifestFileLength, manifestFileDigest);
     strcpy(signatureFilePath, paramMetaInfDirPath);
-    strcat(signatureFilePath, "/neopak.sf");
+    strcat(signatureFilePath, "/");
+    strcat(signatureFilePath, paramFileName);
     finalSignatureFilePointer = fopen(signatureFilePath, "w+");
     if (!finalSignatureFilePointer)
         printf("\n error could not open final sig file\n");

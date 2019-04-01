@@ -314,6 +314,7 @@ int GenerateFullManifestDigestAndSaveInSigFile_test()
     char *manifestFilePath = malloc(256);
     char *signatureFilePath = malloc(256);
     char *manifestFileName = "manifest.mf";
+    char *sigFileName = "neopak.sf";
     uint8_t pubKeyPlaceholder[] = "000000000000000000000000000000000";
     long finalSignatureFileLength;
     char *actualFinalSignatureContents;
@@ -337,7 +338,7 @@ int GenerateFullManifestDigestAndSaveInSigFile_test()
     signatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
     CreateDigestsAndMetaInfEntries(dirName, &workingFileIndex, manifestFilePointer, signatureFilePointer); 
 
-    finalSignatureFilePointer = GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, manifestFilePointer, signatureFilePointer);
+    finalSignatureFilePointer = GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, sigFileName, manifestFilePointer, signatureFilePointer);
 
     //read contents of signature file into string
     if (!finalSignatureFilePointer)

@@ -76,6 +76,7 @@ void MainSign(char *paramSecKey, char *paramDirName)
     //long fileCount = 0;
     char metaInfDirPath[1024];
     char *manifestFileName = "manifest.mf";
+    char *sigFileName = "neopak.sf";
     //for signing with private key
     size_t serializedSignatureDerLength;
     uint8_t *serializedDigest = malloc(sizeof(uint8_t)*32);
@@ -105,7 +106,7 @@ void MainSign(char *paramSecKey, char *paramDirName)
     //make a digest for each file, saving to manifest file
     long workingFileIndex = -1;
     CreateDigestsAndMetaInfEntries(paramDirName, &workingFileIndex, manifestFilePointer, tempSignatureFilePointer); 
-    finalSignatureFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, manifestFilePointer, tempSignatureFilePointer);
+    finalSignatureFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, sigFileName, manifestFilePointer, tempSignatureFilePointer);
 
     //-send ethereum transaction containing pub key and full manifest digest (ie. call JavaScript function here using Duktape)
     //-append transaction hash to manifest file 
