@@ -114,9 +114,13 @@ long getFileLength(FILE *paramFilePointer)
 }
 
 
-size_t stringLength(const char *str)
+int cutStringAndReturnLength(char *paramStringToCut, int paramBeginningIndex, int paramLengthToCut)
 {
-   const char *s;
-   for (s = str; *s; ++s);
-   return(s - str);
+   int stringLength = strlen(paramStringToCut);
+
+   if (paramLengthToCut < 0) paramLengthToCut = stringLength - paramBeginningIndex;
+   if (paramBeginningIndex + paramLengthToCut > stringLength) paramLengthToCut = stringLength - paramBeginningIndex;
+   memmove(paramStringToCut + paramBeginningIndex, paramStringToCut + paramBeginningIndex + paramLengthToCut, stringLength - paramLengthToCut + 1);
+
+   return paramLengthToCut;
 }

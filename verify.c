@@ -38,7 +38,7 @@ void VerifyNeoPakSignature(char *paramTargetDir)
     //compare decrypted signature with digest of verification sig file
         //if matches, verification passes
         //if doe not match, verification fails
-        
+
 
     //DEBUG
     /*
@@ -64,7 +64,10 @@ void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_sig
     //read signature block file into uint8_t array
     signatureBlockFilePointer = fopen(signatureBlockFilePath, "rb");
     if (!signatureBlockFilePointer)
-        printf("Signature file coud not be opened to read");
+    {
+        printf("Signature file coud not be opened to read\n");
+        exit(1);
+    }
     signatureBlockFileLength = getFileLength(signatureBlockFilePointer);
     signatureBlockFileContents = (uint8_t *)malloc((signatureBlockFileLength+1)*sizeof(uint8_t)); // Enough memory for file + \0
     fread(signatureBlockFileContents, signatureBlockFileLength, 1, signatureBlockFilePointer); // Read in the entire file
@@ -85,10 +88,35 @@ void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_sig
 void GetPubKeyObjectFromManifestFile(char *metaInfDirPath, secp256k1_pubkey *pubKeyObject, secp256k1_context *paramContext)
 {
     char manifestFilePath[256];
+    char pubKeyBuffer[256];
     long manifestFileLength;
+    int pubKeyLength;
     FILE *manifestFilePointer;
 
     strcpy(manifestFilePath, metaInfDirPath);
     strcat(manifestFilePath, "/manifest");
+
+    manifestFilePointer = fopen(manifestFilePath, "r");
+    if (!manifestFilePointer)
+    {
+        printf("Manifest file coud not be opened to read\n");
+        exit(1);
+    }
+
+    //get third line of manifest file (which should be the public key)
+    for (int i = 0; i < 3; i++)
+    {
+        fgets(pubKeyBuffer, 256, manifestFilePointer);
+    }
+
+    if((strstr(pubKeyBuffer, "Public Key: ")) == NULL)
+    {
+        printf("Public Key could not be found in manifest file\n");
+    }
+
+    pubKeyLength = cutStringAndReturnLength(pubKeyBuffer, 0, 12);
+
+
+    fclose(manifestFilePointer);
 
 }

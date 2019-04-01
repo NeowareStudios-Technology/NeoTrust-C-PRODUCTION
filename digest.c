@@ -92,11 +92,10 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     strcat(manifestFileEntry, "SHA256-Digest: ");
     strcat(manifestFileEntry, fileDigestChars);
     strcat(manifestFileEntry, "\0");
-    manifestEntryLength = stringLength(manifestFileEntry);
+    manifestEntryLength = strlen(manifestFileEntry);
 
     fclose(tempFilePointer);
     remove("tempFile");
-
 
     GenerateDigestFromString(manifestFileEntry, manifestEntryLength, manifestEntryDigest);
 
