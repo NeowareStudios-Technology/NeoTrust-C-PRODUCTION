@@ -152,6 +152,8 @@ void MainVerify(char *paramTargetDir)
     verificationManifestFilePointer = CreateBaseManifestFile(metaInfDirPath, verificationManifestFileName, serializedPubKeyCompressed);
     verificationTempSignatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
 
+    CreateDigestsAndMetaInfEntries(paramTargetDir, verificationManifestFilePointer, verificationTempSignatureFilePointer); 
+
     //create verification sig file from manifest file
 
     //create digest of verification sig file
