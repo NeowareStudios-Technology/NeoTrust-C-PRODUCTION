@@ -105,7 +105,7 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
     strcpy(metaInfDirPath, paramDirName);
     strcat(metaInfDirPath, "/META-INF");
     mkdir(metaInfDirPath, 0700);
-    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, serializedPubKeyUncompressed);   
+    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, serializedPubKeyCompressed);   
     tempSignatureFilePointer = CreateBaseSignatureFile(metaInfDirPath); 
 
     //make a digest for each file, saving to manifest file

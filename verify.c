@@ -116,7 +116,6 @@ void GetPubKeyObjectFromManifestFile(char *metaInfDirPath, secp256k1_pubkey *pub
 
     pubKeyLength = cutStringAndReturnLength(pubKeyBuffer, 0, 12);
 
-
     fclose(manifestFilePointer);
 
 }
