@@ -140,6 +140,7 @@ void MainVerify(char *paramTargetDir)
     secp256k1_ecdsa_signature sigObject;
     secp256k1_pubkey pubKeyObject;
     uint8_t *serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
+    uint8_t *signatureFileDigest = malloc(sizeof(uint8_t)*32);
 
     //create file paths
     strcpy(metaInfDirPath, paramTargetDir);
@@ -158,7 +159,9 @@ void MainVerify(char *paramTargetDir)
 
     verificationFinalSignatureFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, verificationFinalSigFileName, verificationManifestFilePointer, verificationTempSignatureFilePointer);
 
-    //create digest of verification sig file
+    GenerateSignatureFileDigest(verificationFinalSignatureFilePointer, signatureFileDigest);
+
+    
 
     //decrypt signature using sender's public key (found in manifest file)
 
