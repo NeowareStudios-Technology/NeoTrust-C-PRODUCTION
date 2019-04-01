@@ -95,8 +95,8 @@ void StartSignatureProcess(char *paramSecKey, char *paramDirName)
     secp256k1_scalar myMessageHash, myPrivateKey;
 
     //add space between each hex number in private key and convert to uint8_t *
-    const char* secKey = insertSpaces(paramSecKey);
-    serializedSecKey = stringToHex(secKey);
+    const char* secKey = privKeyInsertSpaces(paramSecKey);
+    serializedSecKey = privKeyStringToHex(secKey);
 
     //generate public key from private key
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);

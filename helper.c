@@ -9,21 +9,33 @@
 
 
 
-uint8_t *stringToHex(const char *s) 
+uint8_t *privKeyStringToHex(const char *stringToConvert) 
 {
     uint8_t *answer = malloc(65 / 3);
     uint8_t *p;
-    for (p = answer; *s; p++)
+    for (p = answer; *stringToConvert; p++)
     {
-        *p = strtoul(s, (char**)&s, 16);
-        s++;
+        *p = strtoul(stringToConvert, (char**)&stringToConvert, 16);
+        stringToConvert++;
+    }
+    return answer;
+}
+
+uint8_t *compPubKeyStringToHex(const char *stringToConvert) 
+{
+    uint8_t *answer = malloc(67 / 3);
+    uint8_t *p;
+    for (p = answer; *stringToConvert; p++)
+    {
+        *p = strtoul(stringToConvert, (char**)&stringToConvert, 16);
+        stringToConvert++;
     }
     return answer;
 }
 
 
 //insert spaces between each hex number in string (passed string must be length 64)
-char* insertSpaces(const char *s)
+char* privKeyInsertSpaces(const char *s)
 {
     char *returnString = malloc(sizeof(char)*97);
     int paramStringIndex = 0;
@@ -33,6 +45,33 @@ char* insertSpaces(const char *s)
     for (int i = 0; i < 97; i++)
     {
         if (i == 96)
+        {
+            returnString[i] = '\0';
+        }
+        else if (i%3 == 0)
+        {
+            returnString[i] = ' ';
+        }
+        else
+        {
+            returnString[i] = s[paramStringIndex];
+            paramStringIndex++;
+        }
+    }
+    return returnString;
+}
+
+//insert spaces between each hex number in string (passed string must be length 64)
+char* compPubKeyInsertSpaces(const char *s)
+{
+    char *returnString = malloc(sizeof(char)*100);
+    int paramStringIndex = 0;
+    
+    //iterate over new array copying the passed array and adding
+    //a space after every 2 chars
+    for (int i = 0; i < 100; i++)
+    {
+        if (i == 99)
         {
             returnString[i] = '\0';
         }

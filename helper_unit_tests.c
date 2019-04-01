@@ -21,7 +21,7 @@
 //the uint8_t hex string to 2 seperate files, reads both of those files into seperate strings, then compares both string
 //-if the string smatch, the test passes
 //-this test is repeated SHORT_TEST_REPEATS times
-int stringToHex_test()
+int privKeyStringToHex_test()
 {
     const char *hexPool = "0123456789abcdef";
     char testKey[65];
@@ -44,10 +44,10 @@ int stringToHex_test()
         testKey[64] = '\0';
 
         //add spaces to string to separate hex values
-        spacedTestKey = insertSpaces(testKey);
+        spacedTestKey = privKeyInsertSpaces(testKey);
 
         //convert test key (with spaces) into hex
-        serializedTestKey = stringToHex(spacedTestKey);
+        serializedTestKey = privKeyStringToHex(spacedTestKey);
 
         //print original testKey string into test file
         for (int i = 0; i < 64; i++)
@@ -69,7 +69,7 @@ int stringToHex_test()
         //compare both strings from test files, if not matching then test fails
         if (strcmp(readTestStringFile, readTestHexFile) != 0)
         {
-            printf("1) stringToHex_test FAILED\n");
+            printf("1) privKeyStringToHex_test FAILED\n");
             return 1;
         }
 
@@ -81,7 +81,7 @@ int stringToHex_test()
     }
 
     //test passes if all repeated test loops pass
-    printf("1) stringToHex_test passed\n");
+    printf("1) privKeyStringToHex_test passed\n");
     return 0;
 }
 
@@ -149,7 +149,7 @@ int main()
 
     printHeader();
 
-    testStatuses[0] = stringToHex_test();
+    testStatuses[0] = privKeyStringToHex_test();
     //testStatuses[1] = countFilesInDirectory_test();
     testStatuses[1] = getFileLength_test();
 
