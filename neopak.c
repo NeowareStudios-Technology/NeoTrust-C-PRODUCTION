@@ -133,7 +133,9 @@ void MainVerify(char *paramTargetDir)
     long verificationSignatureFileLength;
     FILE *verificationTempSignatureFilePointer;
     FILE *verificationManifestFilePointer;
-    char *verificationManifestFileName = "manifest.verify";
+    FILE *verificationFinalSignatureFilePointer;
+    char *verificationManifestFileName = "manifest.mf.verify";
+    char *verificationFinalSigFileName = "neopak.sf.verify";
     secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
     secp256k1_ecdsa_signature sigObject;
     secp256k1_pubkey pubKeyObject;
@@ -154,7 +156,7 @@ void MainVerify(char *paramTargetDir)
 
     CreateDigestsAndMetaInfEntries(paramTargetDir, verificationManifestFilePointer, verificationTempSignatureFilePointer); 
 
-    //create verification sig file from manifest file
+    verificationFinalSignatureFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, verificationFinalSigFileName, verificationManifestFilePointer, verificationTempSignatureFilePointer);
 
     //create digest of verification sig file
 
