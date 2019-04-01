@@ -8,49 +8,6 @@
 #include "verify.h"
 
 
-void VerifyNeoPakSignature(char *paramTargetDir)
-{
-    char metaInfDirPath[256];
-    char signatureFilePath[256];
-    long signatureFileLength;
-    FILE *signatureFilePointer;
-    secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
-    secp256k1_ecdsa_signature sigObject;
-    secp256k1_pubkey pubKeyObject;
-
-    //create file paths
-    strcpy(metaInfDirPath, paramTargetDir);
-    strcat(metaInfDirPath, "/META-INF");
-
-    GetSigObjectFromSigBlockFile(metaInfDirPath, &sigObject, verifyContext);
-    GetPubKeyObjectFromManifestFile(metaInfDirPath, &pubKeyObject, verifyContext);
-    
-    //get the transaction hash (when it exists) and save it
-
-    //create verification manifest file by hashing all files in neopak
-
-    //create verification sig file from manifest file
-
-    //create digest of verification sig file
-
-    //decrypt signature using sender's public key (found in manifest file)
-
-    //compare decrypted signature with digest of verification sig file
-        //if matches, verification passes
-        //if doe not match, verification fails
-
-
-    //DEBUG
-    /*
-    if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, digest, &paramMyPublicKey))
-    {
-        printf("Signature could not be verified \n");
-    }
-    */
-
-}
-
-
 void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_signature *paramSigObject, secp256k1_context *paramContext)
 {
     char signatureBlockFilePath[256];

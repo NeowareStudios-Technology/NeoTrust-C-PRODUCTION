@@ -5,8 +5,8 @@
  * Copywrite NeoWare 2019
  * *********************************/
 
-#include <stdio.h>
-#include "sign.h"
+
+#include "neopak.h"
 
 
 //global
@@ -45,10 +45,10 @@ void ExecuteCommand(char **paramArgs, enum commands paramCommand)
             DisplayUsageInfo();
             break;
         case verify:
-            VerifyNeoPakSignature(paramArgs[1]);
+            MainVerify(paramArgs[1]);
             break;
         case sign:
-            StartSignatureProcess(paramArgs[1], paramArgs[2]);
+            MainSign(paramArgs[1], paramArgs[2]);
             break;
     }
 }
@@ -63,6 +63,115 @@ void DisplayUsageInfo()
     printf("./neopak test                             Sign with test priv key and message hash\n");
     printf("./neopak <privKey> <directoryPath>        Sign all files in directory with private key\n");
     printf("\n *Note: <privKey> must be supplied as a string of hex numbers with length 64 \n");
+}
+
+
+//no return value
+void MainSign(char *paramSecKey, char *paramDirName)
+{
+    FILE *manifestFilePointer;
+    FILE *tempSignatureFilePointer;
+    FILE *finalSignatureFilePointer;
+    long fileLength;
+    //long fileCount = 0;
+    char metaInfDirPath[1024];
+    //for signing with private key
+    uint8_t *serializedDigest;
+    uint8_t *serializedSecKey;
+    uint8_t *signatureFileDigest;
+    uint8_t *serializedPubKeyCompressed;
+    uint8_t *serializedPubKeyUncompressed;
+    uint8_t *serializedSignatureComp;
+    uint8_t *serializedSignatureDer;
+    size_t serializedSignatureDerLength;
+    serializedDigest = malloc(sizeof(uint8_t)*32);
+    serializedSecKey = malloc(sizeof(uint8_t)*32);
+    signatureFileDigest = malloc(sizeof(uint8_t)*32);
+    serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
+    serializedPubKeyUncompressed = malloc(sizeof(uint8_t)*65);
+    serializedSignatureComp = malloc(sizeof(uint8_t)*64);
+    //72 is max length for DER sig, but can be shorter
+    serializedSignatureDer = malloc(sizeof(uint8_t)*72);
+    secp256k1_scalar myMessageHash, myPrivateKey;
+
+    //add space between each hex number in private key and convert to uint8_t *
+    const char* secKey = privKeyInsertSpaces(paramSecKey);
+    serializedSecKey = privKeyStringToHex(secKey);
+
+    //generate public key from private key
+    secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
+    secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
+
+    strcpy(metaInfDirPath, paramDirName);
+    strcat(metaInfDirPath, "/META-INF");
+    mkdir(metaInfDirPath, 0700);
+    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, serializedPubKeyCompressed);   
+    tempSignatureFilePointer = CreateBaseSignatureFile(metaInfDirPath); 
+
+    //make a digest for each file, saving to manifest file
+    long workingFileIndex = -1;
+    CreateDigestsAndMetaInfEntries(paramDirName, &workingFileIndex, manifestFilePointer, tempSignatureFilePointer); 
+    finalSignatureFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, manifestFilePointer, tempSignatureFilePointer);
+
+    //-send ethereum transaction containing pub key and full manifest digest (ie. call JavaScript function here using Duktape)
+    //-append transaction hash to manifest file 
+
+    GenerateSignatureFileDigest(finalSignatureFilePointer, signatureFileDigest);
+
+    serializedSignatureDerLength = VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, signatureFileDigest, serializedSignatureComp, serializedSignatureDer);
+    CreateSignatureBlockFile(metaInfDirPath, serializedSignatureDer, serializedSignatureDerLength);
+    //printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, signatureFileDigest, serializedSignatureComp, serializedSignatureDer);
+   
+    fclose(manifestFilePointer);
+    fclose(tempSignatureFilePointer);
+    free(serializedDigest);
+    free(serializedSecKey);
+    free(serializedPubKeyCompressed);
+    free(serializedPubKeyUncompressed);
+    free(serializedSignatureComp);
+    free(serializedSignatureDer);
+}
+
+
+void MainVerify(char *paramTargetDir)
+{
+    char metaInfDirPath[256];
+    char signatureFilePath[256];
+    long signatureFileLength;
+    FILE *signatureFilePointer;
+    secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
+    secp256k1_ecdsa_signature sigObject;
+    secp256k1_pubkey pubKeyObject;
+
+    //create file paths
+    strcpy(metaInfDirPath, paramTargetDir);
+    strcat(metaInfDirPath, "/META-INF");
+
+    GetSigObjectFromSigBlockFile(metaInfDirPath, &sigObject, verifyContext);
+    GetPubKeyObjectFromManifestFile(metaInfDirPath, &pubKeyObject, verifyContext);
+    
+    //get the transaction hash (when it exists) and save it
+
+    //create verification manifest file by hashing all files in neopak
+
+    //create verification sig file from manifest file
+
+    //create digest of verification sig file
+
+    //decrypt signature using sender's public key (found in manifest file)
+
+    //compare decrypted signature with digest of verification sig file
+        //if matches, verification passes
+        //if doe not match, verification fails
+
+
+    //DEBUG
+    /*
+    if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, digest, &paramMyPublicKey))
+    {
+        printf("Signature could not be verified \n");
+    }
+    */
 }
 
 
