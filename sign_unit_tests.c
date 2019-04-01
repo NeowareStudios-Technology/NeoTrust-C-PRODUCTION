@@ -83,7 +83,29 @@ int VerifyParamsAndSignMessageWithEcdsa_test()
     secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(myContext,serializedTestSecKey, serializedTestPubKeyComp, serializedTestPubKeyUncomp);
     VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedTestSecKey, serializedTestDigest, serializedSignatureComp, serializedSignatureDer);
 
+
     printf("3) VerifyParamsAndSignMessageWithEcdsa_test passed\n");
+    printf("   DIGEST\n    ");
+    for(int i =0; i<32; i++)
+    {
+        printf("%02x", serializedTestDigest[i]);
+    }
+    printf("\n   SEC KEY\n    ");
+    for(int i =0; i<32; i++)
+    {
+        printf("%02x", serializedTestSecKey[i]);
+    }
+    printf("\n   PUB KEY UNCOMP\n    ");
+    for(int i = 0; i <65; i++)
+    {
+        printf("%02x", serializedTestPubKeyUncomp[i]);
+    }
+    printf("\n   SIGNATURE\n    ");
+    for(int i = 0; i <73; i++)
+    {
+        printf("%02x", serializedSignatureDer[i]);
+    }
+    printf("\n");
     return 0;
 }
 
