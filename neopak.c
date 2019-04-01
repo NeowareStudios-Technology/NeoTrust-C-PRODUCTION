@@ -77,22 +77,15 @@ void MainSign(char *paramSecKey, char *paramDirName)
     char metaInfDirPath[1024];
     char *manifestFileName = "manifest.mf";
     //for signing with private key
-    uint8_t *serializedDigest;
-    uint8_t *serializedSecKey;
-    uint8_t *signatureFileDigest;
-    uint8_t *serializedPubKeyCompressed;
-    uint8_t *serializedPubKeyUncompressed;
-    uint8_t *serializedSignatureComp;
-    uint8_t *serializedSignatureDer;
     size_t serializedSignatureDerLength;
-    serializedDigest = malloc(sizeof(uint8_t)*32);
-    serializedSecKey = malloc(sizeof(uint8_t)*32);
-    signatureFileDigest = malloc(sizeof(uint8_t)*32);
-    serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
-    serializedPubKeyUncompressed = malloc(sizeof(uint8_t)*65);
-    serializedSignatureComp = malloc(sizeof(uint8_t)*64);
+    uint8_t *serializedDigest = malloc(sizeof(uint8_t)*32);
+    uint8_t *serializedSecKey = malloc(sizeof(uint8_t)*32);
+    uint8_t *signatureFileDigest = malloc(sizeof(uint8_t)*32);
+    uint8_t *serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
+    uint8_t *serializedPubKeyUncompressed = malloc(sizeof(uint8_t)*65);
+    uint8_t *serializedSignatureComp = malloc(sizeof(uint8_t)*64);
     //72 is max length for DER sig, but can be shorter
-    serializedSignatureDer = malloc(sizeof(uint8_t)*72);
+    uint8_t *serializedSignatureDer = malloc(sizeof(uint8_t)*72);
     secp256k1_scalar myMessageHash, myPrivateKey;
 
     //add space between each hex number in private key and convert to uint8_t *
@@ -137,24 +130,26 @@ void MainSign(char *paramSecKey, char *paramDirName)
 void MainVerify(char *paramTargetDir)
 {
     char metaInfDirPath[256];
-    char signatureFilePath[256];
-    long signatureFileLength;
-    FILE *signatureFilePointer;
+    long verificationSignatureFileLength;
+    FILE *verificationSignatureFilePointer;
+    FILE *verificationManifestFilePointer;
+    char *verificationManifestFileName = "manifest.verify";
     secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
     secp256k1_ecdsa_signature sigObject;
     secp256k1_pubkey pubKeyObject;
+    uint8_t *serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
 
     //create file paths
     strcpy(metaInfDirPath, paramTargetDir);
     strcat(metaInfDirPath, "/META-INF");
 
     GetSigObjectFromSigBlockFile(metaInfDirPath, &sigObject, verifyContext);
-    GetPubKeyObjectFromManifestFile(metaInfDirPath, &pubKeyObject, verifyContext);
+    GetPubKeyObjectFromManifestFile(metaInfDirPath, &pubKeyObject, serializedPubKeyCompressed, verifyContext);
     
     //get the transaction hash (when it exists) and save it
 
     //create verification manifest file by hashing all files in neopak
-
+    verificationManifestFilePointer = CreateBaseManifestFile(metaInfDirPath, verificationManifestFileName, serializedPubKeyCompressed);
 
     //create verification sig file from manifest file
 

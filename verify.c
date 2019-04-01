@@ -49,7 +49,7 @@ void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_sig
 }
 
 
-void GetPubKeyObjectFromManifestFile(char *metaInfDirPath, secp256k1_pubkey *paramPubKeyObject, secp256k1_context *paramContext)
+void GetPubKeyObjectFromManifestFile(char *metaInfDirPath, secp256k1_pubkey *paramPubKeyObject, uint8_t *paramSerializedPubKeyCompressed, secp256k1_context *paramContext)
 {
     char manifestFilePath[256];
     char pubKeyBuffer[256];
@@ -85,12 +85,12 @@ void GetPubKeyObjectFromManifestFile(char *metaInfDirPath, secp256k1_pubkey *par
     //convert compressed pub key hex string to uint8_t hex array
     const char *pubKeyWithSpaces = compPubKeyInsertSpaces(pubKeyBuffer);
     serializedPubKeyCompressed = compPubKeyStringToHex(pubKeyWithSpaces);
-    if (1 != secp256k1_ec_pubkey_parse(paramContext, paramPubKeyObject, serializedPubKeyCompressed, 33))
+    memcpy(paramSerializedPubKeyCompressed, serializedPubKeyCompressed, 33);
+    if (1 != secp256k1_ec_pubkey_parse(paramContext, paramPubKeyObject, paramSerializedPubKeyCompressed, 33))
     {
         printf("Public Key could not be parsed into object\n");
         exit(1);
     }  
 
-    free(serializedPubKeyCompressed);
     fclose(manifestFilePointer);
 }
