@@ -24,6 +24,23 @@ void VerifyNeoPakSignature(char *paramTargetDir)
 
     GetSigObjectFromSigBlockFile(metaInfDirPath, &sigObject, verifyContext);
     GetPubKeyObjectFromManifestFile(metaInfDirPath, &pubKeyObject, verifyContext);
+    
+    //get the transaction hash (when it exists) and save it
+
+    //create verification manifest file by hashing all files in neopak
+
+    //create verification sig file from manifest file
+
+    //create digest of verification sig file
+
+    //decrypt signature using sender's public key (found in manifest file)
+
+    //compare decrypted signature with digest of verification sig file
+        //if matches, verification passes
+        //if doe not match, verification fails
+        
+
+    //DEBUG
     /*
     if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, digest, &paramMyPublicKey))
     {
