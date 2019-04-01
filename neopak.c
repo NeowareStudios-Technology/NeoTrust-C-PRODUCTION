@@ -176,7 +176,7 @@ void MainVerify(char *paramTargetDir)
 
     if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, signatureFileDigest, &pubKeyObject))
     {
-        printf("This neopak file could not be verified. This means that is has been tampered with since it was signed.\n");
+        printf("This neopak archive could not be verified. This means that the files in the \nneopak have been tampered with since it was signed or it was signed by a \ndifferent user than the one who owns the public key in the manifest file.\n");
     }
     else
     {
