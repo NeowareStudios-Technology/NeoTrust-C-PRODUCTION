@@ -81,7 +81,14 @@ void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_sig
     printf("\n\n");
 
     //parse DER signature retrieved from signature block file into signature object
-    secp256k1_ecdsa_signature_parse_der(paramContext, paramSigObject, signatureBlockFileContents, signatureBlockFileLength); 
+    if (1 != secp256k1_ecdsa_signature_parse_der(paramContext, paramSigObject, signatureBlockFileContents, signatureBlockFileLength))
+    {
+        printf("Signature could not be parsed into object\n");
+        exit(1);
+    }
+
+    free(signatureBlockFileContents);
+    fclose(signatureBlockFilePointer);
 }
 
 
@@ -118,16 +125,15 @@ void GetPubKeyObjectFromManifestFile(char *metaInfDirPath, secp256k1_pubkey *par
     //cut pub key buffer so only pub key is held in it
     pubKeyLength = cutStringAndReturnLength(pubKeyBuffer, 0, 12);
 
+    //convert compressed pub key hex string to uint8_t hex array
     const char *pubKeyWithSpaces = compPubKeyInsertSpaces(pubKeyBuffer);
-
     serializedPubKeyCompressed = compPubKeyStringToHex(pubKeyWithSpaces);
-
     if (1 != secp256k1_ec_pubkey_parse(paramContext, paramPubKeyObject, serializedPubKeyCompressed, 33))
     {
         printf("Public Key could not be parsed into object\n");
         exit(1);
     }  
 
+    free(serializedPubKeyCompressed);
     fclose(manifestFilePointer);
-
 }
