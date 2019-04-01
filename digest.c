@@ -7,10 +7,10 @@
 
 #include "digest.h"
 
-void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex, FILE* paramManifestFilePointer, FILE* paramSignatureFilePointer)
+void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePointer, FILE* paramSignatureFilePointer)
 {
     int i;
-    char path[1000];
+    char path[1024];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
     long fileLength;
@@ -29,7 +29,6 @@ void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex,
            //if it is a file, read file into string
            if (dp->d_type != DT_DIR)
             {
-                *paramWorkingFileIndex= *paramWorkingFileIndex + 1;
                 //read target file contents
                 FILE* filePointer = fopen(path, "r");
                 if (!filePointer)
@@ -45,7 +44,7 @@ void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex,
                 
                 free(fileContents);
             }
-           CreateDigestsAndMetaInfEntries(path, paramWorkingFileIndex, paramManifestFilePointer, paramSignatureFilePointer);    
+           CreateDigestsAndMetaInfEntries(path, paramManifestFilePointer, paramSignatureFilePointer);    
         }
     }
     closedir(dir);
@@ -67,10 +66,10 @@ void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName
 void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest)
 {
     FILE *tempFilePointer;
-    char *signatureFileEntry = malloc(1000);
-    char *fileDigestChars = malloc(65); 
-    uint8_t signatureEntryDigest[32];
-    size_t signatureEntryLength;
+    char manifestFileEntry[1024];
+    char fileDigestChars[65]; 
+    uint8_t manifestEntryDigest[32];
+    size_t manifestEntryLength;
 
     tempFilePointer = fopen("tempFile", "a+");
     if (!tempFilePointer)
@@ -85,14 +84,19 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     rewind(tempFilePointer);
                 
     fgets(fileDigestChars, 65, tempFilePointer);
-    strcat(signatureFileEntry, fileDigestChars);
-    strcat(signatureFileEntry, "\0");
-    signatureEntryLength = stringLength(signatureFileEntry);
+    strcpy(manifestFileEntry, "Name: ");
+    strcat(manifestFileEntry, paramFileName);
+    strcat(manifestFileEntry, "\n");
+    strcat(manifestFileEntry, "Digest-Algorithms: SHA256\n");
+    strcat(manifestFileEntry, "SHA256-Digest: ");
+    strcat(manifestFileEntry, fileDigestChars);
+    strcat(manifestFileEntry, "\0");
+    manifestEntryLength = strlen(manifestFileEntry);
 
     fclose(tempFilePointer);
     remove("tempFile");
 
-    GenerateDigestFromString(signatureFileEntry, signatureEntryLength, signatureEntryDigest);
+    GenerateDigestFromString(manifestFileEntry, manifestEntryLength, manifestEntryDigest);
 
     fputs("\n\nName: ", paramSignatureFilePointer);
     fputs(paramFileName, paramSignatureFilePointer);
@@ -100,22 +104,20 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     fputs("SHA256-Digest: ", paramSignatureFilePointer);
     for (int i = 0; i < 32; i++)
     {
-        fprintf(paramSignatureFilePointer, "%02x", signatureEntryDigest[i]);
+        fprintf(paramSignatureFilePointer, "%02x", manifestEntryDigest[i]);
     }
-    free(signatureFileEntry);
-    free(fileDigestChars);
 
 }
 
-FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer)
+FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, char *paramFileName, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer)
 {
     char *manifestFileContents;
     char *signatureFileContents;
     long manifestFileLength;
     long signatureFileLength;
     uint8_t manifestFileDigest[32];
-    char signatureFilePath[100];
-    char tempSignatureFilePath[100];
+    char signatureFilePath[256];
+    char tempSignatureFilePath[256];
     FILE *finalSignatureFilePointer;
 
     //read manifest file contents
@@ -136,7 +138,8 @@ FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE
 
     GenerateDigestFromString(manifestFileContents, manifestFileLength, manifestFileDigest);
     strcpy(signatureFilePath, paramMetaInfDirPath);
-    strcat(signatureFilePath, "/neopak.sf");
+    strcat(signatureFilePath, "/");
+    strcat(signatureFilePath, paramFileName);
     finalSignatureFilePointer = fopen(signatureFilePath, "w+");
     if (!finalSignatureFilePointer)
         printf("\n error could not open final sig file\n");
@@ -183,18 +186,19 @@ void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uin
     }
 }
 
-FILE* CreateBaseManifestFile(char *paramMetaInfPath, uint8_t *paramPublicKey)
+FILE* CreateBaseManifestFile(char *paramMetaInfPath, char *paramFileName, uint8_t *paramPublicKey)
 {
-    char manifestFilePath[1000];
+    char manifestFilePath[1024];
     strcpy(manifestFilePath, paramMetaInfPath);
-    strcat(manifestFilePath, "/manifest");
+    strcat(manifestFilePath, "/");
+    strcat(manifestFilePath, paramFileName);
     FILE *manifestFilePointer = fopen(manifestFilePath, "a+");
     
     if (!manifestFilePointer)
         printf("error: file cant be opened\n");
 
     fputs("Manifest-Version: 0.1\nCreated-By: NeoPak (neopak 0.1 Beta)\nPublic Key: ", manifestFilePointer);
-    for (int i = 0; i < 65; i++)
+    for (int i = 0; i < 33; i++)
         fprintf(manifestFilePointer, "%02x", paramPublicKey[i]);
     fputs("\nComments: PLEASE DO NOT EDIT THIS FILE. YOU WILL BREAK IT.", manifestFilePointer);
 
@@ -203,7 +207,7 @@ FILE* CreateBaseManifestFile(char *paramMetaInfPath, uint8_t *paramPublicKey)
 
 FILE* CreateBaseSignatureFile(char *paramMetaInfPath)
 {
-    char signatureFilePath[1000];
+    char signatureFilePath[1024];
     strcpy(signatureFilePath, paramMetaInfPath);
     strcat(signatureFilePath, "/tempSignature");
     FILE *signatureFilePointer = fopen(signatureFilePath, "a+");

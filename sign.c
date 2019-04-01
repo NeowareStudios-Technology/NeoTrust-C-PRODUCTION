@@ -7,47 +7,6 @@
 
 #include "sign.h"
 
-//sets up all data structures necessary to sign a test message with a test private key and signs in ECDSA
-void StartTestSignatureProcess()
-{
-    uint8_t* serializedDigest;
-    uint8_t* serializedSecKey;
-    uint8_t* serializedPubKeyCompressed;
-    uint8_t* serializedPubKeyUncompressed;
-    uint8_t* serializedSignatureComp;
-    uint8_t* serializedSignatureDer;
-    serializedDigest = malloc(sizeof(uint8_t)*32);
-    serializedSecKey = malloc(sizeof(uint8_t)*32);
-    serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
-    serializedPubKeyUncompressed = malloc(sizeof(uint8_t)*65);
-    serializedSignatureComp = malloc(sizeof(uint8_t)*64);
-    //72 is max length for DER sig, but can be shorters
-    serializedSignatureDer = malloc(sizeof(uint8_t)*72);
-    secp256k1_scalar myMessageHash, myPrivateKey;
-
-    printf("\nStarting signing test with test pub/priv keys and test message hash");
-    //generate random message hash and private key?
-    CreateTestSecp256k1ScalarObject(&myMessageHash);
-    CreateTestSecp256k1ScalarObject(&myPrivateKey);
-    
-    //convert message hash to uint8_t 32 bytes
-    secp256k1_scalar_get_b32(serializedDigest, &myMessageHash);
-    secp256k1_scalar_get_b32(serializedSecKey, &myPrivateKey);
-
-    secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
-    secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
-    VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, serializedDigest, serializedSignatureComp, serializedSignatureDer);
-
-    printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, serializedDigest, serializedSignatureComp, serializedSignatureDer);
-
-    free(serializedDigest);
-    free(serializedSecKey);
-    free(serializedPubKeyCompressed);
-    free(serializedPubKeyUncompressed);
-    free(serializedSignatureComp);
-    free(serializedSignatureDer);
-}
-
 
 void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
    do {
@@ -63,74 +22,8 @@ void CreateTestSecp256k1ScalarObject(secp256k1_scalar *num) {
 }
 
 
-void StartSignatureProcess(char *paramSecKey, char *paramDirName)
-{
-    char **fileContents;
-    FILE *manifestFilePointer;
-    FILE *tempSignatureFilePointer;
-    FILE *finalSignatureFilePointer;
-    long fileLength;
-    //long fileCount = 0;
-    char* metaInfDirPath[1000];
-    //for signing with private key
-    uint8_t *serializedDigest;
-    uint8_t *serializedSecKey;
-    uint8_t *signatureFileDigest;
-    uint8_t *serializedPubKeyCompressed;
-    uint8_t *serializedPubKeyUncompressed;
-    uint8_t *serializedSignatureComp;
-    uint8_t *serializedSignatureDer;
-    size_t serializedSignatureDerLength;
-    serializedDigest = malloc(sizeof(uint8_t)*32);
-    serializedSecKey = malloc(sizeof(uint8_t)*32);
-    signatureFileDigest = malloc(sizeof(uint8_t)*32);
-    serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
-    serializedPubKeyUncompressed = malloc(sizeof(uint8_t)*65);
-    serializedSignatureComp = malloc(sizeof(uint8_t)*64);
-    //72 is max length for DER sig, but can be shorter
-    serializedSignatureDer = malloc(sizeof(uint8_t)*72);
-    secp256k1_scalar myMessageHash, myPrivateKey;
-
-    //add space between each hex number in private key and convert to uint8_t *
-    const char* secKey = insertSpaces(paramSecKey);
-    serializedSecKey = stringToHex(secKey);
-
-    //generate public key from private key
-    secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
-    secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(myContext,serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed);
-
-    strcpy(metaInfDirPath, paramDirName);
-    strcat(metaInfDirPath, "/META-INF");
-    mkdir(metaInfDirPath, 0700);
-    manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, serializedPubKeyUncompressed);   
-    tempSignatureFilePointer = CreateBaseSignatureFile(metaInfDirPath); 
-
-    //make a digest for each file, saving to manifest file
-    long workingFileIndex = -1;
-    CreateDigestsAndMetaInfEntries(paramDirName, &workingFileIndex, manifestFilePointer, tempSignatureFilePointer); 
-    finalSignatureFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, manifestFilePointer, tempSignatureFilePointer);
-
-    //-send ethereum transaction containing pub key and full manifest digest (ie. call JavaScript function here using Duktape)
-    //-append transaction hash to manifest file 
-
-    GenerateSignatureFileDigest(finalSignatureFilePointer, signatureFileDigest);
-
-    serializedSignatureDerLength = VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, signatureFileDigest, serializedSignatureComp, serializedSignatureDer);
-    CreateSignatureBlockFile(metaInfDirPath, serializedSignatureDer, serializedSignatureDerLength);
-    //printValues(serializedSecKey, serializedPubKeyCompressed, serializedPubKeyUncompressed, signatureFileDigest, serializedSignatureComp, serializedSignatureDer);
-   
-    fclose(manifestFilePointer);
-    fclose(tempSignatureFilePointer);
-    free(serializedDigest);
-    free(serializedSecKey);
-    free(serializedPubKeyCompressed);
-    free(serializedPubKeyUncompressed);
-    free(serializedSignatureComp);
-    free(serializedSignatureDer);
-}
-
-
-//returns length of DER encoded signature
+//return value: length of DER encoded signature
+//return params: signatureComp, signatureDer
 size_t VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, uint8_t* secKey, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer)
 {
     /*a general template for this function can be found in 
@@ -189,6 +82,7 @@ size_t VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, ui
 }
 
 
+//return params: pubKeyComp, pubKeyUncomp
 secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp)
 {
     secp256k1_pubkey myPublicKey;
@@ -226,11 +120,13 @@ secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, ui
 }
 
 
+//no return value
 void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerializedSignatureDer, size_t paramSerializedSignatureDerLength)
 {
     FILE *signatureBlockFilePointer;
-    char signatureBlockFilePath[200];
+    char signatureBlockFilePath[256];
 
+    //create file paths
     strcpy(signatureBlockFilePath, paramMetaInfDirPath);
     strcat(signatureBlockFilePath, "/neopak.ec");
 
@@ -240,5 +136,14 @@ void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerialize
         printf("\n\nCOULD NOT OPEN SIG BLOCK FILE\n\n");
     }
     
+    //write signature (in binary form) to signature block file
     fwrite(paramSerializedSignatureDer, sizeof(uint8_t), paramSerializedSignatureDerLength, signatureBlockFilePointer);
+
+    //debug: print created signature
+    printf("\n\nSignature (create)\n");
+    for(int i = 0; i < paramSerializedSignatureDerLength; i++)
+    {
+        printf("%02x", paramSerializedSignatureDer[i]);
+    }
+    printf("\n");
 }

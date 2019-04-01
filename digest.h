@@ -14,13 +14,13 @@
 #include "helper.h"
 
 
-void CreateDigestsAndMetaInfEntries(char *basePath, long *paramWorkingFileIndex, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
+void CreateDigestsAndMetaInfEntries(char *basePath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 
-FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
+FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, char *paramFileName, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
 
-FILE* CreateBaseManifestFile(char *paramTargetDirectoryName, uint8_t *paramPublicKey);
+FILE* CreateBaseManifestFile(char *paramMetaInfPath, char *paramFileName, uint8_t *paramPublicKey);
 
 FILE* CreateBaseSignatureFile(char *paramTargetDirectoryName);
 

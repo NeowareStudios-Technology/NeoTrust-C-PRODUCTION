@@ -15,15 +15,18 @@
 #include "include/testrand_impl.h"
 
 
+uint8_t *privKeyStringToHex(const char *s);
 
-size_t stringLength(const char *str);
+uint8_t *compPubKeyStringToHex(const char *s);
 
-uint8_t *stringToHex(const char *s);
+//insert spaces between each hex number for parsing into uint8_t array (using privKeyStringToHex())
+char* privKeyInsertSpaces(const char *s);
 
-//insert spaces between each hex number for parsing into uint8_t array
-char* insertSpaces(const char *s);
+char* compPubKeyInsertSpaces(const char *s);
 
 //print secret key, public key, digest, and signature
 void printValues(uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp, uint8_t* digest, uint8_t* signatureComp, uint8_t* signatureDer);
 
 long getFileLength(FILE *paramFilePointer);
+
+int cutStringAndReturnLength(char *paramStringToCut, int paramBeginningIndex, int paramLengthToCut);
