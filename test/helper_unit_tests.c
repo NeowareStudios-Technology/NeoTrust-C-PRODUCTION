@@ -12,7 +12,6 @@
 
 #define NUM_TESTS 2
 #define TEST_DIR_NAME "testdir"
-//#define NUM_FILES_TEST_DIR 7
 #define LONG_TEST_REPEATS 20
 #define SHORT_TEST_REPEATS 1000
 
