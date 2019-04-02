@@ -7,7 +7,7 @@
 
 
 #include<time.h>
-#include "digest.h"
+#include "../digest.h"
 
 #define NUM_TESTS 5
 #define TEST_DIR_NAME "testdir"

@@ -6,6 +6,7 @@ TEST_DIGEST_OBJ = $(OPATH)digest_unit_tests.o $(OPATH)digest.o $(OPATH)sha224-25
 TEST_SIGN_OBJ = $(OPATH)sign_unit_tests.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
 OPATH = ./obj/
 SPATH = ./sha/
+TPATH = ./test/
 LDIR = lib
 LIBS = -L $(LDIR) -l secp256k1
 
@@ -53,24 +54,24 @@ test_helper: $(TEST_HELPER_OBJ)
 	rm ./test_helper
 	
 
-$(OPATH)helper_unit_tests.o: helper_unit_tests.c 
-	$(CC) -c helper_unit_tests.c -o $(OPATH)helper_unit_tests.o $(CFLAGS)
+$(OPATH)helper_unit_tests.o: $(TPATH)helper_unit_tests.c 
+	$(CC) -c $(TPATH)helper_unit_tests.c -o $(OPATH)helper_unit_tests.o $(CFLAGS)
 
 test_digest: $(TEST_DIGEST_OBJ)
 	$(CC) -o test_digest $(TEST_DIGEST_OBJ) $(CFLAGS)
 	./test_digest >> unittestresults.out
 	rm ./test_digest
 
-$(OPATH)digest_unit_tests.o: digest_unit_tests.c 
-	$(CC) -c digest_unit_tests.c -o $(OPATH)digest_unit_tests.o $(CFLAGS)
+$(OPATH)digest_unit_tests.o: $(TPATH)digest_unit_tests.c 
+	$(CC) -c $(TPATH)digest_unit_tests.c -o $(OPATH)digest_unit_tests.o $(CFLAGS)
 
 test_sign: $(TEST_SIGN_OBJ)
 	$(CC) -o test_sign $(TEST_SIGN_OBJ) $(LIBS) $(CFLAGS)
 	./test_sign >> unittestresults.out
 	rm ./test_sign
 
-$(OPATH)sign_unit_tests.o: sign_unit_tests.c 
-	$(CC) -c sign_unit_tests.c -o $(OPATH)sign_unit_tests.o $(CFLAGS)
+$(OPATH)sign_unit_tests.o: $(TPATH)sign_unit_tests.c 
+	$(CC) -c $(TPATH)sign_unit_tests.c -o $(OPATH)sign_unit_tests.o $(CFLAGS)
 
 cleanobject:
 	rm obj/*.o

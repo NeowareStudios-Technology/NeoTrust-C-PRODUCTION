@@ -8,7 +8,7 @@
 
 #include <time.h>
 #include <stdio.h>
-#include "helper.h"
+#include "../helper.h"
 
 #define NUM_TESTS 2
 #define TEST_DIR_NAME "testdir"

@@ -7,7 +7,7 @@
 
 
 #include <time.h>
-#include "sign.h"
+#include "../sign.h"
 
 #define NUM_TESTS 3
 
