@@ -5,7 +5,23 @@
  * Copywrite NeoWare 2019
  * *********************************/
 
+#include <time.h>
+#include "../verify.h"
+
 #define NUM_TESTS 1
+#define TEST_META_DIR_NAME "testMETA-INF"
+
+int GetSigObjectFromSigBlockFile_test()
+{
+    char metaInfDirPath[256];
+
+    strcpy(metaInfDirPath, "./");
+    strcat(metaInfDirPath, TEST_META_DIR_NAME);
+
+    printf("%s",metaInfDirPath);
+
+    return 0;
+}
 
 
 void printTestStatuses(int paramTestStatuses[NUM_TESTS])
@@ -32,7 +48,7 @@ int main()
 
     printHeader();
 
-    testStatuses[0] = privKeyStringToHex_test();
+    testStatuses[0] = GetSigObjectFromSigBlockFile_test();
 
     printTestStatuses(testStatuses);
 

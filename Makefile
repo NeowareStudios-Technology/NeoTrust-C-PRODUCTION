@@ -4,6 +4,7 @@ OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)
 TEST_HELPER_OBJ = $(OPATH)helper_unit_tests.o $(OPATH)helper.o
 TEST_DIGEST_OBJ = $(OPATH)digest_unit_tests.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
 TEST_SIGN_OBJ = $(OPATH)sign_unit_tests.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
+TEST_VERIFY_OBJ = $(OPATH)verify_unit_tests.o $(OPATH)verify.o $(OPATH)helper.o
 OPATH = ./obj/
 SPATH = ./sha/
 TPATH = ./test/
@@ -72,6 +73,14 @@ test_sign: $(TEST_SIGN_OBJ)
 
 $(OPATH)sign_unit_tests.o: $(TPATH)sign_unit_tests.c 
 	$(CC) -c $(TPATH)sign_unit_tests.c -o $(OPATH)sign_unit_tests.o $(CFLAGS)
+
+test_verify: $(TEST_VERIFY_OBJ)
+	$(CC) -o test_verify $(TEST_VERIFY_OBJ) $(LIBS) $(CFLAGS)
+	./test_verify >> unittestresults.out
+	rm ./test_verify
+
+$(OPATH)verify_unit_tests.o: $(TPATH)verify_unit_tests.c 
+	$(CC) -c $(TPATH)verify_unit_tests.c -o $(OPATH)verify_unit_tests.o $(CFLAGS)
 
 cleanobject:
 	rm obj/*.o
