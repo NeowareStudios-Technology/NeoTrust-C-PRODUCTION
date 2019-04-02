@@ -43,10 +43,11 @@ $(OPATH)sha384-512.o: $(SPATH)sha384-512.c
 
 
 
-test: test_helper test_digest test_sign
+test: test_helper test_digest test_sign test_verify
 	$(test_helper)
 	$(test_digest)
 	$(test_sign)
+	$(test_verify)
 	rm obj/*.o
 
 test_helper: $(TEST_HELPER_OBJ)
