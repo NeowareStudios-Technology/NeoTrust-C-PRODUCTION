@@ -7,22 +7,24 @@
 
 #include "digest.h"
 
-void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePointer, FILE* paramSignatureFilePointer)
+//recursive function
+void CreateDigestsAndMetaInfEntries(char *paramBasePath, FILE* paramManifestFilePointer, FILE* paramSignatureFilePointer)
 {
-    int i;
     char path[1024];
     struct dirent *dp;
-    DIR *dir = opendir(basePath);
+    DIR *dir = opendir(paramBasePath);
     long fileLength;
     uint8_t fileDigest[32];
     uint8_t manifestEntryDigest[32];
+
+    //iterate over all subdirectories and files
     if (!dir)
         return; 
     while ((dp = readdir(dir)) != NULL)
     {
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0 && strcmp(dp->d_name, "META-INF") != 0)
         {  
-           strcpy(path, basePath);
+           strcpy(path, paramBasePath);
            strcat(path, "/");
            strcat(path, dp->d_name);
 
@@ -40,7 +42,7 @@ void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePoint
 
                 GenerateDigestFromString(fileContents, fileLength, fileDigest);
                 CreateManifestFileEntry(paramManifestFilePointer, dp->d_name, fileDigest);
-                CreateSignatureFileEntry(paramSignatureFilePointer, dp->d_name, basePath, fileDigest);
+                CreateSignatureFileEntry(paramSignatureFilePointer, dp->d_name, paramBasePath, fileDigest);
                 
                 free(fileContents);
             }
@@ -63,7 +65,7 @@ void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName
     }
 }
 
-void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest)
+void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, char *paramBasePath, uint8_t *paramFileDigest)
 {
     FILE *tempFilePointer;
     char manifestFileEntry[1024];
