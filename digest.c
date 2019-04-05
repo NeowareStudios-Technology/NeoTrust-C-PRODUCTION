@@ -7,15 +7,18 @@
 
 #include "digest.h"
 
+
+//recursive function
 void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePointer, FILE* paramSignatureFilePointer)
 {
-    int i;
     char path[1024];
     struct dirent *dp;
     DIR *dir = opendir(basePath);
     long fileLength;
     uint8_t fileDigest[32];
     uint8_t manifestEntryDigest[32];
+
+    //iterate over each subdirectory and file in the target directory
     if (!dir)
         return; 
     while ((dp = readdir(dir)) != NULL)
@@ -26,8 +29,9 @@ void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePoint
            strcat(path, "/");
            strcat(path, dp->d_name);
 
-           //if it is a file, read file into string
-           if (dp->d_type != DT_DIR)
+            //if it is a file, read file into string, create digest from string, create manifest file entry from string,
+            //and create signature file entry from manifest file entry
+            if (dp->d_type != DT_DIR)
             {
                 //read target file contents
                 FILE* filePointer = fopen(path, "r");
@@ -44,11 +48,13 @@ void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePoint
                 
                 free(fileContents);
             }
-           CreateDigestsAndMetaInfEntries(path, paramManifestFilePointer, paramSignatureFilePointer);    
+            //recursive call
+            CreateDigestsAndMetaInfEntries(path, paramManifestFilePointer, paramSignatureFilePointer);    
         }
     }
     closedir(dir);
 }
+
 
 void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName, uint8_t *paramFileDigest)
 {
@@ -63,14 +69,17 @@ void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName
     }
 }
 
+
 void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest)
 {
+    //temp file used to convert target file digest (uint8_t array) to string
     FILE *tempFilePointer;
     char manifestFileEntry[1024];
     char fileDigestChars[65]; 
     uint8_t manifestEntryDigest[32];
     size_t manifestEntryLength;
 
+    //create and open temp file for reading and writing
     tempFilePointer = fopen("tempFile", "a+");
     if (!tempFilePointer)
     {
@@ -78,12 +87,18 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
         exit(1);
     }
 
+    //print the target file digest as hex into temp file
     for (int i = 0; i < 32; i++)
         fprintf(tempFilePointer,"%02x", paramFileDigest[i]);
     
     rewind(tempFilePointer);
-                
+    
+    //read target file digest in temp file as string
     fgets(fileDigestChars, 65, tempFilePointer);
+    fclose(tempFilePointer);
+    remove("tempFile");
+
+    //place manifest entry text (including target file digest) into string
     strcpy(manifestFileEntry, "Name: ");
     strcat(manifestFileEntry, paramFileName);
     strcat(manifestFileEntry, "\n");
@@ -93,11 +108,10 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     strcat(manifestFileEntry, "\0");
     manifestEntryLength = strlen(manifestFileEntry);
 
-    fclose(tempFilePointer);
-    remove("tempFile");
-
+    //generate the digest of the manifest file entry (for signature file entry)
     GenerateDigestFromString(manifestFileEntry, manifestEntryLength, manifestEntryDigest);
 
+    //write signature file entry to signature file (signature file entry includes manifest entry digest)
     fputs("\n\nName: ", paramSignatureFilePointer);
     fputs(paramFileName, paramSignatureFilePointer);
     fputs("\nDigest-Algorithms: SHA256\n", paramSignatureFilePointer);
@@ -106,8 +120,8 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     {
         fprintf(paramSignatureFilePointer, "%02x", manifestEntryDigest[i]);
     }
-
 }
+
 
 FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, char *paramFileName, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer)
 {
