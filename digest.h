@@ -14,7 +14,7 @@
 #include "helper.h"
 
 
-void CreateDigestsAndMetaInfEntries(char *paramBasePath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
+void CreateDigestsAndMetaInfEntries(char *basePath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
 
 void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 
