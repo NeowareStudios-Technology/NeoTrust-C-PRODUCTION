@@ -9,11 +9,11 @@
 
 
 //recursive function
-void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePointer, FILE* paramSigFilePointer)
+void CreateDigestsAndMetaInfEntries(char *paramBasePath, FILE* paramManifestFilePointer, FILE* paramSigFilePointer)
 {
     char path[1024];
     struct dirent *dp;
-    DIR *dir = opendir(basePath);
+    DIR *dir = opendir(paramBasePath);
     long fileLength;
     uint8_t fileDigest[32];
     uint8_t manifestEntryDigest[32];
@@ -25,7 +25,7 @@ void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePoint
     {
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0 && strcmp(dp->d_name, "META-INF") != 0)
         {  
-           strcpy(path, basePath);
+           strcpy(path, paramBasePath);
            strcat(path, "/");
            strcat(path, dp->d_name);
 
@@ -44,7 +44,7 @@ void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePoint
 
                 GenerateSha256DigestFromString(fileContents, fileLength, fileDigest);
                 CreateManifestFileEntry(paramManifestFilePointer, dp->d_name, fileDigest);
-                CreateTempSigFileEntry(paramSigFilePointer, dp->d_name, basePath, fileDigest);
+                CreateTempSigFileEntry(paramSigFilePointer, dp->d_name, fileDigest);
                 
                 free(fileContents);
             }
@@ -72,7 +72,7 @@ void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName
 
 //Temp sig file will hold all signature file entries EXCEPT for the header and full manifest file hash.
 //Full manifest file hash can only be created after iterating through all target directory files.
-void CreateTempSigFileEntry(FILE* paramTempSigFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest)
+void CreateTempSigFileEntry(FILE* paramTempSigFilePointer, char *paramFileName, uint8_t *paramFileDigest)
 {
     //temp digest file used to convert target file digest (uint8_t array) to string
     FILE *tempDigestFilePointer;

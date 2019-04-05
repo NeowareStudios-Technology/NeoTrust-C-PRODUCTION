@@ -14,7 +14,7 @@
 #include "helper.h"
 
 
-void CreateDigestsAndMetaInfEntries(char *basePath, FILE *paramManifestFilePointer, FILE *paramSigFilePointer);
+void CreateDigestsAndMetaInfEntries(char *paramBasePath, FILE *paramManifestFilePointer, FILE *paramSigFilePointer);
 
 void GenerateSha256DigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 
@@ -26,6 +26,6 @@ FILE* CreateBaseSigFile(char *paramTargetDirectoryName);
 
 void CreateManifestFileEntry(FILE *paramManifestFilePointer, char *paramFileName, uint8_t *paramFileDigest);
 
-void CreateTempSigFileEntry(FILE *paramTempSigFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest);
+void CreateTempSigFileEntry(FILE *paramTempSigFilePointer, char *paramFileName, uint8_t *paramFileDigest);
 
 void GenerateSigFileDigest(FILE *paramSigFilePointer, uint8_t *paramSigFileDigest);
