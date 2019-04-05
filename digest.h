@@ -16,7 +16,7 @@
 
 void CreateDigestsAndMetaInfEntries(char *basePath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
 
-void GenerateDigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
+void GenerateSha256DigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 
 FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, char *paramFileName, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
 

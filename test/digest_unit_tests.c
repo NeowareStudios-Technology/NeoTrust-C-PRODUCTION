@@ -15,7 +15,7 @@
 
 //converts each file in the "testdir" directory to sha256 digests and compares to known correct values
 //-if values match, test passes
-int GenerateDigestFromString_test()
+int GenerateSha256DigestFromString_test()
 {
     long fileLength = 0;
     for (int i=0; i<7; i++)
@@ -70,7 +70,7 @@ int GenerateDigestFromString_test()
         fread(fileContents, fileLength, 1, filePointer); // Read in the entire file
         fclose(filePointer); // Close the file*/
 
-        GenerateDigestFromString(fileContents, fileLength, fileDigest);
+        GenerateSha256DigestFromString(fileContents, fileLength, fileDigest);
 
         //print hex digest uint8_t into test file
         testHexFilePointer = fopen("testHexFile", "a+");
@@ -88,13 +88,13 @@ int GenerateDigestFromString_test()
         //if generated digest does not match the expected digest, test fails
         if (strcmp(actualDigest, expectedDigest) != 0)
         {
-            printf("1) GenerateDigestFromString_test FAILED\n");
+            printf("1) GenerateSha256DigestFromString_test FAILED\n");
             return 1;
         }
 
     }
 
-    printf("1) GenerateDigestFromString_test passed\n");
+    printf("1) GenerateSha256DigestFromString_test passed\n");
     return 0;
 }
 
@@ -400,7 +400,7 @@ int main()
 
     printHeader();
 
-    testStatuses[0] = GenerateDigestFromString_test();
+    testStatuses[0] = GenerateSha256DigestFromString_test();
     testStatuses[1] = CreateBaseManifestFile_test();
     testStatuses[2] = CreateBaseSignatureFile_test();
     testStatuses[3] = CreateDigestsAndMetaInfEntries_test();
