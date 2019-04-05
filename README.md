@@ -1,10 +1,10 @@
-# NeoTrust
+# NeoPak
 
 ## Build insructions:
 
--Neopak: run ```make``` in the NeoTrust directory
+-Neopak: run ```make``` in the NeoPak directory
 
--unit tests: run ```make test```in NeoTrust directory
+-unit tests: run ```make test```in NeoPak directory
 
 -unit test results will be in "unittestresults.out"
 

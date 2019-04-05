@@ -1,12 +1,12 @@
 /************************************
- * Project: NeoTrust
+ * Project: NeoPak
  * Author: David Lee Ramirez
  * Date: 2/12/19
  * Copywrite NeoWare 2019
  * *********************************/
 
 
-#include "neotrust.h"
+#include "neopak.h"
 
 
 //global
@@ -59,9 +59,9 @@ void DisplayUsageInfo()
     printf("\nNeoPak\nCopywrite NeoWare 2019\n");
     printf("Created by David Lee Ramirez 2/12/2019 \n");
     printf("Usage:\n");
-    printf("./neotrust                                  Show usage info\n");
-    printf("./neotrust test                             Sign with test priv key and message hash\n");
-    printf("./neotrust <privKey> <directoryPath>        Sign all files in directory with private key\n");
+    printf("./neopak                                  Show usage info\n");
+    printf("./neopak test                             Sign with test priv key and message hash\n");
+    printf("./neopak <privKey> <directoryPath>        Sign all files in directory with private key\n");
     printf("\n *Note: <privKey> must be supplied as a string of hex numbers with length 64 \n");
 }
 
@@ -74,7 +74,7 @@ void MainSign(char *paramSecKey, char *paramDirName)
     long fileLength;
     char metaInfDirPath[1024];
     char *manifestFileName = "manifest.mf";
-    char *sigFileName = "neotrust.sf";
+    char *sigFileName = "neopak.sf";
     size_t serializedSignatureDerLength;
     uint8_t *serializedDigest = malloc(sizeof(uint8_t)*32);
     uint8_t *serializedSecKey = malloc(sizeof(uint8_t)*32);
@@ -139,7 +139,7 @@ void MainVerify(char *paramTargetDir)
     FILE *verificationManifestFilePointer;
     FILE *verificationFinalSigFilePointer;
     char *verificationManifestFileName = "manifest.mf.verify";
-    char *verificationFinalSigFileName = "neotrust.sf.verify";
+    char *verificationFinalSigFileName = "neopak.sf.verify";
     char verificationManifestFilePath[256];
     char verificationFinalSigFilePath[256];
     secp256k1_context *verifyContext = secp256k1_context_create(SECP256K1_CONTEXT_VERIFY); 
@@ -184,7 +184,7 @@ void MainVerify(char *paramTargetDir)
     //public key matches digest of signature file just generated, verification passes. if not, verification fails.
     if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, signatureFileDigest, &pubKeyObject))
     {
-        printf("This neotrust archive could not be verified. This means that the files in the \nneopak have been tampered with since it was signed or it was signed by a \ndifferent user than the one who owns the public key in the manifest file.\n");
+        printf("This neopak archive could not be verified. This means that the files in the \nneopak have been tampered with since it was signed or it was signed by a \ndifferent user than the one who owns the public key in the manifest file.\n");
     }
     else
     {

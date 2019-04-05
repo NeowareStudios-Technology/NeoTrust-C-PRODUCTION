@@ -1,5 +1,5 @@
 /************************************
- * Project: NeoTrust
+ * Project: NeoPak
  * Author: David Lee Ramirez
  * Date: 2/12/19
  * Copywrite NeoWare 2019
@@ -128,7 +128,7 @@ void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerialize
 
     //create file paths
     strcpy(signatureBlockFilePath, paramMetaInfDirPath);
-    strcat(signatureBlockFilePath, "/neotrust.ec");
+    strcat(signatureBlockFilePath, "/neopak.ec");
 
     signatureBlockFilePointer = fopen(signatureBlockFilePath, "wb");
     if (!signatureBlockFilePointer)
