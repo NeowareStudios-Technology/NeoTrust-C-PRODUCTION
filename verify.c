@@ -1,5 +1,5 @@
 /************************************
- * Project: NeoPak
+ * Project: NeoTrust
  * Author: David Lee Ramirez
  * Date: 3/28/19
  * Copywrite NeoWare 2019
@@ -16,7 +16,7 @@ void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_sig
     long signatureBlockFileLength;
 
     strcpy(signatureBlockFilePath, paramMetaInfDirPath);
-    strcat(signatureBlockFilePath, "/neopak.ec");
+    strcat(signatureBlockFilePath, "/neotrust.ec");
 
     //read signature block file into uint8_t array
     signatureBlockFilePointer = fopen(signatureBlockFilePath, "rb");

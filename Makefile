@@ -1,6 +1,6 @@
 CC = gcc 
 CFLAGS = -g --std=c99
-OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)verify.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
+OBJ = $(OPATH)neotrust.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)verify.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
 TEST_HELPER_OBJ = $(OPATH)helper_unit_tests.o $(OPATH)helper.o
 TEST_DIGEST_OBJ = $(OPATH)digest_unit_tests.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
 TEST_SIGN_OBJ = $(OPATH)sign_unit_tests.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
@@ -11,11 +11,11 @@ TPATH = ./test/
 LDIR = lib
 LIBS = -L $(LDIR) -l secp256k1
 
-neopak: $(OBJ)
-	$(CC) -o neopak $(OBJ) $(LIBS) $(CFLAGS)
+neotrust: $(OBJ)
+	$(CC) -o neotrust $(OBJ) $(LIBS) $(CFLAGS)
 
-$(OPATH)neopak.o: neopak.c 
-	$(CC) -c neopak.c -o $(OPATH)neopak.o $(CFLAGS)
+$(OPATH)neotrust.o: neotrust.c 
+	$(CC) -c neotrust.c -o $(OPATH)neotrust.o $(CFLAGS)
 
 $(OPATH)sign.o: sign.c
 	$(CC) -c sign.c -o $(OPATH)sign.o $(CFLAGS)
@@ -93,4 +93,4 @@ cleanmeta:
 	rm -rf testdir/META-INF
 
 uninstall:
-	rm neopak
+	rm neotrust
