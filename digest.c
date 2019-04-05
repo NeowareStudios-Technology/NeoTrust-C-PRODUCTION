@@ -44,7 +44,7 @@ void CreateDigestsAndMetaInfEntries(char *basePath, FILE* paramManifestFilePoint
 
                 GenerateDigestFromString(fileContents, fileLength, fileDigest);
                 CreateManifestFileEntry(paramManifestFilePointer, dp->d_name, fileDigest);
-                CreateSignatureFileEntry(paramSignatureFilePointer, dp->d_name, basePath, fileDigest);
+                CreateTempSigFileEntry(paramSignatureFilePointer, dp->d_name, basePath, fileDigest);
                 
                 free(fileContents);
             }
@@ -70,18 +70,18 @@ void CreateManifestFileEntry(FILE* paramManifestFilePointer, char *paramFileName
 }
 
 
-void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest)
+void CreateTempSigFileEntry(FILE* paramTempSigFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest)
 {
-    //temp file used to convert target file digest (uint8_t array) to string
-    FILE *tempFilePointer;
+    //temp digest file used to convert target file digest (uint8_t array) to string
+    FILE *tempDigestFilePointer;
     char manifestFileEntry[1024];
     char fileDigestChars[65]; 
     uint8_t manifestEntryDigest[32];
     size_t manifestEntryLength;
 
     //create and open temp file for reading and writing
-    tempFilePointer = fopen("tempFile", "a+");
-    if (!tempFilePointer)
+    tempDigestFilePointer = fopen("tempFile", "a+");
+    if (!tempDigestFilePointer)
     {
         printf("\nerror: tempFile could not be opened\n");
         exit(1);
@@ -89,13 +89,13 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
 
     //print the target file digest as hex into temp file
     for (int i = 0; i < 32; i++)
-        fprintf(tempFilePointer,"%02x", paramFileDigest[i]);
+        fprintf(tempDigestFilePointer,"%02x", paramFileDigest[i]);
     
-    rewind(tempFilePointer);
+    rewind(tempDigestFilePointer);
     
     //read target file digest in temp file as string
-    fgets(fileDigestChars, 65, tempFilePointer);
-    fclose(tempFilePointer);
+    fgets(fileDigestChars, 65, tempDigestFilePointer);
+    fclose(tempDigestFilePointer);
     remove("tempFile");
 
     //place manifest entry text (including target file digest) into string
@@ -108,17 +108,17 @@ void CreateSignatureFileEntry(FILE* paramSignatureFilePointer, char *paramFileNa
     strcat(manifestFileEntry, "\0");
     manifestEntryLength = strlen(manifestFileEntry);
 
-    //generate the digest of the manifest file entry (for signature file entry)
+    //generate the digest of the manifest file entry (for use in signature file entry)
     GenerateDigestFromString(manifestFileEntry, manifestEntryLength, manifestEntryDigest);
 
     //write signature file entry to signature file (signature file entry includes manifest entry digest)
-    fputs("\n\nName: ", paramSignatureFilePointer);
-    fputs(paramFileName, paramSignatureFilePointer);
-    fputs("\nDigest-Algorithms: SHA256\n", paramSignatureFilePointer);
-    fputs("SHA256-Digest: ", paramSignatureFilePointer);
+    fputs("\n\nName: ", paramTempSigFilePointer);
+    fputs(paramFileName, paramTempSigFilePointer);
+    fputs("\nDigest-Algorithms: SHA256\n", paramTempSigFilePointer);
+    fputs("SHA256-Digest: ", paramTempSigFilePointer);
     for (int i = 0; i < 32; i++)
     {
-        fprintf(paramSignatureFilePointer, "%02x", manifestEntryDigest[i]);
+        fprintf(paramTempSigFilePointer, "%02x", manifestEntryDigest[i]);
     }
 }
 
@@ -142,7 +142,7 @@ FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, char
     manifestFileContents = (char *)malloc((manifestFileLength+1)*sizeof(char)); // Enough memory for file + \0
     fread(manifestFileContents, manifestFileLength, 1, paramManifestFilePointer); // Read in the entire file
 
-    //read current signature file contents
+    //read temporary signature file contents
     rewind(paramSignatureFilePointer);
     if (!paramSignatureFilePointer)
         printf("Signature file coud not be opened to read");

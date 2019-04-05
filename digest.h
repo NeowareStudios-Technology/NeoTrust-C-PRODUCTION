@@ -26,6 +26,6 @@ FILE* CreateBaseSignatureFile(char *paramTargetDirectoryName);
 
 void CreateManifestFileEntry(FILE *paramManifestFilePointer, char *paramFileName, uint8_t *paramFileDigest);
 
-void CreateSignatureFileEntry(FILE *paramSignatureFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest);
+void CreateTempSigFileEntry(FILE *paramTempSigFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest);
 
 void GenerateSignatureFileDigest(FILE *paramSignatureFilePointer, uint8_t *paramSignatureFileDigest);
