@@ -14,18 +14,18 @@
 #include "helper.h"
 
 
-void CreateDigestsAndMetaInfEntries(char *basePath, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
+void CreateDigestsAndMetaInfEntries(char *basePath, FILE *paramManifestFilePointer, FILE *paramSigFilePointer);
 
 void GenerateSha256DigestFromString(char *paramFileContents, long paramFileLength, uint8_t *paramFileDigest);
 
-FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, char *paramFileName, FILE *paramManifestFilePointer, FILE *paramSignatureFilePointer);
+FILE *GenerateFullManifestDigestAndSaveInSigFile(char *paramMetaInfDirPath, char *paramFileName, FILE *paramManifestFilePointer, FILE *paramSigFilePointer);
 
 FILE* CreateBaseManifestFile(char *paramMetaInfPath, char *paramFileName, uint8_t *paramPublicKey);
 
-FILE* CreateBaseSignatureFile(char *paramTargetDirectoryName);
+FILE* CreateBaseSigFile(char *paramTargetDirectoryName);
 
 void CreateManifestFileEntry(FILE *paramManifestFilePointer, char *paramFileName, uint8_t *paramFileDigest);
 
 void CreateTempSigFileEntry(FILE *paramTempSigFilePointer, char *paramFileName, char *basePath, uint8_t *paramFileDigest);
 
-void GenerateSignatureFileDigest(FILE *paramSignatureFilePointer, uint8_t *paramSignatureFileDigest);
+void GenerateSigFileDigest(FILE *paramSigFilePointer, uint8_t *paramSigFileDigest);

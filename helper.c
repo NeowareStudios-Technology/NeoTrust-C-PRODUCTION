@@ -125,7 +125,7 @@ void printValues(uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp, ui
     printf("\n\n");
 
     //print signature in hex
-    printf("Signature (compact): \n");
+    printf("Sig (compact): \n");
     for (int i = 0; i < 64; i++)
     {
         printf("%02x", signatureComp[i]);
@@ -133,7 +133,7 @@ void printValues(uint8_t* secKey, uint8_t* pubKeyComp, uint8_t* pubKeyUncomp, ui
     printf("\n\n");
 
     //print signature in hex
-    printf("Signature (DER encoded): \n");
+    printf("Sig (DER encoded): \n");
     for (int i = 0; i < 72; i++)
     {
         printf("%02x", signatureDer[i]);

@@ -22,7 +22,7 @@ void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_sig
     signatureBlockFilePointer = fopen(signatureBlockFilePath, "rb");
     if (!signatureBlockFilePointer)
     {
-        printf("Signature file coud not be opened to read\n");
+        printf("Sig file coud not be opened to read\n");
         exit(1);
     }
     signatureBlockFileLength = getFileLength(signatureBlockFilePointer);
@@ -32,7 +32,7 @@ void GetSigObjectFromSigBlockFile(char *paramMetaInfDirPath, secp256k1_ecdsa_sig
     //parse DER signature retrieved from signature block file into signature object
     if (1 != secp256k1_ecdsa_signature_parse_der(paramContext, paramSigObject, signatureBlockFileContents, signatureBlockFileLength))
     {
-        printf("Signature could not be parsed into object\n");
+        printf("Sig could not be parsed into object\n");
         exit(1);
     }
 

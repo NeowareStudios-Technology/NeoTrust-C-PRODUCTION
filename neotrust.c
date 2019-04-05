@@ -69,21 +69,21 @@ void DisplayUsageInfo()
 void MainSign(char *paramSecKey, char *paramDirName)
 {
     FILE *manifestFilePointer;
-    FILE *tempSignatureFilePointer;
-    FILE *finalSignatureFilePointer;
+    FILE *tempSigFilePointer;
+    FILE *finalSigFilePointer;
     long fileLength;
     char metaInfDirPath[1024];
     char *manifestFileName = "manifest.mf";
     char *sigFileName = "neotrust.sf";
-    size_t serializedSignatureDerLength;
+    size_t serializedSigDerLength;
     uint8_t *serializedDigest = malloc(sizeof(uint8_t)*32);
     uint8_t *serializedSecKey = malloc(sizeof(uint8_t)*32);
-    uint8_t *signatureFileDigest = malloc(sizeof(uint8_t)*32);
+    uint8_t *sigFileDigest = malloc(sizeof(uint8_t)*32);
     uint8_t *serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
     uint8_t *serializedPubKeyUncompressed = malloc(sizeof(uint8_t)*65);
-    uint8_t *serializedSignatureComp = malloc(sizeof(uint8_t)*64);
+    uint8_t *serializedSigComp = malloc(sizeof(uint8_t)*64);
     //72 is max length for DER sig, but can be shorter
-    uint8_t *serializedSignatureDer = malloc(sizeof(uint8_t)*72);
+    uint8_t *serializedSigDer = malloc(sizeof(uint8_t)*72);
     secp256k1_scalar myMessageHash, myPrivateKey;
 
     //add space between each hex number in private key and convert to uint8_t *
@@ -100,42 +100,42 @@ void MainSign(char *paramSecKey, char *paramDirName)
     mkdir(metaInfDirPath, 0700);
 
     manifestFilePointer = CreateBaseManifestFile(metaInfDirPath, manifestFileName, serializedPubKeyCompressed);   
-    tempSignatureFilePointer = CreateBaseSignatureFile(metaInfDirPath); 
+    tempSigFilePointer = CreateBaseSigFile(metaInfDirPath); 
 
     //create manifest file and signature file entries from each file in target directory
     //(target file -> digest -> manifest file entry -> digest -> signature file entry)
-    CreateDigestsAndMetaInfEntries(paramDirName, manifestFilePointer, tempSignatureFilePointer); 
+    CreateDigestsAndMetaInfEntries(paramDirName, manifestFilePointer, tempSigFilePointer); 
 
     //create the full signature file (this must be called last (after file iteration) as it requires the digest of the complete manifest file)
-    finalSignatureFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, sigFileName, manifestFilePointer, tempSignatureFilePointer);
+    finalSigFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, sigFileName, manifestFilePointer, tempSigFilePointer);
 
     //TO DO
     //-send ethereum transaction containing pub key and full manifest digest (ie. call JavaScript function here using Duktape)
     //-append transaction hash to manifest file 
 
-    GenerateSignatureFileDigest(finalSignatureFilePointer, signatureFileDigest);
+    GenerateSigFileDigest(finalSigFilePointer, sigFileDigest);
 
     //create signature by signing the digest of the full signature file with the user's privat key
-    serializedSignatureDerLength = VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, signatureFileDigest, serializedSignatureComp, serializedSignatureDer);
+    serializedSigDerLength = VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedSecKey, sigFileDigest, serializedSigComp, serializedSigDer);
     //save signature to binary file
-    CreateSignatureBlockFile(metaInfDirPath, serializedSignatureDer, serializedSignatureDerLength);
+    CreateSigBlockFile(metaInfDirPath, serializedSigDer, serializedSigDerLength);
    
     fclose(manifestFilePointer);
-    fclose(tempSignatureFilePointer);
+    fclose(tempSigFilePointer);
     free(serializedDigest);
     free(serializedSecKey);
     free(serializedPubKeyCompressed);
     free(serializedPubKeyUncompressed);
-    free(serializedSignatureComp);
-    free(serializedSignatureDer);
+    free(serializedSigComp);
+    free(serializedSigDer);
 }
 
 
 void MainVerify(char *paramTargetDir)
 {
     char metaInfDirPath[256];
-    long verificationSignatureFileLength;
-    FILE *verificationTempSignatureFilePointer;
+    long verificationSigFileLength;
+    FILE *verificationTempSigFilePointer;
     FILE *verificationManifestFilePointer;
     FILE *verificationFinalSigFilePointer;
     char *verificationManifestFileName = "manifest.mf.verify";
@@ -146,7 +146,7 @@ void MainVerify(char *paramTargetDir)
     secp256k1_ecdsa_signature sigObject;
     secp256k1_pubkey pubKeyObject;
     uint8_t *serializedPubKeyCompressed = malloc(sizeof(uint8_t)*33);
-    uint8_t *signatureFileDigest = malloc(sizeof(uint8_t)*32);
+    uint8_t *sigFileDigest = malloc(sizeof(uint8_t)*32);
 
     //create file paths for temporary verification manifest and signature files
     strcpy(metaInfDirPath, paramTargetDir);
@@ -170,19 +170,19 @@ void MainVerify(char *paramTargetDir)
 
     //generate temporary verification manifest and signature files for digest comparisons with original values
     verificationManifestFilePointer = CreateBaseManifestFile(metaInfDirPath, verificationManifestFileName, serializedPubKeyCompressed);
-    verificationTempSignatureFilePointer = CreateBaseSignatureFile(metaInfDirPath);
-    CreateDigestsAndMetaInfEntries(paramTargetDir, verificationManifestFilePointer, verificationTempSignatureFilePointer); 
-    verificationFinalSigFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, verificationFinalSigFileName, verificationManifestFilePointer, verificationTempSignatureFilePointer);
+    verificationTempSigFilePointer = CreateBaseSigFile(metaInfDirPath);
+    CreateDigestsAndMetaInfEntries(paramTargetDir, verificationManifestFilePointer, verificationTempSigFilePointer); 
+    verificationFinalSigFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, verificationFinalSigFileName, verificationManifestFilePointer, verificationTempSigFilePointer);
 
     //generate digest that will be used to verify signature
-    GenerateSignatureFileDigest(verificationFinalSigFilePointer, signatureFileDigest);
+    GenerateSigFileDigest(verificationFinalSigFilePointer, sigFileDigest);
 
     remove(verificationFinalSigFilePath);
     remove(verificationManifestFilePath);
 
     //verify signature against signature file digest that was just generated. if digest resulting from decrypting the signature with the 
     //public key matches digest of signature file just generated, verification passes. if not, verification fails.
-    if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, signatureFileDigest, &pubKeyObject))
+    if (1 != secp256k1_ecdsa_verify(verifyContext, &sigObject, sigFileDigest, &pubKeyObject))
     {
         printf("This neotrust archive could not be verified. This means that the files in the \nneopak have been tampered with since it was signed or it was signed by a \ndifferent user than the one who owns the public key in the manifest file.\n");
     }
