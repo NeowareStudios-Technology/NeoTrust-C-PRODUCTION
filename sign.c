@@ -138,12 +138,4 @@ void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerialize
     
     //write signature (in binary form) to signature block file
     fwrite(paramSerializedSignatureDer, sizeof(uint8_t), paramSerializedSignatureDerLength, signatureBlockFilePointer);
-
-    //debug: print created signature
-    printf("\n\nSignature (create)\n");
-    for(int i = 0; i < paramSerializedSignatureDerLength; i++)
-    {
-        printf("%02x", paramSerializedSignatureDer[i]);
-    }
-    printf("\n");
 }
