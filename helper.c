@@ -9,33 +9,33 @@
 
 
 
-uint8_t *privKeyStringToHex(const char *stringToConvert) 
+uint8_t *privKeyStringToHex(const char *string) 
 {
     uint8_t *answer = malloc(65 / 3);
     uint8_t *p;
-    for (p = answer; *stringToConvert; p++)
+    for (p = answer; *string; p++)
     {
-        *p = strtoul(stringToConvert, (char**)&stringToConvert, 16);
-        stringToConvert++;
+        *p = strtoul(string, (char**)&string, 16);
+        string++;
     }
     return answer;
 }
 
-uint8_t *compPubKeyStringToHex(const char *stringToConvert) 
+uint8_t *compPubKeyStringToHex(const char *string) 
 {
     uint8_t *answer = malloc(67 / 3);
     uint8_t *p;
-    for (p = answer; *stringToConvert; p++)
+    for (p = answer; *string; p++)
     {
-        *p = strtoul(stringToConvert, (char**)&stringToConvert, 16);
-        stringToConvert++;
+        *p = strtoul(string, (char**)&string, 16);
+        string++;
     }
     return answer;
 }
 
 
 //insert spaces between each hex number in string (passed string must be length 64)
-char* privKeyInsertSpaces(const char *s)
+char* privKeyInsertSpaces(const char *string)
 {
     char *returnString = malloc(sizeof(char)*97);
     int paramStringIndex = 0;
@@ -54,7 +54,7 @@ char* privKeyInsertSpaces(const char *s)
         }
         else
         {
-            returnString[i] = s[paramStringIndex];
+            returnString[i] = string[paramStringIndex];
             paramStringIndex++;
         }
     }
@@ -62,7 +62,7 @@ char* privKeyInsertSpaces(const char *s)
 }
 
 //insert spaces between each hex number in string (passed string must be length 64)
-char* compPubKeyInsertSpaces(const char *s)
+char* compPubKeyInsertSpaces(const char *string)
 {
     char *returnString = malloc(sizeof(char)*100);
     int paramStringIndex = 0;
@@ -81,7 +81,7 @@ char* compPubKeyInsertSpaces(const char *s)
         }
         else
         {
-            returnString[i] = s[paramStringIndex];
+            returnString[i] = string[paramStringIndex];
             paramStringIndex++;
         }
     }
@@ -153,13 +153,13 @@ long getFileLength(FILE *paramFilePointer)
 }
 
 
-int cutStringAndReturnLength(char *paramStringToCut, int paramBeginningIndex, int paramLengthToCut)
+int cutStringAndReturnLength(char *stringToCut, int beginningIndex, int lengthToCut)
 {
-   int stringLength = strlen(paramStringToCut);
+   int stringLength = strlen(stringToCut);
 
-   if (paramLengthToCut < 0) paramLengthToCut = stringLength - paramBeginningIndex;
-   if (paramBeginningIndex + paramLengthToCut > stringLength) paramLengthToCut = stringLength - paramBeginningIndex;
-   memmove(paramStringToCut + paramBeginningIndex, paramStringToCut + paramBeginningIndex + paramLengthToCut, stringLength - paramLengthToCut + 1);
+   if (lengthToCut < 0) lengthToCut = stringLength - beginningIndex;
+   if (beginningIndex + lengthToCut > stringLength) lengthToCut = stringLength - beginningIndex;
+   memmove(stringToCut + beginningIndex, stringToCut + beginningIndex + lengthToCut, stringLength - lengthToCut + 1);
 
-   return paramLengthToCut;
+   return lengthToCut;
 }
