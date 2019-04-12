@@ -166,13 +166,16 @@ void MainVerify(char *paramTargetDir)
     GetPubKeyObjectFromManifestFile(metaInfDirPath, &pubKeyObject, serializedPubKeyCompressed, verifyContext);
     
     //TO DO
-    //get the transaction hash (when it exists) and save it
+    //get the transaction hash from signature file (when it exists) and save it in memory
 
     //generate temporary verification manifest and signature files for digest comparisons with original values
     verificationManifestFilePointer = CreateBaseManifestFile(metaInfDirPath, verificationManifestFileName, serializedPubKeyCompressed);
     verificationTempSigFilePointer = CreateBaseSigFile(metaInfDirPath);
     CreateDigestsAndMetaInfEntries(paramTargetDir, verificationManifestFilePointer, verificationTempSigFilePointer); 
     verificationFinalSigFilePointer =  GenerateFullManifestDigestAndSaveInSigFile(metaInfDirPath, verificationFinalSigFileName, verificationManifestFilePointer, verificationTempSigFilePointer);
+
+    //TO DO
+    //contact Ethereum blockchain to verify that public key and manifest file digest match public key and manifest file digest in transaction
 
     //generate digest that will be used to verify signature
     GenerateSigFileDigest(verificationFinalSigFilePointer, sigFileDigest);
