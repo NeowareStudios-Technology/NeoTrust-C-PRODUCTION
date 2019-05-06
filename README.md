@@ -2,6 +2,8 @@
 
 ## Build insructions:
 
+-build works on macOS Mojave Version 10.14.3
+
 -Neopak: run ```make``` in the NeoTrust directory
 
 -unit tests: run ```make test```in NeoTrust directory
@@ -26,7 +28,13 @@
 
 8)generate digest from entire signature file, sign this digest with user's private key, and save signature in signature block file
 
-## Notes:
+## General Notes:
 
 -signature in signature block file is in DER format
+
 -public key in manifest file is in compressed format (33 bytes)
+
+## DukTape Notes:
+-Built on macOS Mojave Version 10.14.3 
+
+-DukTape has to be build with python 2  (including pyYaml) using this command: ```python tools/configurepy --output-directory duktap-src```
