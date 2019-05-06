@@ -1,5 +1,5 @@
 /************************************
- * Project: NeoPak
+ * Project: NeoTrust
  * Author: David Lee Ramirez
  * Date: 2/12/19
  * Copywrite NeoWare 2019
@@ -51,7 +51,7 @@ size_t VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey, ui
     //verify signature
     if (1 != secp256k1_ecdsa_verify(myContext, &mySig, digest, &paramMyPublicKey))
     {
-        printf("Signature could not be verified \n");
+        printf("Sig could not be verified \n");
         exit(1);
     }
 
@@ -121,14 +121,14 @@ secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, ui
 
 
 //no return value
-void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerializedSignatureDer, size_t paramSerializedSignatureDerLength)
+void CreateSigBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerializedSigDer, size_t paramSerializedSigDerLength)
 {
     FILE *signatureBlockFilePointer;
     char signatureBlockFilePath[256];
 
     //create file paths
     strcpy(signatureBlockFilePath, paramMetaInfDirPath);
-    strcat(signatureBlockFilePath, "/neopak.ec");
+    strcat(signatureBlockFilePath, "/neotrust.ec");
 
     signatureBlockFilePointer = fopen(signatureBlockFilePath, "wb");
     if (!signatureBlockFilePointer)
@@ -137,13 +137,5 @@ void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerialize
     }
     
     //write signature (in binary form) to signature block file
-    fwrite(paramSerializedSignatureDer, sizeof(uint8_t), paramSerializedSignatureDerLength, signatureBlockFilePointer);
-
-    //debug: print created signature
-    printf("\n\nSignature (create)\n");
-    for(int i = 0; i < paramSerializedSignatureDerLength; i++)
-    {
-        printf("%02x", paramSerializedSignatureDer[i]);
-    }
-    printf("\n");
+    fwrite(paramSerializedSigDer, sizeof(uint8_t), paramSerializedSigDerLength, signatureBlockFilePointer);
 }

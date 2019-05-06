@@ -1,20 +1,21 @@
 CC = gcc 
 CFLAGS = -g --std=c99
-OBJ = $(OPATH)neopak.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)verify.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
+OBJ = $(OPATH)neotrust.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)verify.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
 TEST_HELPER_OBJ = $(OPATH)helper_unit_tests.o $(OPATH)helper.o
 TEST_DIGEST_OBJ = $(OPATH)digest_unit_tests.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
 TEST_SIGN_OBJ = $(OPATH)sign_unit_tests.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
+TEST_VERIFY_OBJ = $(OPATH)verify_unit_tests.o $(OPATH)verify.o $(OPATH)helper.o
 OPATH = ./obj/
 SPATH = ./sha/
 TPATH = ./test/
 LDIR = lib
 LIBS = -L $(LDIR) -l secp256k1
 
-neopak: $(OBJ)
-	$(CC) -o neopak $(OBJ) $(LIBS) $(CFLAGS)
+neotrust: $(OBJ)
+	$(CC) -o neotrust $(OBJ) $(LIBS) $(CFLAGS)
 
-$(OPATH)neopak.o: neopak.c 
-	$(CC) -c neopak.c -o $(OPATH)neopak.o $(CFLAGS)
+$(OPATH)neotrust.o: neotrust.c 
+	$(CC) -c neotrust.c -o $(OPATH)neotrust.o $(CFLAGS)
 
 $(OPATH)sign.o: sign.c
 	$(CC) -c sign.c -o $(OPATH)sign.o $(CFLAGS)
@@ -42,10 +43,11 @@ $(OPATH)sha384-512.o: $(SPATH)sha384-512.c
 
 
 
-test: test_helper test_digest test_sign
+test: test_helper test_digest test_sign test_verify
 	$(test_helper)
 	$(test_digest)
 	$(test_sign)
+	$(test_verify)
 	rm obj/*.o
 
 test_helper: $(TEST_HELPER_OBJ)
@@ -73,6 +75,14 @@ test_sign: $(TEST_SIGN_OBJ)
 $(OPATH)sign_unit_tests.o: $(TPATH)sign_unit_tests.c 
 	$(CC) -c $(TPATH)sign_unit_tests.c -o $(OPATH)sign_unit_tests.o $(CFLAGS)
 
+test_verify: $(TEST_VERIFY_OBJ)
+	$(CC) -o test_verify $(TEST_VERIFY_OBJ) $(LIBS) $(CFLAGS)
+	./test_verify >> unittestresults.out
+	rm ./test_verify
+
+$(OPATH)verify_unit_tests.o: $(TPATH)verify_unit_tests.c 
+	$(CC) -c $(TPATH)verify_unit_tests.c -o $(OPATH)verify_unit_tests.o $(CFLAGS)
+
 cleanobject:
 	rm obj/*.o
 
@@ -83,4 +93,4 @@ cleanmeta:
 	rm -rf testdir/META-INF
 
 uninstall:
-	rm neopak
+	rm neotrust

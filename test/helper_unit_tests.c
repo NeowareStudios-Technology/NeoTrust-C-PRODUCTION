@@ -1,5 +1,5 @@
 /************************************
- * Project: NeoPak
+ * Project: NeoTrust
  * Author: David Lee Ramirez
  * Date: 3/18/19
  * Copywrite NeoWare 2019
@@ -12,7 +12,6 @@
 
 #define NUM_TESTS 2
 #define TEST_DIR_NAME "testdir"
-//#define NUM_FILES_TEST_DIR 7
 #define LONG_TEST_REPEATS 20
 #define SHORT_TEST_REPEATS 1000
 
@@ -123,6 +122,9 @@ int getFileLength_test()
     printf("2) getFileLength_test passed\n");
     return 0;
 }
+
+
+/****** Include the following functions in all unit test C files ********/
 
 
 void printTestStatuses(int paramTestStatuses[NUM_TESTS])

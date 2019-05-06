@@ -1,5 +1,5 @@
 /************************************
- * Project: NeoPak
+ * Project: NeoTrust
  * Author: David Lee Ramirez
  * Date: 3/21/19
  * Copywrite NeoWare 2019
@@ -60,15 +60,15 @@ int VerifyParamsAndSignMessageWithEcdsa_test()
     uint8_t* serializedTestSecKey;
     uint8_t* serializedTestPubKeyComp;
     uint8_t* serializedTestPubKeyUncomp;
-    uint8_t* serializedSignatureComp;
-    uint8_t* serializedSignatureDer;
+    uint8_t* serializedSigComp;
+    uint8_t* serializedSigDer;
     serializedTestDigest = malloc(sizeof(uint8_t)*32);
     serializedTestSecKey = malloc(sizeof(uint8_t)*32);
     serializedTestPubKeyComp = malloc(sizeof(uint8_t)*33);
     serializedTestPubKeyUncomp = malloc(sizeof(uint8_t)*65);
-    serializedSignatureComp = malloc(sizeof(uint8_t)*64);
+    serializedSigComp = malloc(sizeof(uint8_t)*64);
     //72 is max length for DER sig, but can be shorters
-    serializedSignatureDer = malloc(sizeof(uint8_t)*72);
+    serializedSigDer = malloc(sizeof(uint8_t)*72);
     secp256k1_scalar testMessageHash, testPrivateKey;
 
     //generate random message hash and private key?
@@ -81,7 +81,7 @@ int VerifyParamsAndSignMessageWithEcdsa_test()
 
     secp256k1_context *myContext = secp256k1_context_create(SECP256K1_CONTEXT_SIGN| SECP256K1_CONTEXT_VERIFY);
     secp256k1_pubkey myPublicKey = GeneratePubKeyFromPrivKey(myContext,serializedTestSecKey, serializedTestPubKeyComp, serializedTestPubKeyUncomp);
-    VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedTestSecKey, serializedTestDigest, serializedSignatureComp, serializedSignatureDer);
+    VerifyParamsAndSignMessageWithEcdsa(myPublicKey, serializedTestSecKey, serializedTestDigest, serializedSigComp, serializedSigDer);
 
 
     printf("3) VerifyParamsAndSignMessageWithEcdsa_test passed\n");
@@ -103,11 +103,14 @@ int VerifyParamsAndSignMessageWithEcdsa_test()
     printf("\n   SIGNATURE\n    ");
     for(int i = 0; i <73; i++)
     {
-        printf("%02x", serializedSignatureDer[i]);
+        printf("%02x", serializedSigDer[i]);
     }
     printf("\n");
     return 0;
 }
+
+
+/****** Include the following functions in all unit test C files ********/
 
 
 void printTestStatuses(int paramTestStatuses[NUM_TESTS])

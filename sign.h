@@ -1,5 +1,5 @@
 /************************************
- * Project: NeoPak
+ * Project: NeoTrust
  * Author: David Lee Ramirez
  * Date: 2/12/19
  * Copywrite NeoWare 2019
@@ -26,4 +26,4 @@ size_t VerifyParamsAndSignMessageWithEcdsa(secp256k1_pubkey paramMyPublicKey,uin
 secp256k1_pubkey GeneratePubKeyFromPrivKey(secp256k1_context *paramMyContext, uint8_t* secKey, uint8_t* pubKeyComp,
     uint8_t* pubKeyUncomp);
 
-void CreateSignatureBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerializedSignatureDer, size_t paramSerializedSignatureDerLength);
+void CreateSigBlockFile(char *paramMetaInfDirPath, uint8_t *paramSerializedSigDer, size_t paramSerializedSigDerLength);
