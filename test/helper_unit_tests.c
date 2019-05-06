@@ -124,6 +124,9 @@ int getFileLength_test()
 }
 
 
+/****** Include the following functions in all unit test C files ********/
+
+
 void printTestStatuses(int paramTestStatuses[NUM_TESTS])
 {
     for (int i = 0; i < NUM_TESTS; i++)
