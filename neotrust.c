@@ -7,6 +7,7 @@
 
 
 #include "neotrust.h"
+#include "Duktape/duktape.h"
 
 
 //global
@@ -196,6 +197,16 @@ void MainVerify(char *paramTargetDir)
 }
 
 
+//test main() for testing embedded Duktape JS engine
+int main(int argc, char **argv)
+{
+    duk_context *ctx = NULL;
+    ctx = duk_create_heap_default();
+
+}
+
+
+/*
 int main(int argc, char **argv)
 {
     command = ParseArgumentsIntoCommand(argc);
@@ -204,6 +215,7 @@ int main(int argc, char **argv)
 
     return 0;
 }
+*/
 
 //TEST WITH THIS:
 //private key: 6f910beb039b93eba3bf95eb9ab2610855f18a7512463c78bc9ebf774535e89f
