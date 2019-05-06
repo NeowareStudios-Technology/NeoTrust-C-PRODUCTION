@@ -18,11 +18,11 @@
 
 4)generate digests from each entry in manifest file and save in signature file
 
-5)generate digest from entire manifest file and send Ethereum transaction that includes this digest and user's public key
+5)generate digest from entire manifest file and send Ethereum transaction that includes this digest
 
-6)append Ethereum transaction hash to manifest file
+7)insert manifest file digest into signature file
 
-7)create digest from entire manifest file (again) and append this digest to signature file
+6)insert Ethereum transaction hash to signature file
 
 8)generate digest from entire signature file, sign this digest with user's private key, and save signature in signature block file
 
