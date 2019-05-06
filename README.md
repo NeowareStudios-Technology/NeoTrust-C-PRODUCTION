@@ -31,8 +31,10 @@
 ## General Notes:
 
 -signature in signature block file is in DER format
+
 -public key in manifest file is in compressed format (33 bytes)
 
 ## DukTape Notes:
--Built on macOS Mojave Version 10.14.3
+-Built on macOS Mojave Version 10.14.3 
+
 -DukTape has to be build with python 2  (including pyYaml) using this command: ```python tools/configurepy --output-directory duktap-src```
