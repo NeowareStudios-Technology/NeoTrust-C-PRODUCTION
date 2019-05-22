@@ -1,6 +1,6 @@
 CC = gcc 
 CFLAGS = -g --std=c99
-OBJ = $(OPATH)neotrust.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)verify.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
+OBJ = $(OPATH)duktape.o $(OPATH)neotrust.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)helper.o $(OPATH)verify.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o
 TEST_HELPER_OBJ = $(OPATH)helper_unit_tests.o $(OPATH)helper.o
 TEST_DIGEST_OBJ = $(OPATH)digest_unit_tests.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
 TEST_SIGN_OBJ = $(OPATH)sign_unit_tests.o $(OPATH)sign.o $(OPATH)digest.o $(OPATH)sha224-256.o $(OPATH)sha1.o $(OPATH)sha384-512.o $(OPATH)usha.o $(OPATH)helper.o
@@ -8,6 +8,7 @@ TEST_VERIFY_OBJ = $(OPATH)verify_unit_tests.o $(OPATH)verify.o $(OPATH)helper.o
 OPATH = ./obj/
 SPATH = ./sha/
 TPATH = ./test/
+DPATH = ./Duktape/
 LDIR = lib
 LIBS = -L $(LDIR) -l secp256k1
 
@@ -40,6 +41,9 @@ $(OPATH)sha1.o: $(SPATH)sha1.c
 
 $(OPATH)sha384-512.o: $(SPATH)sha384-512.c
 	$(CC) -c $(SPATH)sha384-512.c -o $(OPATH)sha384-512.o $(CFLAGS)
+
+$(OPATH)duktape.o: $(DPATH)duktape.c
+	$(CC) -c $(DPATH)duktape.c -o $(OPATH)duktape.o $(CFLAGS)
 
 
 

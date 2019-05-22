@@ -7,6 +7,7 @@
 
 
 #include "neotrust.h"
+#include "Duktape/duktape.h"
 
 
 //global
@@ -196,6 +197,42 @@ void MainVerify(char *paramTargetDir)
 }
 
 
+/* For brevity assumes a maximum file length of 16kB. */
+static void push_file_as_string(duk_context *ctx, const char *filename) {
+    FILE *f;
+    size_t len;
+    char buf[1638400];
+
+    f = fopen(filename, "rb");
+    if (f) {
+        len = fread((void *) buf, 1, sizeof(buf), f);
+        fclose(f);
+        duk_push_lstring(ctx, (const char *) buf, (duk_size_t) len);
+    } else {
+        duk_push_undefined(ctx);
+    }
+}
+
+
+//test main() for testing embedded Duktape JS engine
+int main(int argc, char **argv)
+{
+    //create Duktape context
+    duk_context *ctx = NULL;
+    ctx = duk_create_heap_default();
+
+    //push context onto Duktape stack?
+    duk_push_global_object(ctx);
+
+    //push js file to Duktape stack?
+    push_file_as_string(ctx, "index.js");
+
+
+
+}
+
+
+/*
 int main(int argc, char **argv)
 {
     command = ParseArgumentsIntoCommand(argc);
@@ -204,6 +241,7 @@ int main(int argc, char **argv)
 
     return 0;
 }
+*/
 
 //TEST WITH THIS:
 //private key: 6f910beb039b93eba3bf95eb9ab2610855f18a7512463c78bc9ebf774535e89f
